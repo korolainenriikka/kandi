@@ -7,7 +7,7 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi-org.libproxy.helsinki.fi/10.1145/3132211.3134458},
 doi = {10.1145/3132211.3134458},
-abstract = {An emerging class of interactive wearable cognitive assistance applications is poised to become one of the key demonstrators of edge computing infrastructure. In this paper, we design seven such applications and evaluate their performance in terms of latency across a range of edge computing configurations, mobile hardware, and wireless networks, including 4G LTE. We also devise a novel multi-algorithm approach that leverages temporal locality to reduce end-to-end latency by 60% to 70%, without sacrificing accuracy. Finally, we derive target latencies for our applications, and show that edge computing is crucial to meeting these targets.},
+abstract = {An emerging class of interactive wearable cognitive assistance applications is poised to become one of the key demonstrators of edge computing infrastructure. In this paper, we design seven such applications and evaluate their performance in terms of latency across a range of edge computing configurations, mobile hardware, and wireless networks, including 4G LTE. We also devise a novel multi-algorithm approach that leverages temporal locality to reduce end-to-end latency by 60\% to 70\%, without sacrificing accuracy. Finally, we derive target latencies for our applications, and show that edge computing is crucial to meeting these targets.},
 booktitle = {Proceedings of the Second ACM/IEEE Symposium on Edge Computing},
 articleno = {14},
 numpages = {14},
@@ -15,3 +15,310 @@ keywords = {hololens, edge computing, mobile computing, smart glass, augmented r
 location = {San Jose, California},
 series = {SEC '17}
 }
+
+@article{millwheel,
+author = {Akidau, Tyler and Balikov, Alex and Bekiro\u{g}lu, Kaya and Chernyak, Slava and Haberman, Josh and Lax, Reuven and McVeety, Sam and Mills, Daniel and Nordstrom, Paul and Whittle, Sam},
+title = {MillWheel: Fault-Tolerant Stream Processing at Internet Scale},
+year = {2013},
+issue_date = {August 2013},
+publisher = {VLDB Endowment},
+volume = {6},
+number = {11},
+issn = {2150-8097},
+url = {https://doi-org.libproxy.helsinki.fi/10.14778/2536222.2536229},
+doi = {10.14778/2536222.2536229},
+abstract = {MillWheel is a framework for building low-latency data-processing applications that is widely used at Google. Users specify a directed computation graph and application code for individual nodes, and the system manages persistent state and the continuous flow of records, all within the envelope of the framework's fault-tolerance guarantees.This paper describes MillWheel's programming model as well as its implementation. The case study of a continuous anomaly detector in use at Google serves to motivate how many of MillWheel's features are used. MillWheel's programming model provides a notion of logical time, making it simple to write time-based aggregations. MillWheel was designed from the outset with fault tolerance and scalability in mind. In practice, we find that MillWheel's unique combination of scalability, fault tolerance, and a versatile programming model lends itself to a wide variety of problems at Google.},
+journal = {Proc. VLDB Endow.},
+month = aug,
+pages = {1033–1044},
+numpages = {12}
+}
+
+@article{dataflow,
+author = {Akidau, Tyler and Bradshaw, Robert and Chambers, Craig and Chernyak, Slava and Fern\'{a}ndez-Moctezuma, Rafael J. and Lax, Reuven and McVeety, Sam and Mills, Daniel and Perry, Frances and Schmidt, Eric and Whittle, Sam},
+title = {The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, out-of-Order Data Processing},
+year = {2015},
+issue_date = {August 2015},
+publisher = {VLDB Endowment},
+volume = {8},
+number = {12},
+issn = {2150-8097},
+url = {https://doi-org.libproxy.helsinki.fi/10.14778/2824032.2824076},
+doi = {10.14778/2824032.2824076},
+abstract = {Unbounded, unordered, global-scale datasets are increasingly common in day-to-day business (e.g. Web logs, mobile usage statistics, and sensor networks). At the same time, consumers of these datasets have evolved sophisticated requirements, such as event-time ordering and windowing by features of the data themselves, in addition to an insatiable hunger for faster answers. Meanwhile, practicality dictates that one can never fully optimize along all dimensions of correctness, latency, and cost for these types of input. As a result, data processing practitioners are left with the quandary of how to reconcile the tensions between these seemingly competing propositions, often resulting in disparate implementations and systems.We propose that a fundamental shift of approach is necessary to deal with these evolved requirements in modern data processing. We as a field must stop trying to groom unbounded datasets into finite pools of information that eventually become complete, and instead live and breathe under the assumption that we will never know if or when we have seen all of our data, only that new data will arrive, old data may be retracted, and the only way to make this problem tractable is via principled abstractions that allow the practitioner the choice of appropriate tradeoffs along the axes of interest: correctness, latency, and cost.In this paper, we present one such approach, the Dataflow Model, along with a detailed examination of the semantics it enables, an overview of the core principles that guided its design, and a validation of the model itself via the real-world experiences that led to its development.},
+journal = {Proc. VLDB Endow.},
+month = aug,
+pages = {1792–1803},
+numpages = {12}
+}
+
+@inproceedings{storm@twitter,
+author = {Toshniwal, Ankit and Taneja, Siddarth and Shukla, Amit and Ramasamy, Karthik and Patel, Jignesh M. and Kulkarni, Sanjeev and Jackson, Jason and Gade, Krishna and Fu, Maosong and Donham, Jake and Bhagat, Nikunj and Mittal, Sailesh and Ryaboy, Dmitriy},
+title = {Storm@twitter},
+year = {2014},
+isbn = {9781450323765},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi-org.libproxy.helsinki.fi/10.1145/2588555.2595641},
+doi = {10.1145/2588555.2595641},
+abstract = {This paper describes the use of Storm at Twitter. Storm is a real-time fault-tolerant and distributed stream data processing system. Storm is currently being used to run various critical computations in Twitter at scale, and in real-time. This paper describes the architecture of Storm and its methods for distributed scale-out and fault-tolerance. This paper also describes how queries (aka. topologies) are executed in Storm, and presents some operational stories based on running Storm at Twitter. We also present results from an empirical evaluation demonstrating the resilience of Storm in dealing with machine failures. Storm is under active development at Twitter and we also present some potential directions for future work.},
+booktitle = {Proceedings of the 2014 ACM SIGMOD International Conference on Management of Data},
+pages = {147–156},
+numpages = {10},
+keywords = {real-time query processing, stream data management},
+location = {Snowbird, Utah, USA},
+series = {SIGMOD '14}
+}
+
+@inproceedings{facebook,
+author = {Chen, Guoqiang Jerry and Wiener, Janet L. and Iyer, Shridhar and Jaiswal, Anshul and Lei, Ran and Simha, Nikhil and Wang, Wei and Wilfong, Kevin and Williamson, Tim and Yilmaz, Serhat},
+title = {Realtime Data Processing at Facebook},
+year = {2016},
+isbn = {9781450335317},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi-org.libproxy.helsinki.fi/10.1145/2882903.2904441},
+doi = {10.1145/2882903.2904441},
+booktitle = {Proceedings of the 2016 International Conference on Management of Data},
+pages = {1087–1098},
+numpages = {12},
+keywords = {realtime data processing, stream processing},
+location = {San Francisco, California, USA},
+series = {SIGMOD '16}
+}
+
+@inproceedings{uber,
+author = {Fu, Yupeng and Soman, Chinmay},
+title = {Real-Time Data Infrastructure at Uber},
+year = {2021},
+isbn = {9781450383431},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi-org.libproxy.helsinki.fi/10.1145/3448016.3457552},
+doi = {10.1145/3448016.3457552},
+abstract = {Uber's business is highly real-time in nature. PBs of data is continuously being collected from the end users such as Uber drivers, riders, restaurants, eaters and so on everyday. There is a lot of valuable information to be processed and many decisions must be made in seconds for a variety of use cases such as customer incentives, fraud detection, machine learning model prediction. In addition, there is an increasing need to expose this ability to different user categories, including engineers, data scientists, executives and operations personnel which adds to the complexity. In this paper, we present the overall architecture of the real-time data infrastructure and identify three scaling challenges that we need to continuously address for each component in the architecture. At Uber, we heavily rely on open source technologies for the key areas of the infrastructure. On top of those open-source software, we add significant improvements and customizations to make the open-source solutions fit in Uber's environment and bridge the gaps to meet Uber's unique scale and requirements. We then highlight several important use cases and show their real-time solutions and tradeoffs. Finally, we reflect on the lessons we learned as we built, operated and scaled these systems.},
+booktitle = {Proceedings of the 2021 International Conference on Management of Data},
+pages = {2503–2516},
+numpages = {14},
+keywords = {streaming processing, real-time infrastructure},
+location = {Virtual Event, China},
+series = {SIGMOD/PODS '21}
+}
+
+@article{iotsurvey,
+author = {Qian, Bin and Su, Jie and Wen, Zhenyu and Jha, Devki Nandan and Li, Yinhao and Guan, Yu and Puthal, Deepak and James, Philip and Yang, Renyu and Zomaya, Albert Y. and Rana, Omer and Wang, Lizhe and Koutny, Maciej and Ranjan, Rajiv},
+title = {Orchestrating the Development Lifecycle of Machine Learning-Based IoT Applications: A Taxonomy and Survey},
+year = {2020},
+issue_date = {September 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {53},
+number = {4},
+issn = {0360-0300},
+url = {https://doi-org.libproxy.helsinki.fi/10.1145/3398020},
+doi = {10.1145/3398020},
+abstract = {Machine Learning (ML) and Internet of Things (IoT) are complementary advances: ML techniques unlock the potential of IoT with intelligence, and IoT applications increasingly feed data collected by sensors into ML models, thereby employing results to improve their business processes and services. Hence, orchestrating ML pipelines that encompass model training and implication involved in the holistic development lifecycle of an IoT application often leads to complex system integration. This article provides a comprehensive and systematic survey of the development lifecycle of ML-based IoT applications. We outline the core roadmap and taxonomy and subsequently assess and compare existing standard techniques used at individual stages.},
+journal = {ACM Comput. Surv.},
+month = aug,
+articleno = {82},
+numpages = {47},
+keywords = {machine learning, deep learning, orchestration, IoT}
+}
+
+@book{maritimeinformatics,
+author = {Artikis, Alexander and Zissis, Dimitris},
+year = {2021},
+month = {01},
+pages = {333},
+title = {Guide to Maritime Informatics},
+isbn = {978-3-030-61851-3},
+doi = {10.1007/978-3-030-61852-0}
+}
+
+@inproceedings{lambdakappa,
+author = {Feick, Martin AND Kleer, Niko AND Kohn, Marek},
+title = {Fundamentals of Real-Time Data Processing Architectures Lambda and Kappa},
+booktitle = {SKILL 2018 - Studierendenkonferenz Informatik},
+year = {2018},
+editor = {Becker, Michael} ,
+pages = { 55-66 },
+publisher = {Gesellschaft für Informatik e.V.},
+address = {Bonn}
+}
+
+@article{weatherroutingspeedoptimum,
+title = {Effectiveness of 2D optimization algorithms considering voluntary speed reduction under uncertain metocean conditions},
+journal = {Ocean Engineering},
+volume = {200},
+pages = {107063},
+year = {2020},
+issn = {0029-8018},
+doi = {https://doi.org/10.1016/j.oceaneng.2020.107063},
+url = {https://www.sciencedirect.com/science/article/pii/S0029801820301360},
+author = {Helong Wang and Xiao Lang and Wengang Mao and Di Zhang and Gaute Storhaug},
+keywords = {Voyage optimization, Voluntary speed reduction, Fuel consumption, Metocean forecast uncertainties, Great circle routes},
+}
+
+@inproceedings{weatherroutinguncertaintyI,
+author = {Manderbacka, Teemu},
+year = {2019},
+month = {06},
+pages = {},
+title = {On the uncertainties of the weather routing and support system against dangerous conditions}
+}
+
+@article{weatherroutinguncertaintyII,
+title = {Uncertainty in marine weather routing},
+journal = {Applied Ocean Research},
+volume = {88},
+pages = {138-146},
+year = {2019},
+issn = {0141-1187},
+doi = {https://doi.org/10.1016/j.apor.2019.04.008},
+url = {https://www.sciencedirect.com/science/article/pii/S0141118719300380},
+author = {Thomas Dickson and Helen Farr and David Sear and James I R Blake},
+keywords = {Uncertainty analysis, Numerical error, Weather routing},
+}
+
+@article{mapreduce,
+author = {Dean, Jeffrey and Ghemawat, Sanjay},
+title = {MapReduce: Simplified Data Processing on Large Clusters},
+year = {2008},
+issue_date = {January 2008},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {51},
+number = {1},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/1327452.1327492},
+doi = {10.1145/1327452.1327492},
+journal = {Commun. ACM},
+month = jan,
+pages = {107–113},
+numpages = {7}
+}
+
+@article{mobileedgecomputing,
+author={Author,Alan A. and Author,Bill B. and Author,Cathy},
+year={2005},
+title={Title of article},
+journal={Title of Journal},
+volume={10},
+number={2},
+pages={49-53},
+}
+
+@INPROCEEDINGS{geolytics,
+  author={Cheng, Bin and Papageorgiou, Apostolos and Cirillo, Flavio and Kovacs, Ernoe},
+  booktitle={2015 IEEE 2nd World Forum on Internet of Things (WF-IoT)}, 
+  title={GeeLytics: Geo-distributed edge analytics for large scale IoT systems based on dynamic topology}, 
+  year={2015},
+  volume={},
+  number={},
+  pages={565-570},
+  doi={10.1109/WF-IoT.2015.7389116}}
+
+@INPROCEEDINGS{edgeiot,
+  author={Kumar, Umesh and Verma, Parul and Qamar Abbas, Syed},
+  booktitle={2021 International Conference on Computer Communication and Informatics (ICCCI)}, 
+  title={Bringing Edge Computing into IoT Architecture to Improve IoT Network Performance}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/ICCCI50826.2021.9402499}}
+
+@ARTICLE{iotsystems,
+  author={Swamy, S. Narasimha and Kota, Solomon Raju},
+  journal={IEEE Access}, 
+  title={An Empirical Study on System Level Aspects of Internet of Things (IoT)}, 
+  year={2020},
+  volume={8},
+  number={},
+  pages={188082-188134},
+  doi={10.1109/ACCESS.2020.3029847}}
+
+
+@inbook{mliot,
+author = {Boovaraghavan, Sudershan and Maravi, Anurag and Mallela, Prahaladha and Agarwal, Yuvraj},
+title = {MLIoT: An End-to-End Machine Learning System for the Internet-of-Things},
+year = {2021},
+isbn = {9781450383547},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3450268.3453522},
+booktitle = {Proceedings of the International Conference on Internet-of-Things Design and Implementation},
+pages = {169–181},
+numpages = {13}
+}
+
+@inproceedings{apachesurvey,
+author = {Nasiri, Hamid and Nasehi, Saeed and Goudarzi, Maziar},
+title = {A Survey of Distributed Stream Processing Systems for Smart City Data Analytics},
+year = {2018},
+isbn = {9781450365321},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3269961.3282845},
+doi = {10.1145/3269961.3282845},
+booktitle = {Proceedings of the International Conference on Smart Cities and Internet of Things},
+articleno = {12},
+numpages = {7},
+keywords = {Big data, Stream processing, Internet of Things, Distributed computing, Smart City},
+location = {Mashhad, Iran},
+series = {SCIOT '18}
+}
+
+@inproceedings{gpuinsmartcity,
+author = {Shang, Lei and Lin, Ching Yeh and Atif, Muhammad and Williams, Allan},
+title = {Evaluation of High Density GPUs as Sustainable Smart City Infrastructure},
+year = {2015},
+isbn = {9780769556970},
+publisher = {IEEE Press},
+booktitle = {Proceedings of the 8th International Conference on Utility and Cloud Computing},
+pages = {482–487},
+numpages = {6},
+location = {Limassol, Cyprus},
+series = {UCC '15}
+}
+
+@inproceedings{e2eiotstack,
+author = {Hamann, Arne and Saidi, Selma and Ginthoer, David and Wietfeld, Christian and Ziegenbein, Dirk},
+title = {Building End-to-End IoT Applications with QoS Guarantees},
+year = {2020},
+isbn = {9781450367257},
+publisher = {IEEE Press},
+booktitle = {Proceedings of the 57th ACM/EDAC/IEEE Design Automation Conference},
+articleno = {112},
+numpages = {6},
+location = {Virtual Event, USA},
+series = {DAC '20}
+}
+
+@INPROCEEDINGS{i4sea,
+  author={Tampakis, Panagiotis and Chondrodima, Eva and Pikrakis, Aggelos and Theodoridis, Yannis and Pristouris, Kostis and Nakos, Harry and Petra, Eleni and Dalamagas, Theodore and Kandiros, Andreas and Markakis, Georgios and Maina, Irida and Kavadas, Stefanos},
+  booktitle={2020 21st IEEE International Conference on Mobile Data Management (MDM)}, 
+  title={Sea Area Monitoring and Analysis of Fishing Vessels Activity: The i4sea Big Data Platform}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={275-280},
+  doi={10.1109/MDM48529.2020.00063}}
+  
+  @inproceedings{uprctrajectorysystem,
+author = {Petrou, Petros and Nikitopoulos, Panagiotis and Tampakis, Panagiotis and Glenis, Apostolos and Koutroumanis, Nikolaos and Santipantakis, Georgios M. and Patroumpas, Kostas and Vlachou, Akrivi and Georgiou, Harris and Chondrodima, Eva and Doulkeridis, Christos and Pelekis, Nikos and Andrienko, Gennady L. and Patterson, Fabian and Fuchs, Georg and Theodoridis, Yannis and Vouros, George A.},
+title = {ARGO: A Big Data Framework for Online Trajectory Prediction},
+year = {2019},
+isbn = {9781450362801},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi-org.libproxy.helsinki.fi/10.1145/3340964.3340988},
+doi = {10.1145/3340964.3340988},
+booktitle = {Proceedings of the 16th International Symposium on Spatial and Temporal Databases},
+pages = {194–197},
+numpages = {4},
+keywords = {geostreaming, mobility events, trajectories, location prediction},
+location = {Vienna, Austria},
+series = {SSTD '19}
+}
+

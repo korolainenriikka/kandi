@@ -3,6 +3,7 @@
 % In theses, open new chapters only at right page.
 \PassOptionsToClass{openright,twoside,a4paper}{report}
 \usepackage{csquotes}
+\usepackage{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% REFERENCES
@@ -52,7 +53,7 @@
 % \showboxbreadth=50 
 % \showboxdepth=50
 
-\title{Big data system architectures for performance: a Comparison}
+\title{Sensor data systems for scale: a Comparison}
 
 % TM: Contributors to template editors now listed in the beginning of the file in comments
 \author{Riikka Korolainen}
@@ -65,7 +66,7 @@
 \examiners{Prof.~D.U.~Mind, Dr.~O.~Why}
 
 
-\keywords{mahine learning, sensor data}
+\keywords{machine learning, sensor data}
 \additionalinformation{\translate{\track}}
 
 %% Use 1-3 paths, and use right arrows between the
@@ -107,10 +108,10 @@
 \maketitle
 
 \begin{abstract}
+%abstract should be max 100 words
+In an intersection of the fields of internet of things, machine learning and distributed systems, resides the field of MLIot systems. The object of research is how to organize a system that uses machine learning to extract value out of sensor data. Use cases include smart cities, traffic management, and ? a third example would set a nice rythm :)
 
-Many big data systems in the last decades have been pioneers in their industry, and with nothing pre-established, each has developed their ad-hoc solutions resulting in highly specialized systems of high variance in design. This literature review intends to investigate if this has led to different solutions answering similar challenges, and if so, what are each solutions' strengths and challenges. A system abstraction is tried to synthesize and categorize each systems' components.
-
-An especially emphasized trait in the various systems will be their potential of handing the ever-growing quantity of data. The aim is to find clues on which systems will survive in the emergence of a new level in hardware: namely, supercomputers are at date in transition form zettascale to peta, even pre-exascale computing. This means clusters performing $10^15-10^18$ floating-point operations per second are being built, and with them a whole new sets of requirements are posed at their administrating systems.
+This comparative review aims to survey the various existing solutions and performance benchmarking experiments to find out which design decisions aid a system in achieving high scalability. A in-progress project regarding maritime digitalisation, VesselAI, is used as a case exaple. The decisions that are best suited for the case are presented, and in addition to them it is dissected, which decisions are suitable for any system with voluminous sensor data, high geographical distribution and slower-than-instant speed requirements.
 
 \end{abstract}
 

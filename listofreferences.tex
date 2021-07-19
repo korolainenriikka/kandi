@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[style=numeric,bibstyle=numeric,backend=biber,natbib=true,maxbibnames=99,giveninits=true,uniquename=init]{biblatex}
+\addbibresource{bibliography.bib}
+
+\begin{document}
+
+% this document contains the shortcut names of each paper found, divided by thesis part
+
+% to add: relevance
+\chapter{surveys and other fits-many-section's}
+
+\begin{itemize}
+    \item \cite{iotsurvey} iotsurvey: general survey and taxonomy on iot
+    \item \cite{iotsystems} iotsystems: survey on iot systems
+\end{itemize}
+
+\chapter{context}
+
+often used architectures etc
+
+\begin{itemize}
+    \item \cite{dataflow} dataflow: a viewpoint on data
+    \item \cite{lambdakappa} lambdakappa: introduction to lambda and kappa architectures
+    \item \cite{mapreduce} mapreduce: what is mapreduce
+    \item \cite{apachesurvey} apachesurvey: a comparison of apache tools for smart cities
+\end{itemize}
+
+maritime case
+
+\begin{itemize}
+    \item \cite{maritimeinformatics} maritimeinformatics: the introduction to maritime book
+    \item \cite{weatherroutingspeedoptimum} weatherroutingspeedoptimum: from napa, labeled as central
+    \item \cite{weatherroutinguncertaintyI} weatherroutinguncertaintyI: on uncertainty in weather routing, probably less relevant
+     \item \cite{weatherroutinguncertaintyII} weatherroutinguncertaintyII: another one on uncertainty in weather routing, probably less relevant
+     \item \cite{i4sea} i4sea: uprc, system for maritime big data
+     \item \cite{uprctrajectorysystem} uprctrajectorysystem
+\end{itemize}
+
+the largest big data systems (these will probably not be needed):
+
+\begin{itemize}
+    \item \cite{storm@twitter} storm@twitter: twitter storm, master-worker example
+    \item \cite{facebook} facebooks' master-worker-model based systems
+    \item \cite{uber} the uber system description
+    \item \cite{millwheel} google millwheel, this is often compared to in papers 
+\end{itemize} 
+
+
+\chapter{vesselai-like systems}
+
+\begin{itemize}
+    \item \cite{edgelatency} edgelatency: empirical comparison on end-to-end times with centralized vs edge computing (data amount is small however)
+    \item \cite{mobileedgecomputing} mobileedgecomputing
+    \item \cite{geolytics} geolytics: multi-location supporting iot system
+    \item \cite{edgeiot} edgeiot: iot edge computing
+    \item \cite{mliot} mliot: a proposal for ml+iot optimized system
+    \item \cite{gpuinsmartcity} gpuinsmartcity
+    \item \cite{e2eiotstack} e2eiotstack: bluiding blocks into a full system
+\end{itemize}
+
+not in .bib:
+
+J. Lin, The Lambda and the Kappa, 2017.  
+
+J. Kreps, Questioning the Lambda Architecture, 2014.  https://www.oreilly.com/radar/questioning-the-lambda-architecture/
+
+deliverables from vesselai: d1.2(user stories), d1.1. (initial requirements) how to reference these?
+
+the ferari project: http://www.ferari-project.eu/objectives/ aims to create a distributed sensor system, ml integrated
+-> find relevant papers/delivarables from there
+
+\printbibliography
+
+\end{document}
