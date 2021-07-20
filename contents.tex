@@ -68,12 +68,24 @@ the high level components, d1.2 p 32 has one good starting point
 
 definition of a user request in this context: the human is not considered, they use the ui. user is the application making requests to the system. these might be preprocessing-related or actual human user requests
 
-lambda kappa hadoop. explain what the most used systems are like on a high level
+\subsection{the Lambda and Kappa architectures}
 
-multiple places say these
-\begin{itemize}
-    \item lambda is bad because of two duplicate systems (nearly-identical code in batch and stream processors)
-\end{itemize}
+% this is the content on lambda & kappa that is probably needed content-wise. only needs better writing.
+
+the initial motivation behind lambda: to beat cap theorem's inherent need to tradeoff between consistency and availability \cite{lambdakappa}
+
+nathan marz presenting a system that supposedly beats cap. how: treat data as immutable, emphasize importance of preparing for human error, and splitting a database into two systems, batch and speed layer. The batch layer does order of hours long preprocessing of queries, speed layer has  abstracted within itself a complex system for handling the data from the latest hours to make also that available for querying. Fault tolerance comes mainly from the fact that the speed layer is possible to empty to the batch queue and restart in case of failure or overload.
+
+the most known criticism to lambda, a blog post by Jay Kreps \cite{questioninglambda}, acknowledged its strengths in seeing data as immutable and highlighting the possibility that data may be needed to reprocess due to changes in appication code. The main points of criticism were the argument that lambda does not acutually beat cap but still compromises some consistency, that deeming real-time stream processing as inherently faulty and approximate "does not make sense" and is only a fault in the current tools \cite{questioninglambda}. The post along with other sources deem the most important flaw in lambda to be the fact that maintaining and syncronizing separate codebases for batch and stream layer to be redundantly complex \cite{uber} \cite{facebook}. At the same time multiple system analyses name maintainability the most or one of the most important trait about a big data system \cite{facebook} \cite{storm@twitter}.
+
+As an alternative approach to solve these problems, Kreps proposed a different architecture called the Kappa architecture. It is otherwise similar to lambda but only has either batch or speed layer, usually speed layer in a for of highly parallelized stream processor. This mitigates the duplication problem while keeping other strenghths from lambda, but the ability of giving fast answers to queries is lost.
+
+% problems with both lambda&kappa, structure needs reorder because this does not make sense before vesselai requirement specs
+
+fundamental assumptions of both systems:  the need almost instant execution times is assumed \cite{lambdakappa}. This is not required in vesselai. also, not stated in the sources on lambda and kappa but still assumed: that we are able to tell before the user query what exactly is going to be queried. If in vesselai the model may change and with that the query as well, or more importantly the queries regard only a mini fraction of geographical space so preprocessing the full globe and needing a percent of the preprocessed has a potential of being a grande waste of computation in the maritime case (my judgement). for the latter point it is possible that neither lambda or kappa are good.
+
+- all the apache systems: what they are what is each used for, a very short description
+
 
 \section{the evaluation dimensions}
 
@@ -103,7 +115,11 @@ The data is a combination of both descriptive static data, such as geographical 
 % a paragraph for giving the vesselai high level architecture to show which part we are talking about (inference)
 
 % this paragraph: requirements
+%old text
 The use cases for the vesselai project are named in four pilots, which are intelligent routing, ship energy systems design, autonomous vessel operating and weather routing. In terms of the dimensions of evaluation stated above this demands on scalability above all. Latency, correctness, and fault tolerance depend on the application: in highly congested areas an application for collision detection might set high demands on these. a routing application for multi-week journey: if a prediction is often not accurate a lot of fuel costs are added. The latency is still in every application in order of seconds even up to a minute for the user request and pre-processing can take time: weather data comes 4x a day for example. No instant-seeming action, ie milliseconds end to end time are required. Therefore they should not be aimed for as cutting down time will inevitably reduce quality in other, more critical dimensions.
+
+%on time requirements
+One fundamental difference of the maritime application domain compared to other applications are the time requirements: usually instant-seeming is required, ie order of milliseconds. In maritime, time requirements range from a few seconds up to 60 minutes (second to minute discussed in the napa meet for pilot 4, 30-60 in the uprc meet for pilots 1&3)
 
 \chapter{vesselai-like systems}
 
