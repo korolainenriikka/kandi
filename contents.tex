@@ -11,13 +11,19 @@ motivation: intention is to find inference system strengths/weaknesses that can 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
 
-where (location & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the model be deployed on?
+where (location & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the models be deployed on?
+
+things to exclude: model development considerations (for sure), details on stream processing (probably)
 
 aspects to consider: version management in central vs edge inference, lifelong learning management, the tradeoff between cheap & close-to-user hardware & speed of hardware 
 
 how big is the messaging overhead in a highly distributed system
 
 do the specialities of this context, the low end to end latency requirement and very high geo distribution (user might be in the middle of the ocean with very bad internet) impact something we consider so much that an ''unconventional'' design decision is justified
+
+a possibly good narrow-down: in \cite{D1.1} part on moving beyond the state of the art: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum''
+
+\includegraphics[scale=0.8]{hpciotchallengefromd11.png}
 
 results summary
 
@@ -45,7 +51,13 @@ this part will generalize: what was learned from the vesselai conclusion that is
 
 \section{acm classification,  keyword ideas}
 
-end to end + sensor data (iot) + machine learning + maritime + inference
+acm:
+Information systems → Information systems applications →
+Spatial-temporal systems → Data streaming (from \cite{uprctrajectorysystem})
+
+end to end + sensor data (iot) + machine learning + maritime + inference + lifelong learning
+
+Distributed Machine Learning, Internet of Things, Training, Serving (from \cite{mliot})
 
 title wordplay:
 
@@ -76,9 +88,11 @@ the initial motivation behind lambda: to beat cap theorem's inherent need to tra
 
 nathan marz presenting a system that supposedly beats cap. how: treat data as immutable, emphasize importance of preparing for human error, and splitting a database into two systems, batch and speed layer. The batch layer does order of hours long preprocessing of queries, speed layer has  abstracted within itself a complex system for handling the data from the latest hours to make also that available for querying. Fault tolerance comes mainly from the fact that the speed layer is possible to empty to the batch queue and restart in case of failure or overload.
 
-the most known criticism to lambda, a blog post by Jay Kreps \cite{questioninglambda}, acknowledged its strengths in seeing data as immutable and highlighting the possibility that data may be needed to reprocess due to changes in appication code. The main points of criticism were the argument that lambda does not acutually beat cap but still compromises some consistency, that deeming real-time stream processing as inherently faulty and approximate "does not make sense" and is only a fault in the current tools \cite{questioninglambda}. The post along with other sources deem the most important flaw in lambda to be the fact that maintaining and syncronizing separate codebases for batch and stream layer to be redundantly complex \cite{uber} \cite{facebook}. At the same time multiple system analyses name maintainability the most or one of the most important trait about a big data system \cite{facebook} \cite{storm@twitter}.
+the most known criticism to lambda, a blog post by Jay Kreps \cite{questioninglambda}, acknowledged its strengths in seeing data as immutable and highlighting the possibility that data may be needed to reprocess due to changes in application code. The main points of criticism were the argument that lambda does not actually beat cap but still compromises some consistency, that deeming real-time stream processing as inherently faulty and approximate "does not make sense" and is only a fault in the current tools \cite{questioninglambda}. The post along with other sources deem the most important flaw in lambda to be the fact that maintaining and syncronizing separate code bases for batch and stream layer to be redundantly complex \cite{uber} \cite{facebook}. At the same time multiple system analyses name maintainability the most or one of the most important trait about a big data system \cite{facebook} \cite{storm@twitter}.
 
-As an alternative approach to solve these problems, Kreps proposed a different architecture called the Kappa architecture. It is otherwise similar to lambda but only has either batch or speed layer, usually speed layer in a for of highly parallelized stream processor. This mitigates the duplication problem while keeping other strenghths from lambda, but the ability of giving fast answers to queries is lost.
+As an alternative approach to solve these problems, Kreps proposed a different architecture called the Kappa architecture. It is otherwise similar to lambda but only has either batch or speed layer, usually speed layer in a for of highly parallelized stream processor. This mitigates the duplication problem while keeping other strengths from lambda, but the ability of giving fast answers to queries is lost.
+
+(\cite{D1.1} states that both lambda and kappa mitigate human errors ''by  updating  the  code  and  running  it  again  on  the historical  data '')
 
 % problems with both lambda&kappa, structure needs reorder because this does not make sense before vesselai requirement specs
 
@@ -113,9 +127,14 @@ what are raspberry pi and arduino and how their power compares to a standard lap
 The data is a combination of both descriptive static data, such as geographical information, and dynamic data. Dynamic data types are weather data and AIS, the Automatic Identification System data. The latter is the most important but also the most voluminous and erroneous. Maybe some examples here on what kind of errors ais has, like manually written distinations, location errors and illegal traffic disguising their action
 
 % a paragraph for giving the vesselai high level architecture to show which part we are talking about (inference)
+On the model library from d4.1; models etc will be located in the ai4eu catalog as docker containers \cite{D4.1}
+
+The project is set out to solve ''in  particular  extreme-scale,  continuous  and  lifelong  learning  and  serving  of  AI  models'' \cite{D4.1}. This thesis is trying to find the best deployment scheme to enable meeting of perfomance requirements (latency, throughput, scalability) and facilitating lifelong learning.
+
+\cite{D4.1} also has on page 15 an ok illustration on where the model library is in the system but a more high level one will probably be included here.
 
 % this paragraph: requirements
-%old text
+% old text
 The use cases for the vesselai project are named in four pilots, which are intelligent routing, ship energy systems design, autonomous vessel operating and weather routing. In terms of the dimensions of evaluation stated above this demands on scalability above all. Latency, correctness, and fault tolerance depend on the application: in highly congested areas an application for collision detection might set high demands on these. a routing application for multi-week journey: if a prediction is often not accurate a lot of fuel costs are added. The latency is still in every application in order of seconds even up to a minute for the user request and pre-processing can take time: weather data comes 4x a day for example. No instant-seeming action, ie milliseconds end to end time are required. Therefore they should not be aimed for as cutting down time will inevitably reduce quality in other, more critical dimensions.
 
 %on time requirements
@@ -136,8 +155,3 @@ data semantics: should data be at least once, exactly once or at most once (dupl
 \chapter{the vesselai system}
 
 i e the results i get
-
-
-
-
-
