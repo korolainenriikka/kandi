@@ -11,17 +11,21 @@ motivation: intention is to find inference system strengths/weaknesses that can 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
 
+primary question: Which training and inference setup would be optimal for enabling lifelong learning in the specific context of vesselai?
+
+secondary questions:
+
 where (location & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the models be deployed on?
 
-things to exclude: model development considerations (for sure), details on stream processing (probably)
+things to exclude: details on stream processing, inference system details
 
-aspects to consider: version management in central vs edge inference, lifelong learning management, the tradeoff between cheap & close-to-user hardware & speed of hardware 
+aspects to consider: version management in central vs edge inference, lifelong learning management, concept drift in iot: how to avoid (concept drift still fully unresearched!)
 
 how big is the messaging overhead in a highly distributed system
 
-do the specialities of this context, the low end to end latency requirement and very high geo distribution (user might be in the middle of the ocean with very bad internet) impact something we consider so much that an ''unconventional'' design decision is justified
+do the specialities of this context, the low end to end latency requirement, very high geographical and no private data (no private from d10.1) impact something we consider so much that an ''unconventional'' design decision is justified? (privacy matters affect design a lot \cite{iotsystems})
 
-a possibly good narrow-down: in \cite{D1.1} part on moving beyond the state of the art: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum''
+a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
 
 \includegraphics[scale=0.8]{hpciotchallengefromd11.png}
 
@@ -63,6 +67,8 @@ title wordplay:
 
 Sensor data systems at extreme scale / for scale
 
+Enabling lifelong learning in a machine learning IoT system: a case study
+
 % this portion currently: very very very drafty text on the topic, all this can be added -s from literature
 \chapter{context}
 
@@ -80,9 +86,12 @@ the high level components, d1.2 p 32 has one good starting point
 
 definition of a user request in this context: the human is not considered, they use the ui. user is the application making requests to the system. these might be preprocessing-related or actual human user requests
 
-\subsection{the Lambda and Kappa architectures}
-
+%\subsection{the Lambda and Kappa architectures}
+% this is probably off topic.
 % this is the content on lambda & kappa that is probably needed content-wise. only needs better writing.
+
+EDIT: change this section to give fundamentals on IoT inference architectures, esp. "programming paradigms" as in \cite{iotsystems} sect on those.
+
 
 the initial motivation behind lambda: to beat cap theorem's inherent need to tradeoff between consistency and availability \cite{lambdakappa}
 
@@ -100,6 +109,7 @@ fundamental assumptions of both systems:  the need almost instant execution time
 
 - all the apache systems: what they are what is each used for, a very short description
 
+\section{on IoT systems}
 
 \section{the evaluation dimensions}
 
@@ -121,7 +131,7 @@ something on how fast is fast, how powerful the hpc systems are compared to lapt
 
 what are raspberry pi and arduino and how their power compares to a standard laptop
 
-\section{vesselai case: detailed description}
+\section{vesselai case: context and requirements}
 
 % this paragraph: data description
 The data is a combination of both descriptive static data, such as geographical information, and dynamic data. Dynamic data types are weather data and AIS, the Automatic Identification System data. The latter is the most important but also the most voluminous and erroneous. Maybe some examples here on what kind of errors ais has, like manually written distinations, location errors and illegal traffic disguising their action
@@ -142,15 +152,22 @@ One fundamental difference of the maritime application domain compared to other 
 
 \chapter{vesselai-like systems}
 
-\section{tradeoffs}
+\section{inference paradigm}
+
+discuss here: edge v couldlet v fog v cloud
+
+
+\section{facilitating lifelong learning}
 
 a tradeoff: federated vs centralized learning \cite{iotsurvey}
 
 edge vs central inference: if on edge the model needs to be small \cite{iotsurvey}
 
-is data cleaned before or after storage?
+\section{other possible discussions to add}
 
-data semantics: should data be at least once, exactly once or at most once (duplicate cleanup speed vs quality). if cleanup happens after storage different applications can have different semantics
+\begin{itemize}
+    \item where to do data cleaning
+\end{itemize}
 
 \chapter{the vesselai system}
 
