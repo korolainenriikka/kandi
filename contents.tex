@@ -11,7 +11,9 @@ motivation: intention is to find inference system strengths/weaknesses that can 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
 
-primary question: Which training and inference setup would be optimal for enabling lifelong learning in the specific context of vesselai?
+primary question: Which training and inference setup would be optimal for enabling lifelong learning / incremental learning / retraining in the specific context of vesselai?
+
+dealing with concept drift
 
 secondary questions:
 
@@ -27,31 +29,24 @@ do the specialities of this context, the low end to end latency requirement, ver
 
 a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
 
-\includegraphics[scale=0.8]{hpciotchallengefromd11.png}
 
 results summary
 
-\section{chapter roles}
-%3rd paragraph/section: chapter roles
-The rest of the paper is organized as follows: 
+\section{Chapter roles}
 
-Chapter 2 briefly describes state-of-the-art data applications' abstract components (the level will be like cleaning validating messaging storage and so on, very basics), widely established reference architectures (lambda and kappa at least). Also the systems evaluation dimensions (these are for example reproducibility, scalability, latency accuracy and fault tolerance) are defined. 
+The rest of this thesis is organized as follows:
 
-I also read some papers on the most established and non-sensor systems, like google millwheel and twitter storm, these could be briefly mentioned as examples on the dimension tradeoff choices and how they can impact the system. also the apache tools (kafka, hadoop) are mentioned a lot in literature so should they somehow be mentioned also
+Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed sensor systems with machine learning will be given. The most important design decisions; edge-fog-or-cloud deployments and incoming data processing scheme as batch, micro-batch or stream, will be quickly presented.
 
-Also the general context for vesselai will be described. Specialities like data volume, spatial distribution of data sources and sensor-like+static data will be described. Also something on what AIS is and how the data is like. 
+A more thorough state-of-the-art inspection is given in the domain of machine learning on the methods for extending the lifetime of a model. The main challenges in this, the concept drift and the stability-plasticity-dilemma are defined, and then the existing solutions for addressing the challenges are presented.
 
-Chapter 3: bridge to this chapter: the previous context gives the following requirements: dissection on requirements comes here
+Then follows a quick interlude into high performance computing, where the power and application requirements of the newest HPC systems are given.
 
-the main point of this chapter is to go through systems that have similar requirements to vesselai, ie iot systems, maybe with special emphasis on smart cities because they also have spatial data and large volume. The question is which sensor systems are good for which dimension optimization and which set challenges on which dimension.
+Lastly, the general context for the VesselAI project will be described. The specialities of the maritime domain and the nature of the data sources will be dissected, after which the project pilots and general goals will be presented. From these the general requirements will be listed and the main challenge of the project is identified: how to organize a workflow for efficient re-training of the models.
 
-the second-last chapter:  the vesselai system
-analysis, evaluation, experiences, recommendations, future improvement needs (these keywords from thesis instructions)
-the architectural model of choice for vesselai, or 1-3 best options and their respective tradeoffs. Also discussion on what is reasonable to conclude: for example is the evidence solid enough to tell if edge computing is better than centralized, or
-if stream and batch should be combined or not, and on which questions further experimentation and measurements are needed
+Chapter 3 analyzes and compares the various systems approaches presented previously from the point of view of the case studied. The main abstract components of the system, stream processing, training workflow, and deployment scheme are each inspected for the optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
 
-conclusion
-this part will generalize: what was learned from the vesselai conclusion that is applicable to extreme scale data systems in general?
+The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
 
 \section{acm classification,  keyword ideas}
 
@@ -131,24 +126,61 @@ something on how fast is fast, how powerful the hpc systems are compared to lapt
 
 what are raspberry pi and arduino and how their power compares to a standard laptop
 
-\section{vesselai case: context and requirements}
+\section{The case: context and requirements for machine learning in the maritime domain}
 
-% this paragraph: data description
-The data is a combination of both descriptive static data, such as geographical information, and dynamic data. Dynamic data types are weather data and AIS, the Automatic Identification System data. The latter is the most important but also the most voluminous and erroneous. Maybe some examples here on what kind of errors ais has, like manually written distinations, location errors and illegal traffic disguising their action
+Maritime as a domain of application for a sensor-based machine learning system is in a few ways significantly different from many others. The most obvious difference is its global nature; domains like smart cities also have to take into account the fact that there is some geographical distribution, but with the seas covering x\% of the earths' surface, the extent of geographical distribution in the maritime context is on a whole new level.
 
-% a paragraph for giving the vesselai high level architecture to show which part we are talking about (inference)
-On the model library from d4.1; models etc will be located in the ai4eu catalog as docker containers \cite{D4.1}
+With the vastness of the seas and its vital nature for world trade, the amount of vessel traffic is large even in comparison to other big data applications. Due to international regulation vessels have to send update signals on their status from every few minutes to every 2 seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily (a source from \cite{maritimeinformatics} states this), this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather updates, are needed. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
 
-The project is set out to solve ''in  particular  extreme-scale,  continuous  and  lifelong  learning  and  serving  of  AI  models'' \cite{D4.1}. This thesis is trying to find the best deployment scheme to enable meeting of perfomance requirements (latency, throughput, scalability) and facilitating lifelong learning.
+Added to scale, another specific of this context is speed. Depending on the size of the vessel, it takes from minutes to up to an hour to change the course of the vessel. This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even detrimental to the success of the system operation: for speed other more important traits would have to be deprioritised, which in this case would do more harm than good.
 
-\cite{D4.1} also has on page 15 an ok illustration on where the model library is in the system but a more high level one will probably be included here.
+The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
 
-% this paragraph: requirements
-% old text
-The use cases for the vesselai project are named in four pilots, which are intelligent routing, ship energy systems design, autonomous vessel operating and weather routing. In terms of the dimensions of evaluation stated above this demands on scalability above all. Latency, correctness, and fault tolerance depend on the application: in highly congested areas an application for collision detection might set high demands on these. a routing application for multi-week journey: if a prediction is often not accurate a lot of fuel costs are added. The latency is still in every application in order of seconds even up to a minute for the user request and pre-processing can take time: weather data comes 4x a day for example. No instant-seeming action, ie milliseconds end to end time are required. Therefore they should not be aimed for as cutting down time will inevitably reduce quality in other, more critical dimensions.
+The goal on the application level of the VesselAI project is to provide the following four pilot services to users: vessel route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. More abstract goals are to find a system that is suitable for both managing extreme-scale data and facilitating long model lifetimes. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way.
 
-%on time requirements
-One fundamental difference of the maritime application domain compared to other applications are the time requirements: usually instant-seeming is required, ie order of milliseconds. In maritime, time requirements range from a few seconds up to 60 minutes (second to minute discussed in the napa meet for pilot 4, 30-60 in the uprc meet for pilots 1&3)
+With this context specification in mind, the following guidelines on the system aimed for can be stated: the high volume and relatively low quality of the data sets high demands on the training part of the pipeline, whereas the inference side has less strict requirements. The fact that the pilot cases are clearly defined and at least as of date there are no plans for additional applications, the primary challenge is maintaining and updating the models for these specific problem, not being ready to cope with the possibility of new problems being added, as is sometimes the case in other systems (find citations here...).  Summarized: the primary challenge for this system is to find a way of organising the training workflow to maintain accuracy throughout the model lifespan. This is the primary topic of inspection in the following chapters.
+
+%outline:
+
+%maritime
+%	global
+%	geo distributed
+%	volume is huge (ais message rates & amount of traffic: give numbers)
+%	time scales: it takes minutes to an hour to turn a cargo vessel
+
+%ais
+%	what is AIS
+%	a lot of features that are unreliable
+%	identifying the erroneus might be very difficult: smugglers' disguising ais example
+%	... check maritime informatics for more
+
+%the project
+%	the pilots I-V: what each one aims for
+%		these ml problems are difficult
+%	abstract aims
+%		deal with extreme scale data
+%		facilitate continuous learning
+%		utilize modern HPC
+%	... check deliverables for exact aims
+%
+%the system
+%	we combine different data sets
+%		static and dynamic, fast and slow paced
+%			examples: map data, weather data, sensor data
+%	many models only need a small fraction of the data
+%
+
+%combine these: the requirements
+%we need to know what we need and what we do not need for sure to know which system design makes sense.
+
+%we need throughput, not individual request answer speed (millisecond speed unnecessary)
+%pilots defined: we need to keep models up to date, not be ready to expand to new models as much
+%the machine learning paradigm and workflow of choice needs to be mature enough for industry implementation
+%	in a complex scenario.
+%inference time windows are big. the challenge is facilitating training.
+
+%then: present abstract illustration of the architecture and state: THIS is %the spot which we investigate.
+
 
 \chapter{vesselai-like systems}
 
