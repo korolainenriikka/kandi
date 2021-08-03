@@ -8,6 +8,8 @@ list of high level components: data ingestion, model development & iterating & t
 
 motivation: intention is to find inference system strengths/weaknesses that can be applied to other extreme scale sensor data systems as well
 
+another point of motivation: in the literature on architectures for iot or ml+iot or preserving knowledge in ML: there is little input on why certain decisions were made. this explains the why's
+
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
 
@@ -17,7 +19,7 @@ dealing with concept drift
 
 secondary questions:
 
-where (location & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the models be deployed on?
+where (location (edge, fog, cloud) & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the models be deployed on?
 
 things to exclude: details on stream processing, inference system details
 
@@ -33,6 +35,8 @@ a point of motivation from D1.1 moving beyond the state of the art section: ''th
 results summary
 
 \section{Chapter roles}
+
+% this should maybe be shortened? in many papers this section is much shorter and only outlines the highest level, ie here chapters maybe
 
 The rest of this thesis is organized as follows:
 
@@ -62,18 +66,19 @@ title wordplay:
 
 Sensor data systems at extreme scale / for scale
 
-Enabling lifelong learning in a machine learning IoT system: a case study
+Enabling knowledge retention in a sensor-based machine learning big data system: a case study
 
-% this portion currently: very very very drafty text on the topic, all this can be added -s from literature
-\chapter{context}
+\chapter{Context and Background}
 
-\section{on machine learning}
+\section{Knowledge retention techniques for machine learning}
 
 anything used later that my level reader might not understand comes here
 
-define federated learning and lifelong learning
+define federated learning and lifelong learning, online learning?
 
-\section{on big data systems in general}
+\section{On Big Data Systems}
+
+% maybe edit the heading to also include sensor/IoT
 
 to add here: a high-enough abstraction / "charting of the field" of big data systems in general
 
@@ -85,8 +90,7 @@ definition of a user request in this context: the human is not considered, they 
 % this is probably off topic.
 % this is the content on lambda & kappa that is probably needed content-wise. only needs better writing.
 
-EDIT: change this section to give fundamentals on IoT inference architectures, esp. "programming paradigms" as in \cite{iotsystems} sect on those.
-
+\subsection{Data ingestion: reference architectures for stream processing}
 
 the initial motivation behind lambda: to beat cap theorem's inherent need to tradeoff between consistency and availability \cite{lambdakappa}
 
@@ -104,9 +108,20 @@ fundamental assumptions of both systems:  the need almost instant execution time
 
 - all the apache systems: what they are what is each used for, a very short description
 
-\section{on IoT systems}
+\subsection{On machine learning IoT systems: the inference paradigms}
 
-\section{the evaluation dimensions}
+here:
+
+edge vs fog vs cloud
+
+OCF is The Open Connectivity Foundation. add below + the proper source
+
+The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
+
+
+%\section{the evaluation dimensions}
+
+this sect should be removed and added as a part of the introduction.
 
 For this thesis, dimensions are defined as traits by which various systems can be evaluated. These are:
 
@@ -120,7 +135,7 @@ throughput: how many user requests the system is able to handle (this trait may 
 
 a word for how easy something is to improve on...: multiple mature big data systems descriptions mentioned this as the most of one of the most important trait in the system \cite{uber} \cite{facebook}.
 
-\section{note on hardware types}
+\section{High-performance Computing}
 
 something on how fast is fast, how powerful the hpc systems are compared to laptops
 
@@ -139,6 +154,12 @@ The main data source, the status signal data sent by vessels, called \textit{aut
 The goal on the application level of the VesselAI project is to provide the following four pilot services to users: vessel route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. More abstract goals are to find a system that is suitable for both managing extreme-scale data and facilitating long model lifetimes. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way.
 
 With this context specification in mind, the following guidelines on the system aimed for can be stated: the high volume and relatively low quality of the data sets high demands on the training part of the pipeline, whereas the inference side has less strict requirements. The fact that the pilot cases are clearly defined and at least as of date there are no plans for additional applications, the primary challenge is maintaining and updating the models for these specific problem, not being ready to cope with the possibility of new problems being added, as is sometimes the case in other systems (find citations here...).  Summarized: the primary challenge for this system is to find a way of organising the training workflow to maintain accuracy throughout the model lifespan. This is the primary topic of inspection in the following chapters.
+
+% TO ADD HERE: the data processed is not personal in any way and the case studied is in this sense very different from many others. dunno id d10 should be cited because it was marked confidential
+
+% TO ADD (MAYBE): this is sensor stuff so it is kind of IoT like but it is different in many respects to what is usually thought of when talking about IoT like smart ovens and all those
+
+% TO ADD: the data used is spatiotemporal. Kind of mentioned kind of not mentioned. Could be emphasized more if needed in an argument
 
 %outline:
 
@@ -188,12 +209,23 @@ With this context specification in mind, the following guidelines on the system 
 
 discuss here: edge v couldlet v fog v cloud
 
++ and - for fog, from \cite{fogsurvey}
 
-\section{facilitating lifelong learning}
++'s that matter: saves bandwidth, mitigates problems with hostile areas that have fragile net connections (fog is stated to be fundamental in solving this problem), has reached a good enough maturity
+
++'s that do not matter: saves time (in range 66-302 ms), is somewhat more private, context awareness: able to adjust to location is probably not something the models are able to benefit from because edge training is most likely not computationally feasible
+
+-'s: adds compexity by distribution and heterogenity: " imposes non-trivial orchestration issues", cloud is more energy efficient (fot this check [120] from \cite{fogsurvey}),
+
+so: fog has drawbacks in complexity that are not acceptable considering that the advantages gotten with it are largely irrelevant.
+
+\section{facilitating knowledge retention}
 
 a tradeoff: federated vs centralized learning \cite{iotsurvey}
 
 edge vs central inference: if on edge the model needs to be small \cite{iotsurvey}
+
+\section{stream processing}
 
 \section{other possible discussions to add}
 
