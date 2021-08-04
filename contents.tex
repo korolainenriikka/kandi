@@ -31,6 +31,10 @@ do the specialities of this context, the low end to end latency requirement, ver
 
 a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
 
+methology
+
+one point to mention / keep in mind: in comparing different systems existing only those handling some kind of geospatial sensor data are considered. In other systems the requirements already differ so much that not a lot can be derived from them. Exception to this are the mature super-big systems like the googles and facebooks, which give good lessons learned in general.
+
 
 results summary
 
@@ -58,7 +62,11 @@ acm:
 Information systems → Information systems applications →
 Spatial-temporal systems → Data streaming (from \cite{uprctrajectorysystem})
 
-end to end + sensor data (iot) + machine learning + maritime + inference + lifelong learning
+machine learning + maritime + inference + lifelong learning
+
+adaptive learning (not sure about the exact definition)
+
+high performance computing
 
 Distributed Machine Learning, Internet of Things, Training, Serving (from \cite{mliot})
 
@@ -72,15 +80,43 @@ Enabling knowledge retention in a sensor-based machine learning big data system:
 
 \section{Knowledge retention techniques for machine learning}
 
-anything used later that my level reader might not understand comes here
+\subsection{Definitions}
 
-define federated learning and lifelong learning, online learning?
+% this section: I should have more sources and double-check that I got the definitions correct.
+
+The term \textbf{knowledge retention} is used here for using a machine learning model for an extended span of time, from months to years, while preserving its performance. Here ''knowledge'' means the model parameters that were resulted from training for a specific machine learning task. The ways of retaining knowledge are two: firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
+
+The paper at hand is dealing with the problem of adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding trasfer learning are defined next.
+
+\textbf{Lifelong learning} is a machine learning paradigm that ''can learn many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
+
+The general challenges arising in knowledge retention are the following. Especially within transfer learning \textbf{the stability-plasticity dilemma} is central. This refers to the need of finding an optimal balance on when to retain the old knowledge (stability) and when to replace it with new insight (plasticity) in order to perform well in predicting for both the old tasks seen and the new ones emerging later. Overdoing plasticity, i. e. replacing old parameters too easily may sometimes lead to \textbf{catastrophic forgetting}, which means that the ability to predict accurately for the old tasks is lost completely or for a big part.
+
+Within adaptive learning the central problem to address is called \textbf{the concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of the environment in which learning is conducted changing in some way. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
+
+The concept drift can include in itself a need for balancing stability and plasticity, depending on the use case. In autonomous cars, for example, an adaptive learning algorithm could change its predictions based on shifts in lighting and terrain conditions, but it should still be able to operate in the conditions it has seen before the changes \cite{conceptdriftsurvey}. In contrast, in maritime, it is not necessary for the models to perform well in an environment of the past after marine traffic conditions have shifted over time.
+
+\subsection{Implementing adaptive learning}
+
+In the following section the ways of mitigating the effects of concept drift whilst maintaining performance on old tasks, if necessary, are presented.
+
+The ways of doing adaptive: retraining, incremental learning, online learning. Then there was the ways of preserving old data and re-feeding it to models. Then there are the ensemble learning techniques, putting models to sleep state, blind&informed adaptation, ways for feedback mechanisms
+
+-> there are a lot of ways, many ways to classify the ways also. Make more sense of what each means and how they should be presented. Find more sources than \cite{conceptdriftsurvey} to find more insight.
+
+definitions
+ retraining: taking a new instance of the model and completely training it again from scratch
+	    incremental learning: a model is trained with each batch coming in from a data source and updated after each training. a way of doing adaptive learning.
+	    online learning: the model is updated with each data entry coming in from a data stream and is simultaneously constantly in operation. a way of doing adaptive learning.
+	    ensemble learning: adapting through predicting with a combination of models
 
 \section{On Big Data Systems}
 
 % maybe edit the heading to also include sensor/IoT
 
 to add here: a high-enough abstraction / "charting of the field" of big data systems in general
+
+also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important \cite{facebook} \cite{storm@twitter}.
 
 the high level components, d1.2 p 32 has one good starting point
 
@@ -161,6 +197,8 @@ With this context specification in mind, the following guidelines on the system 
 
 % TO ADD: the data used is spatiotemporal. Kind of mentioned kind of not mentioned. Could be emphasized more if needed in an argument
 
+% could emphasize even more not overdoing latency, not doing speed for the sake of speed because it's cool
+
 %outline:
 
 %maritime
@@ -205,6 +243,14 @@ With this context specification in mind, the following guidelines on the system 
 
 \chapter{vesselai-like systems}
 
+\section{facilitating knowledge retention}
+
+a tradeoff: federated vs centralized learning \cite{iotsurvey}
+
+edge vs central inference: if on edge the model needs to be small \cite{iotsurvey}
+
+Here: give the +'s and -'s of each approach. This information on how knowledge retention is likely to be applied affects the discussions on the other things in consideration
+
 \section{inference paradigm}
 
 discuss here: edge v couldlet v fog v cloud
@@ -219,20 +265,23 @@ discuss here: edge v couldlet v fog v cloud
 
 so: fog has drawbacks in complexity that are not acceptable considering that the advantages gotten with it are largely irrelevant.
 
-\section{facilitating knowledge retention}
-
-a tradeoff: federated vs centralized learning \cite{iotsurvey}
-
-edge vs central inference: if on edge the model needs to be small \cite{iotsurvey}
 
 \section{stream processing}
 
 \section{other possible discussions to add}
 
 \begin{itemize}
-    \item where to do data cleaning
+    \item where to do data cleaning - maybe too much given the amount of to-discuss here already?
 \end{itemize}
 
 \chapter{the vesselai system}
 
 i e the results i get
+
+\chapter{Conclusion}
+
+add here applicability of these conclusions to other systems.
+
+could add here: that the results gotten could not be validated empirically as the scope and level of this thesis will not allow for a thorough experimental inspection.
+
+also add maybe here that the literature on the topic is so vast and quickly evolving that it is possible that the subset of existing literature that I have gone through somehow conveys things in a non-objective way. This is unlikely however.
