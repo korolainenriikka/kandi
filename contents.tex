@@ -2,13 +2,26 @@
 
 %1st paragraph/section: context summary: why
 \section{context summary, why, and motivation}
-summary on maritime context
+%Topic in a sentence: knowledge retention including into a system. The system does machine learning on extreme-scale data
 
-list of high level components: data ingestion, model development & iterating & trainig environment, model library, model inference. we are focusing on inference
+One of the main paradigm shifts currently ongoing within machine learning is developing models that can handle evolving tasks and environments. While the literature on algorithms able to retain knowledge is increasing, systems approaches to this problem are lagging behind, and systems presented in literature systematically lack reasoning on why the design decisions presented were made.
 
-motivation: intention is to find inference system strengths/weaknesses that can be applied to other extreme scale sensor data systems as well
+To contribute to filling this gap, an inspection of systems approaches for enabling long model lifetimes within the context of maritime is conducted. The case in question is highly geographically distributed, voluminous in data, and does not require instant response times. The aim is to thoroughly compare and assess approaches for dealing with evolving model environments and discuss which approaches suit the case and its set of requirements. Then, it is discussed what kind of big data system design would optimally enable implementing the knowledge retention approach chosen.
 
-another point of motivation: in the literature on architectures for iot or ml+iot or preserving knowledge in ML: there is little input on why certain decisions were made. this explains the why's
+In addition to presenting a system proposal for the specific case, as a conclusion is also discussed, which requirements led to which design decisions to elaborate how the insights derived in this case can be transferred to another case.
+
+The way in which this work differs form many other system presentations is that the goal is not only to find a solution that works, but to find a solution that has the highest chance of succeeding in operation. This means that some less technical considerations are also included. These are simplicity and maturity of the solution, as these traits arguably increase the chance that a system working in theory actually works in practice.
+
+% outline: topic, backgound summary, motivation
+
+% things to mention:
+% the paradigm shift
+% lack of systems literature addressing whys
+% maritime requirements
+% the intention: find vesselai optimal solutions
+% further intention: find applicability to other cases
+% take into account: maturity, simplicity. Not only find a system that works but the one that has the highest probability of succeeding in operation
+
 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
@@ -44,7 +57,7 @@ results summary
 
 The rest of this thesis is organized as follows:
 
-Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed sensor systems with machine learning will be given. The most important design decisions; edge-fog-or-cloud deployments and incoming data processing scheme as batch, micro-batch or stream, will be quickly presented.
+Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed sensor systems with machine learning will be given. The most important design decisions; edge-fog-or-cloud deployments and incoming data processing scheme as batch, micro-batch or stream, will be briefly presented.
 
 A more thorough state-of-the-art inspection is given in the domain of machine learning on the methods for extending the lifetime of a model. The main challenges in this, the concept drift and the stability-plasticity-dilemma are defined, and then the existing solutions for addressing the challenges are presented.
 
@@ -52,7 +65,7 @@ Then follows a quick interlude into high performance computing, where the power 
 
 Lastly, the general context for the VesselAI project will be described. The specialities of the maritime domain and the nature of the data sources will be dissected, after which the project pilots and general goals will be presented. From these the general requirements will be listed and the main challenge of the project is identified: how to organize a workflow for efficient re-training of the models.
 
-Chapter 3 analyzes and compares the various systems approaches presented previously from the point of view of the case studied. The main abstract components of the system, stream processing, training workflow, and deployment scheme are each inspected for the optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
+Chapter 3 analyzes and compares the various systems approaches presented previously while taking great consideration the point of view of the case studied. The main abstract components of the system, stream processing, training workflow, and deployment scheme are each inspected for the optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
 
 The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
 
@@ -84,15 +97,19 @@ Enabling knowledge retention in a sensor-based machine learning big data system:
 
 % this section: I should have more sources and double-check that I got the definitions correct.
 
-The term \textbf{knowledge retention} is used here for using a machine learning model for an extended span of time, from months to years, while preserving its performance. Here ''knowledge'' means the model parameters that were resulted from training for a specific machine learning task. The ways of retaining knowledge are two: firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
+% mention the types of adaptive learning earlier
 
-The paper at hand is dealing with the problem of adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding trasfer learning are defined next.
+% find referenve to "There are two broad ways of retaining knowledge"
 
-\textbf{Lifelong learning} is a machine learning paradigm that ''can learn many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
+In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
+%The paper at hand is dealing with the problem of adaptive learning. 
+This thesis focuses on adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding transfer learning are defined next.
+
+\textbf{Lifelong learning} is a machine learning paradigm of ''learning many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
 
 The general challenges arising in knowledge retention are the following. Especially within transfer learning \textbf{the stability-plasticity dilemma} is central. This refers to the need of finding an optimal balance on when to retain the old knowledge (stability) and when to replace it with new insight (plasticity) in order to perform well in predicting for both the old tasks seen and the new ones emerging later. Overdoing plasticity, i. e. replacing old parameters too easily may sometimes lead to \textbf{catastrophic forgetting}, which means that the ability to predict accurately for the old tasks is lost completely or for a big part.
 
-Within adaptive learning the central problem to address is called \textbf{the concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of the environment in which learning is conducted changing in some way. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
+Within adaptive learning the central problem to address is called \textbf{concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of changes in the environment in which learning is conducted. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
 
 The concept drift can include in itself a need for balancing stability and plasticity, depending on the use case. In autonomous cars, for example, an adaptive learning algorithm could change its predictions based on shifts in lighting and terrain conditions, but it should still be able to operate in the conditions it has seen before the changes \cite{conceptdriftsurvey}. In contrast, in maritime, it is not necessary for the models to perform well in an environment of the past after marine traffic conditions have shifted over time.
 
@@ -110,7 +127,7 @@ definitions
 	    online learning: the model is updated with each data entry coming in from a data stream and is simultaneously constantly in operation. a way of doing adaptive learning.
 	    ensemble learning: adapting through predicting with a combination of models
 
-\section{On Big Data Systems}
+\section{On Big Data Systems With Machine Learning}
 
 % maybe edit the heading to also include sensor/IoT
 
@@ -183,7 +200,7 @@ Maritime as a domain of application for a sensor-based machine learning system i
 
 With the vastness of the seas and its vital nature for world trade, the amount of vessel traffic is large even in comparison to other big data applications. Due to international regulation vessels have to send update signals on their status from every few minutes to every 2 seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily (a source from \cite{maritimeinformatics} states this), this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather updates, are needed. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
 
-Added to scale, another specific of this context is speed. Depending on the size of the vessel, it takes from minutes to up to an hour to change the course of the vessel. This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even detrimental to the success of the system operation: for speed other more important traits would have to be deprioritised, which in this case would do more harm than good.
+Added to scale, another specific of this context is speed. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change the course of the vessel (todo: fact-check this). This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even detrimental to the success of the system operation: for speed other more important traits would have to be deprioritised, which in this case would do more harm than good.
 
 The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
 
@@ -211,7 +228,6 @@ With this context specification in mind, the following guidelines on the system 
 %	what is AIS
 %	a lot of features that are unreliable
 %	identifying the erroneus might be very difficult: smugglers' disguising ais example
-%	... check maritime informatics for more
 
 %the project
 %	the pilots I-V: what each one aims for
@@ -220,7 +236,6 @@ With this context specification in mind, the following guidelines on the system 
 %		deal with extreme scale data
 %		facilitate continuous learning
 %		utilize modern HPC
-%	... check deliverables for exact aims
 %
 %the system
 %	we combine different data sets
@@ -243,13 +258,37 @@ With this context specification in mind, the following guidelines on the system 
 
 \chapter{vesselai-like systems}
 
-\section{facilitating knowledge retention}
+\section{facilitating knowledge retention: training approaches}
 
-a tradeoff: federated vs centralized learning \cite{iotsurvey}
+include also here: data cleaning
 
-edge vs central inference: if on edge the model needs to be small \cite{iotsurvey}
+central vs federated learning: learning location
+
+the approach of doing adaptive learning in a unsupervised / semi-supervised setting
 
 Here: give the +'s and -'s of each approach. This information on how knowledge retention is likely to be applied affects the discussions on the other things in consideration
+
+blind mechanisms
+
++ no need for a feedbacck system
+
+identifying concept drift approaches
+
++ more accuracy compared to blind methods \cite{conceptdriftsurvey}
+
+- a feedback mechanism needs to be in the system
+
+online learning
+
+- no way for abrupt adaptation, only gradual \cite{conceptdriftsurvey}
+
+ensemble
+
+approaches: stable&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
+
+data window comparisons
+
+- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> probably not applicable
 
 \section{inference paradigm}
 
@@ -271,7 +310,7 @@ so: fog has drawbacks in complexity that are not acceptable considering that the
 \section{other possible discussions to add}
 
 \begin{itemize}
-    \item where to do data cleaning - maybe too much given the amount of to-discuss here already?
+    \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
 \end{itemize}
 
 \chapter{the vesselai system}
