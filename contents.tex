@@ -22,6 +22,8 @@ The way in which this work differs form many other system presentations is that 
 % further intention: find applicability to other cases
 % take into account: maturity, simplicity. Not only find a system that works but the one that has the highest probability of succeeding in operation
 
+% to-adds: that maturity is a factor that ended up being the very one reason many promising-seeming approaches cannot be adopted in this case
+
 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
@@ -89,6 +91,8 @@ Sensor data systems at extreme scale / for scale
 
 Enabling knowledge retention in a sensor-based machine learning big data system: a case study
 
+%knowledge retention is a bad term for this because we are not really aiming for retaining knowledge but enabling the models to be accurate across an extended lifespan
+
 \chapter{Context and Background}
 
 \section{Knowledge retention techniques for machine learning}
@@ -102,8 +106,8 @@ Enabling knowledge retention in a sensor-based machine learning big data system:
 % find referenve to "There are two broad ways of retaining knowledge"
 
 In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
-%The paper at hand is dealing with the problem of adaptive learning. 
-This thesis focuses on adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding transfer learning are defined next.
+
+The paper at hand is dealing with the problem of adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding transfer learning are defined next.
 
 \textbf{Lifelong learning} is a machine learning paradigm of ''learning many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
 
@@ -112,6 +116,12 @@ The general challenges arising in knowledge retention are the following. Especia
 Within adaptive learning the central problem to address is called \textbf{concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of changes in the environment in which learning is conducted. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
 
 The concept drift can include in itself a need for balancing stability and plasticity, depending on the use case. In autonomous cars, for example, an adaptive learning algorithm could change its predictions based on shifts in lighting and terrain conditions, but it should still be able to operate in the conditions it has seen before the changes \cite{conceptdriftsurvey}. In contrast, in maritime, it is not necessary for the models to perform well in an environment of the past after marine traffic conditions have shifted over time.
+
+% maybe add here the definition of feature drift: "A feature drift occurs when a subset of features becomes, or ceases to be, relevant to the learning task [10]" (from mlflorstreamingsurvey) -> feature evolution will be a rare occurence in vesselai, can be omitted? also streamminingchallenges stated that feature drift is an important problem to address!
+
+% maybe add: also hyperparams need to evolve! \cite{mlflorstreamingsurvey}
+
+% maybe add: there is gradual and abrupt drift \cite{streamminingchallenges} \cite{conceptdriftsurvey}
 
 \subsection{Implementing adaptive learning}
 
@@ -284,11 +294,21 @@ online learning
 
 ensemble
 
++ a mature approach for the problem \cite{mlforstreamingsurvey}
+
 approaches: stable&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
 
 data window comparisons
 
 - old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> probably not applicable
+
+combinations of approaches that are not researched a lot -> immature
+
+\begin{itemize}
+    \item concept drift detection + delayed labels \cite{mlforstreamingsurvey}
+    \item transfer learning + online learning \cite{mlforstreamingsurvey}
+    \item adaptive learning + delayed labels \cite{mlforstreamingsurvey}
+\end{itemize}
 
 \section{inference paradigm}
 
@@ -307,10 +327,13 @@ so: fog has drawbacks in complexity that are not acceptable considering that the
 
 \section{stream processing}
 
+stream has compared to batch the ml pipeline steps ''interleaved'' \cite{mlforstreamingsurvey}
+
 \section{other possible discussions to add}
 
 \begin{itemize}
     \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
+    \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
 \end{itemize}
 
 \chapter{the vesselai system}
