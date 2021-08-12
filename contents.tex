@@ -28,27 +28,15 @@ The way in which this work differs form many other system presentations is that 
 %2nd paragraph/section: question, results, methodology
 \section{research questions, results summary and methodology}
 
-primary question: Which training and inference setup would be optimal for enabling lifelong learning / incremental learning / retraining in the specific context of vesselai?
+primary question: Which model adaptation approach would be optimal for maintaining model accuracy across a long lifetime in the specific context of vesselai?
 
-dealing with concept drift
+secondary question: what type of infrastructure is needed to facilitate the chosen approach for model lifetime extension in the system?
 
-secondary questions:
-
-where (location (edge, fog, cloud) & type of hardware (not exact but like supercomputer, regular computer or mini device like raspberry pi/arduino)) should the models be deployed on?
-
-things to exclude: details on stream processing, inference system details
-
-aspects to consider: version management in central vs edge inference, lifelong learning management, concept drift in iot: how to avoid (concept drift still fully unresearched!)
-
-how big is the messaging overhead in a highly distributed system
-
-do the specialities of this context, the low end to end latency requirement, very high geographical and no private data (no private from d10.1) impact something we consider so much that an ''unconventional'' design decision is justified? (privacy matters affect design a lot \cite{iotsystems})
 
 a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
 
 methology
 
-one point to mention / keep in mind: in comparing different systems existing only those handling some kind of geospatial sensor data are considered. In other systems the requirements already differ so much that not a lot can be derived from them. Exception to this are the mature super-big systems like the googles and facebooks, which give good lessons learned in general.
 
 
 results summary
@@ -70,28 +58,6 @@ Lastly, the general context for the VesselAI project will be described. The spec
 Chapter 3 analyzes and compares the various systems approaches presented previously while taking great consideration the point of view of the case studied. The main abstract components of the system, stream processing, training workflow, and deployment scheme are each inspected for the optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
 
 The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
-
-\section{acm classification,  keyword ideas}
-
-acm:
-Information systems → Information systems applications →
-Spatial-temporal systems → Data streaming (from \cite{uprctrajectorysystem})
-
-machine learning + maritime + inference + lifelong learning
-
-adaptive learning (not sure about the exact definition)
-
-high performance computing
-
-Distributed Machine Learning, Internet of Things, Training, Serving (from \cite{mliot})
-
-title wordplay:
-
-Sensor data systems at extreme scale / for scale
-
-Enabling knowledge retention in a sensor-based machine learning big data system: a case study
-
-%knowledge retention is a bad term for this because we are not really aiming for retaining knowledge but enabling the models to be accurate across an extended lifespan
 
 \chapter{Context and Background}
 
@@ -139,22 +105,17 @@ definitions
 
 \section{On Big Data Systems With Machine Learning}
 
-% maybe edit the heading to also include sensor/IoT
-
-to add here: a high-enough abstraction / "charting of the field" of big data systems in general
-
-also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important \cite{facebook} \cite{storm@twitter}.
+to add here: a high-level-enough abstraction / "charting of the field" of big data systems in general
 
 the high level components, d1.2 p 32 has one good starting point
 
-definition of a user request in this context: the human is not considered, they use the ui. user is the application making requests to the system. these might be preprocessing-related or actual human user requests
+\subsection{The high-level components}
 
-%\subsection{the Lambda and Kappa architectures}
-% this is probably off topic.
-% this is the content on lambda & kappa that is probably needed content-wise. only needs better writing.
+% add here a basic figure on the components
 
-\subsection{Data ingestion: reference architectures for stream processing}
+data ingestion
 
+below: initial contents on lambda and kappa, needs summarizing
 the initial motivation behind lambda: to beat cap theorem's inherent need to tradeoff between consistency and availability \cite{lambdakappa}
 
 nathan marz presenting a system that supposedly beats cap. how: treat data as immutable, emphasize importance of preparing for human error, and splitting a database into two systems, batch and speed layer. The batch layer does order of hours long preprocessing of queries, speed layer has  abstracted within itself a complex system for handling the data from the latest hours to make also that available for querying. Fault tolerance comes mainly from the fact that the speed layer is possible to empty to the batch queue and restart in case of failure or overload.
@@ -169,11 +130,13 @@ As an alternative approach to solve these problems, Kreps proposed a different a
 
 fundamental assumptions of both systems:  the need almost instant execution times is assumed \cite{lambdakappa}. This is not required in vesselai. also, not stated in the sources on lambda and kappa but still assumed: that we are able to tell before the user query what exactly is going to be queried. If in vesselai the model may change and with that the query as well, or more importantly the queries regard only a mini fraction of geographical space so preprocessing the full globe and needing a percent of the preprocessed has a potential of being a grande waste of computation in the maritime case (my judgement). for the latter point it is possible that neither lambda or kappa are good.
 
-- all the apache systems: what they are what is each used for, a very short description
+data cleaning
 
-\subsection{On machine learning IoT systems: the inference paradigms}
+model training
 
-here:
+model evaluation
+
+inference: here:
 
 edge vs fog vs cloud
 
@@ -181,28 +144,36 @@ OCF is The Open Connectivity Foundation. add below + the proper source
 
 The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
 
+model monitoring
 
-%\section{the evaluation dimensions}
 
-this sect should be removed and added as a part of the introduction.
+\subsection{Best-practice design principles}
 
-For this thesis, dimensions are defined as traits by which various systems can be evaluated. These are:
+%another to-add: general good design principles when developing a bd system
 
-latency: the time it takes from user input until they get their desired output,
+%\cite{designprinciples}: most important things are system stability with fluctuating data quality, scalability, minimal human intervention
 
-scalability: at which data volume per time unit the system faces bottlenecks,
+%\cite{facebook}: ease of use, performance, fault-tolerance, scalability, correctness
 
-accuracy: how true the predictions made by the system are and how much information the system is able to give its user about the predictions' accuracy.
+%\cite{storm@twitter}: scalable, resilient, extensible, efficient, easy to administer
 
-throughput: how many user requests the system is able to handle (this trait may not be necessary)
+%\cite{uber} always a tradeoff between requirements, quick iteration for improvements, quich scaling in hardware
 
-a word for how easy something is to improve on...: multiple mature big data systems descriptions mentioned this as the most of one of the most important trait in the system \cite{uber} \cite{facebook}.
+%\cite{millwheel}: fault tolerance, scalability
 
-\section{High-performance Computing}
+%--> synthesized there is scalability, resiliency for faults & environment changes, easy to improve the system 
 
-something on how fast is fast, how powerful the hpc systems are compared to laptops
+%also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important
 
-what are raspberry pi and arduino and how their power compares to a standard laptop
+In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. At its simplest, for instance, improving the systems throughput by adding ... (what?) in a way adds complexity, meanwhile sacrificing simplicity.
+
+The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
+
+\begin{itemize}
+    \item \textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
+    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of big datas' nature, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributing computation, or making adding more hardware to the system as seamless as possible.
+    \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
+\end{itemize}
 
 \section{The case: context and requirements for machine learning in the maritime domain}
 
@@ -270,6 +241,8 @@ With this context specification in mind, the following guidelines on the system 
 
 \section{facilitating knowledge retention: training approaches}
 
+The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
+
 include also here: data cleaning
 
 central vs federated learning: learning location
@@ -310,9 +283,18 @@ combinations of approaches that are not researched a lot -> immature
     \item adaptive learning + delayed labels \cite{mlforstreamingsurvey}
 \end{itemize}
 
-\section{inference paradigm}
+\section{system architecture}
 
-discuss here: edge v couldlet v fog v cloud
+to discuss here: given the model updating approach deemed best for the case, what should the system be like on an abstract level?
+
+\begin{itemize}
+    \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
+    \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
+\end{itemize}
+
+\section{infrastructure choices}
+
+discuss here: edge v couldlet v fog v cloud for inference, then also should training be central (hpc) or more distributed
 
 + and - for fog, from \cite{fogsurvey}
 
@@ -323,18 +305,6 @@ discuss here: edge v couldlet v fog v cloud
 -'s: adds compexity by distribution and heterogenity: " imposes non-trivial orchestration issues", cloud is more energy efficient (fot this check [120] from \cite{fogsurvey}),
 
 so: fog has drawbacks in complexity that are not acceptable considering that the advantages gotten with it are largely irrelevant.
-
-
-\section{stream processing}
-
-stream has compared to batch the ml pipeline steps ''interleaved'' \cite{mlforstreamingsurvey}
-
-\section{other possible discussions to add}
-
-\begin{itemize}
-    \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
-    \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
-\end{itemize}
 
 \chapter{the vesselai system}
 
