@@ -61,6 +61,98 @@ The paper is concluded with discussion on if the conclusions reached with the ca
 
 \chapter{Context and Background}
 
+\section{On Big Data Systems With Machine Learning}
+
+% MLOps is a term that should be used / mentioned somewhere
+
+to add here: a high-level-enough abstraction / "charting of the field" of big data systems in general
+
+the high level components, d1.2 p 32 has one good starting point
+
+\subsection{The high-level components}
+
+The figure~\ref{simplepipeline} displays the abstract steps that large-scale machine learning systems compose of: 
+
+\begin{figure}[ht]
+%\begin{figure}[tbh] t= top, b = bottom, h=here
+\ \newline
+\begin{center}
+\includegraphics[width=0.9\textwidth]{simplegoogle.png}
+%\rotatebox{90}{\includegraphics[scale=.75]{kuvaesimerkki.pdf}}
+\caption{Abstract components of a big data analytics system. From Google Developer MLOps guide \cite{googlemlops}.}
+\label{simplepipeline}
+\end{center}
+\end{figure}
+
+
+While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most systems have all of the steps incorporated.
+
+\textbf{Data extraction}: this component is responsible for handling the incoming data. Usual forms of data are either web logs, coming in from a server, or IoT data, coming in from sensors that are often geographically distant from the data ingesting component.
+
+In big data systems incoming data is represented either as batches, meaning chunks of data coming in at certain intervals, or as a stream, meaning that individual data records are coming in constantly. The main advantage of using a batch representation is known to be increased throughput%(find citations here)
+, while stream processing allows smaller end-to-end latencies. %(find citations here)
+
+To mitigate the tradeoff between throughput and latency, a popular solution is called the lambda architecture. This reference architecture has a processing unit for both batch and stream data with the stream component, so-called speed layer, handling requests for the data not yet processed by the batch layer \cite{beatingcap}. While this approach is widely accepted to solve the problem of handling highly voluminous data fast and mitigating human errors by allowing restarting the speed layer any time without losing data \cite{lambdakappa}, the architecture has faced criticism for being redundantly complex and forcing the data ingestion code to be written twice \cite{questioninglambda} \cite{uber} \cite{facebook}. As an alternative, the kappa architecture has been proposed, only composing of either a batch or a stream processor, usually the latter \cite{questioninglambda}. This mitigates duplication, but retains the tradeoff with throughput and latency \cite{lambdakappa}.
+
+\textbf{Data preparation}: this step encompasses the processes of data cleaning, transformation, and feature engineering. Data cleaning refers to operations that identify and remove faulty data, such as values that are missing or are clearly impossible such ?. Data transformation and feature engineering are used interchangeably, both meaning processes that transform data into a format that the models used can process. A popular example in this is the mapping of plain text into word count matrices.
+
+While the data preparation step is often overlooked in literature %(cite comething...)
+it is both a challenging and crucial part of the system as data preprocessing may take up to x\% of the total end-to-end time of the system. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways.
+
+\textbf{Data storage}: Interpreted in the figure as offline data, the data storage is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Due to the volume of the data, the storage is either cleared often completely or only a small part is archived.
+
+\textbf{Model training}:
+
+% to mention: cloud or federated with tradeoffs of better computing resources vs less time taken to transmit data and saved bandwidth
+
+\textbf{Model evaluation and validation}:
+
+% i need a reference for this
+
+\textbf{Model registry}:
+
+% need a reference here as well...
+
+\textbf{Model inference}: edge fog cloud here marked in the figure as 'prediction service', this component contains the trained models that are used for answering application requests. These requests can require data statistics, computed with conventional data analytics, or predictions made by machine learning models.
+
+The most important design decision to make for this component in the sensor data scenario is where to deploy the models, in the cloud, a cloudlet or 'fog', or on the edge. Cloud means that the model is deployed in a data center and edge refers to models being deployed in the IoT devices. Fog refers to the in-between solutions: 
+
+OCF is The Open Connectivity Foundation. add below + the proper source
+
+The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
+
+
+% problems with both lambda&kappa, structure needs reorder because this does not make sense before vesselai requirement specs
+
+fundamental assumptions of both systems:  the need almost instant execution times is assumed \cite{lambdakappa}. This is not required in vesselai. also, not stated in the sources on lambda and kappa but still assumed: that we are able to tell before the user query what exactly is going to be queried. If in vesselai the model may change and with that the query as well, or more importantly the queries regard only a mini fraction of geographical space so preprocessing the full globe and needing a percent of the preprocessed has a potential of being a grande waste of computation in the maritime case (my judgement). for the latter point it is possible that neither lambda or kappa are good.
+
+
+\subsection{Best-practice design principles}
+
+%\cite{designprinciples}: most important things are system stability with fluctuating data quality, scalability, minimal human intervention
+
+%\cite{facebook}: ease of use, performance, fault-tolerance, scalability, correctness
+
+%\cite{storm@twitter}: scalable, resilient, extensible, efficient, easy to administer
+
+%\cite{uber} always a tradeoff between requirements, quick iteration for improvements, quich scaling in hardware
+
+%\cite{millwheel}: fault tolerance, scalability
+
+%--> synthesized there is scalability, resiliency for faults & environment changes, easy to improve the system 
+
+%also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important
+
+In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. At its simplest, for instance, improving the systems throughput by adding ... (what?) in a way adds complexity, meanwhile sacrificing simplicity.
+
+The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
+
+\begin{itemize}
+    \item \textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
+    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of big datas' nature, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributing computation, or making adding more hardware to the system as seamless as possible.
+    \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
+\end{itemize}
+
 \section{Knowledge retention techniques for machine learning}
 
 \subsection{Definitions}
@@ -103,77 +195,7 @@ definitions
 	    online learning: the model is updated with each data entry coming in from a data stream and is simultaneously constantly in operation. a way of doing adaptive learning.
 	    ensemble learning: adapting through predicting with a combination of models
 
-\section{On Big Data Systems With Machine Learning}
-
-to add here: a high-level-enough abstraction / "charting of the field" of big data systems in general
-
-the high level components, d1.2 p 32 has one good starting point
-
-\subsection{The high-level components}
-
-% add here a basic figure on the components
-
-data ingestion
-
-below: initial contents on lambda and kappa, needs summarizing
-the initial motivation behind lambda: to beat cap theorem's inherent need to tradeoff between consistency and availability \cite{lambdakappa}
-
-nathan marz presenting a system that supposedly beats cap. how: treat data as immutable, emphasize importance of preparing for human error, and splitting a database into two systems, batch and speed layer. The batch layer does order of hours long preprocessing of queries, speed layer has  abstracted within itself a complex system for handling the data from the latest hours to make also that available for querying. Fault tolerance comes mainly from the fact that the speed layer is possible to empty to the batch queue and restart in case of failure or overload.
-
-the most known criticism to lambda, a blog post by Jay Kreps \cite{questioninglambda}, acknowledged its strengths in seeing data as immutable and highlighting the possibility that data may be needed to reprocess due to changes in application code. The main points of criticism were the argument that lambda does not actually beat cap but still compromises some consistency, that deeming real-time stream processing as inherently faulty and approximate "does not make sense" and is only a fault in the current tools \cite{questioninglambda}. The post along with other sources deem the most important flaw in lambda to be the fact that maintaining and syncronizing separate code bases for batch and stream layer to be redundantly complex \cite{uber} \cite{facebook}. At the same time multiple system analyses name maintainability the most or one of the most important trait about a big data system \cite{facebook} \cite{storm@twitter}.
-
-As an alternative approach to solve these problems, Kreps proposed a different architecture called the Kappa architecture. It is otherwise similar to lambda but only has either batch or speed layer, usually speed layer in a for of highly parallelized stream processor. This mitigates the duplication problem while keeping other strengths from lambda, but the ability of giving fast answers to queries is lost.
-
-(\cite{D1.1} states that both lambda and kappa mitigate human errors ''by  updating  the  code  and  running  it  again  on  the historical  data '')
-
-% problems with both lambda&kappa, structure needs reorder because this does not make sense before vesselai requirement specs
-
-fundamental assumptions of both systems:  the need almost instant execution times is assumed \cite{lambdakappa}. This is not required in vesselai. also, not stated in the sources on lambda and kappa but still assumed: that we are able to tell before the user query what exactly is going to be queried. If in vesselai the model may change and with that the query as well, or more importantly the queries regard only a mini fraction of geographical space so preprocessing the full globe and needing a percent of the preprocessed has a potential of being a grande waste of computation in the maritime case (my judgement). for the latter point it is possible that neither lambda or kappa are good.
-
-data cleaning
-
-model training
-
-model evaluation
-
-inference: here:
-
-edge vs fog vs cloud
-
-OCF is The Open Connectivity Foundation. add below + the proper source
-
-The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
-
-model monitoring
-
-
-\subsection{Best-practice design principles}
-
-%another to-add: general good design principles when developing a bd system
-
-%\cite{designprinciples}: most important things are system stability with fluctuating data quality, scalability, minimal human intervention
-
-%\cite{facebook}: ease of use, performance, fault-tolerance, scalability, correctness
-
-%\cite{storm@twitter}: scalable, resilient, extensible, efficient, easy to administer
-
-%\cite{uber} always a tradeoff between requirements, quick iteration for improvements, quich scaling in hardware
-
-%\cite{millwheel}: fault tolerance, scalability
-
-%--> synthesized there is scalability, resiliency for faults & environment changes, easy to improve the system 
-
-%also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important
-
-In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. At its simplest, for instance, improving the systems throughput by adding ... (what?) in a way adds complexity, meanwhile sacrificing simplicity.
-
-The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
-
-\begin{itemize}
-    \item \textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
-    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of big datas' nature, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributing computation, or making adding more hardware to the system as seamless as possible.
-    \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
-\end{itemize}
+% add here: in order to implement adaptive learning, a few new components need to be introduced. Then display the more complex system description and explain with emphasis the trigger and monitoring
 
 \section{The case: context and requirements for machine learning in the maritime domain}
 
