@@ -30,9 +30,11 @@ The way in which this work differs form many other system presentations is that 
 
 primary question: Which model adaptation approach would be optimal for maintaining model accuracy across a long lifetime in the specific context of vesselai?
 
-secondary question: what type of infrastructure is needed to facilitate the chosen approach for model lifetime extension in the system?
+ssecondary question, option #1: what kind of workflow automation needs to be in place in order to have the models updated as efficiently as possible
 
+secondary question, option #2: what type of infrastructure is needed to facilitate the chosen approach for model lifetime extension in the system?
 
+%outdated
 a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
 
 methology
@@ -47,15 +49,13 @@ results summary
 
 The rest of this thesis is organized as follows:
 
-Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed sensor systems with machine learning will be given. The most important design decisions; edge-fog-or-cloud deployments and incoming data processing scheme as batch, micro-batch or stream, will be briefly presented.
+Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed big data systems with machine learning is given. The high-level components, such as data preprocessing and model training, are presented. Then, some general best practices for big data systems design are discussed.
 
 A more thorough state-of-the-art inspection is given in the domain of machine learning on the methods for extending the lifetime of a model. The main challenges in this, the concept drift and the stability-plasticity-dilemma are defined, and then the existing solutions for addressing the challenges are presented.
 
-Then follows a quick interlude into high performance computing, where the power and application requirements of the newest HPC systems are given.
+Next, the general context for the VesselAI project is described. The specialities of the maritime domain and the nature of the data sources are dissected, after which the project pilots and general goals are presented. From these the general requirements are listed and the main challenge of the project is identified: how to organize a workflow for efficient adaptation of the models.
 
-Lastly, the general context for the VesselAI project will be described. The specialities of the maritime domain and the nature of the data sources will be dissected, after which the project pilots and general goals will be presented. From these the general requirements will be listed and the main challenge of the project is identified: how to organize a workflow for efficient re-training of the models.
-
-Chapter 3 analyzes and compares the various systems approaches presented previously while taking great consideration the point of view of the case studied. The main abstract components of the system, stream processing, training workflow, and deployment scheme are each inspected for the optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
+Chapter 3 analyzes and compares the various model updating approaches presented previously while taking into great consideration the point of view of the case studied. The implications of this to the machine learning workflow and the required infrastructure are inspected for optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
 
 The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
 
@@ -73,6 +73,7 @@ the high level components, d1.2 p 32 has one good starting point
 
 The figure~\ref{simplepipeline} displays the abstract steps that large-scale machine learning systems compose of: 
 
+% the figure is too small... -> not very readable
 \begin{figure}[ht]
 %\begin{figure}[tbh] t= top, b = bottom, h=here
 \ \newline
@@ -85,7 +86,7 @@ The figure~\ref{simplepipeline} displays the abstract steps that large-scale mac
 \end{figure}
 
 
-While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most systems have all of the steps incorporated.
+While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most contemporary big data systems consist of the following steps:
 
 \textbf{Data extraction}: this component is responsible for handling the incoming data. Usual forms of data are either web logs, coming in from a server, or IoT data, coming in from sensors that are often geographically distant from the data ingesting component.
 
@@ -99,11 +100,11 @@ To mitigate the tradeoff between throughput and latency, a popular solution is c
 While the data preparation step is often overlooked in literature %(cite comething...)
 it is both a challenging and crucial part of the system as data preprocessing may take up to x\% of the total end-to-end time of the system. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways.
 
-\textbf{Data storage}: Interpreted in the figure as offline data, the data storage is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Due to the volume of the data, the storage is either cleared often completely or only a small part is archived.
+\textbf{Data storage}: Interpreted in the figure as offline data, the data storage is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Due to the volume of the data, the storage is either cleared often completely or only a small part of the data is archived.
 
 \textbf{Model training}:
 
-% to mention: cloud or federated with tradeoffs of better computing resources vs less time taken to transmit data and saved bandwidth
+% to mention: cloud or federated with tradeoffs of better computing resources vs less time taken to transmit data and saved bandwidth. mention that federated approach is out of scope in this work
 
 \textbf{Model evaluation and validation}:
 
@@ -120,12 +121,6 @@ The most important design decision to make for this component in the sensor data
 OCF is The Open Connectivity Foundation. add below + the proper source
 
 The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
-
-
-% problems with both lambda&kappa, structure needs reorder because this does not make sense before vesselai requirement specs
-
-fundamental assumptions of both systems:  the need almost instant execution times is assumed \cite{lambdakappa}. This is not required in vesselai. also, not stated in the sources on lambda and kappa but still assumed: that we are able to tell before the user query what exactly is going to be queried. If in vesselai the model may change and with that the query as well, or more importantly the queries regard only a mini fraction of geographical space so preprocessing the full globe and needing a percent of the preprocessed has a potential of being a grande waste of computation in the maritime case (my judgement). for the latter point it is possible that neither lambda or kappa are good.
-
 
 \subsection{Best-practice design principles}
 
@@ -145,15 +140,17 @@ fundamental assumptions of both systems:  the need almost instant execution time
 
 In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. At its simplest, for instance, improving the systems throughput by adding ... (what?) in a way adds complexity, meanwhile sacrificing simplicity.
 
-The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
+The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system compared, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the Uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
 
 \begin{itemize}
     \item \textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
-    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of big datas' nature, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributing computation, or making adding more hardware to the system as seamless as possible.
+    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of the nature of big data, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributed computation, or making adding more hardware to the system as seamless as possible.
     \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
 \end{itemize}
 
-\section{Knowledge retention techniques for machine learning}
+\section{Model adaptation techniques for machine learning}
+
+% to-do: add adaptive learning approaches to the first subsect and remove subsectioning
 
 \subsection{Definitions}
 
@@ -161,7 +158,9 @@ The most mature big data systems as of date have each evolved on their own but d
 
 % mention the types of adaptive learning earlier
 
-% find referenve to "There are two broad ways of retaining knowledge"
+% find reference to "There are two broad ways of retaining knowledge"
+
+% Knowledge retention is a self-invented term and should be replaced with a better one.
 
 In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
 
@@ -203,13 +202,13 @@ Maritime as a domain of application for a sensor-based machine learning system i
 
 With the vastness of the seas and its vital nature for world trade, the amount of vessel traffic is large even in comparison to other big data applications. Due to international regulation vessels have to send update signals on their status from every few minutes to every 2 seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily (a source from \cite{maritimeinformatics} states this), this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather updates, are needed. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
 
-Added to scale, another specific of this context is speed. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change the course of the vessel (todo: fact-check this). This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even detrimental to the success of the system operation: for speed other more important traits would have to be deprioritised, which in this case would do more harm than good.
+Added to scale, another specific of this context is speed. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change the course of the vessel (todo: fact-check this). This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even of detriment to the success of the system operation: for low latency other more important traits would have to be deprioritised, which in this case would do more harm than good.
 
 The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
 
 The goal on the application level of the VesselAI project is to provide the following four pilot services to users: vessel route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. More abstract goals are to find a system that is suitable for both managing extreme-scale data and facilitating long model lifetimes. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way.
 
-With this context specification in mind, the following guidelines on the system aimed for can be stated: the high volume and relatively low quality of the data sets high demands on the training part of the pipeline, whereas the inference side has less strict requirements. The fact that the pilot cases are clearly defined and at least as of date there are no plans for additional applications, the primary challenge is maintaining and updating the models for these specific problem, not being ready to cope with the possibility of new problems being added, as is sometimes the case in other systems (find citations here...).  Summarized: the primary challenge for this system is to find a way of organising the training workflow to maintain accuracy throughout the model lifespan. This is the primary topic of inspection in the following chapters.
+With this context specification in mind, the following guidelines on the system aimed for can be stated: the high volume and relatively low quality of the data sets high demands on the training part of the pipeline, whereas the inference side has less strict requirements. The fact that the pilot cases are clearly defined and at least as of date there are no plans for additional applications, the primary challenge is maintaining and updating the models for these specific problem, not being ready to cope with the possibility of new problems being added, as is sometimes the case in other systems (find citations here...).  Summarized, the primary challenge for this system is to find a way of organising the training workflow to maintain accuracy throughout the model lifespan. This is the primary topic of inspection in the following chapters.
 
 % TO ADD HERE: the data processed is not personal in any way and the case studied is in this sense very different from many others. dunno id d10 should be cited because it was marked confidential
 
@@ -249,14 +248,6 @@ With this context specification in mind, the following guidelines on the system 
 
 %combine these: the requirements
 %we need to know what we need and what we do not need for sure to know which system design makes sense.
-
-%we need throughput, not individual request answer speed (millisecond speed unnecessary)
-%pilots defined: we need to keep models up to date, not be ready to expand to new models as much
-%the machine learning paradigm and workflow of choice needs to be mature enough for industry implementation
-%	in a complex scenario.
-%inference time windows are big. the challenge is facilitating training.
-
-%then: present abstract illustration of the architecture and state: THIS is %the spot which we investigate.
 
 
 \chapter{vesselai-like systems}
