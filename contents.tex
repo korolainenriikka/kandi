@@ -39,6 +39,10 @@ a point of motivation from D1.1 moving beyond the state of the art section: ''th
 
 methology
 
+when comparing systems, only systems handing spatiotemporal data are considered
+
+when comparing model updating approaches, classifiers are left out. This is because in general in this field classifiers are researched much more than other types of learning and taking classifiers into account would give a false sense of maturity of the approaches as the case studied has only non-classifier models
+
 
 
 results summary
@@ -65,52 +69,58 @@ The paper is concluded with discussion on if the conclusions reached with the ca
 
 % MLOps is a term that should be used / mentioned somewhere
 
-to add here: a high-level-enough abstraction / "charting of the field" of big data systems in general
-
-the high level components, d1.2 p 32 has one good starting point
+% current main concern for this sect: I state out a lot of facts without giving a reference -> the fine line between common knowledge and what needs backing...
 
 \subsection{The high-level components}
 
-The figure~\ref{simplepipeline} displays the abstract steps that large-scale machine learning systems compose of: 
+The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
 
+% how do I properly cite the google cloud developer guide?
 % the figure is too small... -> not very readable
 \begin{figure}[ht]
 %\begin{figure}[tbh] t= top, b = bottom, h=here
 \ \newline
 \begin{center}
 \includegraphics[width=0.9\textwidth]{simplegoogle.png}
-%\rotatebox{90}{\includegraphics[scale=.75]{kuvaesimerkki.pdf}}
 \caption{Abstract components of a big data analytics system. From Google Developer MLOps guide \cite{googlemlops}.}
 \label{simplepipeline}
 \end{center}
 \end{figure}
 
 
-While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most contemporary big data systems consist of the following steps:
+While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most contemporary big data systems implement all of the following steps:
 
 \textbf{Data extraction}: this component is responsible for handling the incoming data. Usual forms of data are either web logs, coming in from a server, or IoT data, coming in from sensors that are often geographically distant from the data ingesting component.
+% that data is usually web logs or sensor requires a reference?
 
 In big data systems incoming data is represented either as batches, meaning chunks of data coming in at certain intervals, or as a stream, meaning that individual data records are coming in constantly. The main advantage of using a batch representation is known to be increased throughput%(find citations here)
 , while stream processing allows smaller end-to-end latencies. %(find citations here)
+% the usually interpreted as stream or batch needs a ref too?
 
 To mitigate the tradeoff between throughput and latency, a popular solution is called the lambda architecture. This reference architecture has a processing unit for both batch and stream data with the stream component, so-called speed layer, handling requests for the data not yet processed by the batch layer \cite{beatingcap}. While this approach is widely accepted to solve the problem of handling highly voluminous data fast and mitigating human errors by allowing restarting the speed layer any time without losing data \cite{lambdakappa}, the architecture has faced criticism for being redundantly complex and forcing the data ingestion code to be written twice \cite{questioninglambda} \cite{uber} \cite{facebook}. As an alternative, the kappa architecture has been proposed, only composing of either a batch or a stream processor, usually the latter \cite{questioninglambda}. This mitigates duplication, but retains the tradeoff with throughput and latency \cite{lambdakappa}.
 
-\textbf{Data preparation}: this step encompasses the processes of data cleaning, transformation, and feature engineering. Data cleaning refers to operations that identify and remove faulty data, such as values that are missing or are clearly impossible such ?. Data transformation and feature engineering are used interchangeably, both meaning processes that transform data into a format that the models used can process. A popular example in this is the mapping of plain text into word count matrices.
+\textbf{Data preparation}: This step encompasses the processes of data cleaning, transformation, and feature engineering. Data cleaning refers to operations identifying and removing faulty data, such as values that are missing or are clearly impossible. Data transformation and feature engineering are used interchangeably, both meaning processes that transform data into a format that the models used can process. A popular example in this is the mapping of plain text into word count matrices \cite{dapbook}.
 
-While the data preparation step is often overlooked in literature %(cite comething...)
-it is both a challenging and crucial part of the system as data preprocessing may take up to x\% of the total end-to-end time of the system. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways.
+While the data preparation step is often overlooked in literature,
+it is a both challenging and crucial part of the system as preprocessing commonly takes up a majority of the total end-to-end latency of a machine learning system \cite{adaptivelearningsystems}. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways.
+% the two approaches and their tradeoffs need a ref...
+% the how many % of time preprocessing takes needs a ref... i got one somewhere...
 
 \textbf{Data storage}: Interpreted in the figure as offline data, the data storage is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Due to the volume of the data, the storage is either cleared often completely or only a small part of the data is archived.
+% data archival needs a ref.
+% popular ways of implementing data storage too!
 
-\textbf{Model training}:
+\textbf{Model training}: This component is responsible for training the model, which means tuning the model parameters in a way that it fits to the distribution of the incoming data in order to make accurate predictions from data coming in during operation.
 
-% to mention: cloud or federated with tradeoffs of better computing resources vs less time taken to transmit data and saved bandwidth. mention that federated approach is out of scope in this work
+The training conducted can be done from scratch, meaning that the same instance of the model has not been trained before, or in cases of using adaptation-capable models, the models can be updated. Details on model updating or retraining are discussed below.
 
-\textbf{Model evaluation and validation}:
+As for infrastructure, training can be conducted in a central or federated manner. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{iotsurvey}. As the amount of data is large, high-performance computing (HPC) clusters and modern general processing units (GPU) are used to reach required latencies \cite{iotsurvey}. Federated approach refers to an internet of things setting where the training is conducted in the edge devices of the IoT network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}. As in the maritime context the data is neither highly private or has differing environments in different sensors, the federated approach is not considered further in this work.
 
-% i need a reference for this
+\textbf{Model evaluation and validation}: In this stage the model is tested and adjusted in various ways. For testing, usually various model metrics such as accuracy for classifiers and error statistics for regression tasks are checked \cite{iotsurvey}. These numbers can also be compared against other models, possibly models already in operation \cite{googlemlops}. Also testing different data sets and checking compatibility with the rest of the system is conducted at this stage \cite{googlemlops}.
 
-\textbf{Model registry}:
+In addition to testing, models are also optimized for the infrastructure that they are being deployed on. This can include, for example, various performance optimizations, or in case of constrained memory, model compression \cite{iotsurvey}.
+
+\textbf{Model registry}: is a centralized storage for the trained models. 
 
 % need a reference here as well...
 
@@ -196,6 +206,8 @@ definitions
 
 % add here: in order to implement adaptive learning, a few new components need to be introduced. Then display the more complex system description and explain with emphasis the trigger and monitoring
 
+% iotsurvey has a decent seeming sect on the monitoring stuff
+
 \section{The case: context and requirements for machine learning in the maritime domain}
 
 Maritime as a domain of application for a sensor-based machine learning system is in a few ways significantly different from many others. The most obvious difference is its global nature; domains like smart cities also have to take into account the fact that there is some geographical distribution, but with the seas covering x\% of the earths' surface, the extent of geographical distribution in the maritime context is on a whole new level.
@@ -204,7 +216,7 @@ With the vastness of the seas and its vital nature for world trade, the amount o
 
 Added to scale, another specific of this context is speed. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change the course of the vessel (todo: fact-check this). This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even of detriment to the success of the system operation: for low latency other more important traits would have to be deprioritised, which in this case would do more harm than good.
 
-The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
+The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, unreceived sensor messages, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
 
 The goal on the application level of the VesselAI project is to provide the following four pilot services to users: vessel route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. More abstract goals are to find a system that is suitable for both managing extreme-scale data and facilitating long model lifetimes. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way.
 
