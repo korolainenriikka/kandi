@@ -73,6 +73,8 @@ The paper is concluded with discussion on if the conclusions reached with the ca
 
 \subsection{The high-level components}
 
+% is this section necessary?
+
 The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
 
 % how do I properly cite the google cloud developer guide?
@@ -180,6 +182,7 @@ The paper at hand is dealing with the problem of adaptive learning. However, as 
 
 The general challenges arising in knowledge retention are the following. Especially within transfer learning \textbf{the stability-plasticity dilemma} is central. This refers to the need of finding an optimal balance on when to retain the old knowledge (stability) and when to replace it with new insight (plasticity) in order to perform well in predicting for both the old tasks seen and the new ones emerging later. Overdoing plasticity, i. e. replacing old parameters too easily may sometimes lead to \textbf{catastrophic forgetting}, which means that the ability to predict accurately for the old tasks is lost completely or for a big part.
 
+% add: that the only legitimate option to drift mitigation is retraining, which is cpu-heavy.
 Within adaptive learning the central problem to address is called \textbf{concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of changes in the environment in which learning is conducted. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
 
 The concept drift can include in itself a need for balancing stability and plasticity, depending on the use case. In autonomous cars, for example, an adaptive learning algorithm could change its predictions based on shifts in lighting and terrain conditions, but it should still be able to operate in the conditions it has seen before the changes \cite{conceptdriftsurvey}. In contrast, in maritime, it is not necessary for the models to perform well in an environment of the past after marine traffic conditions have shifted over time.
@@ -195,7 +198,7 @@ The concept drift can include in itself a need for balancing stability and plast
 In the following section the ways of mitigating the effects of concept drift whilst maintaining performance on old tasks, if necessary, are presented.
 
 The ways of doing adaptive: retraining, incremental learning, online learning. Then there was the ways of preserving old data and re-feeding it to models. Then there are the ensemble learning techniques, putting models to sleep state, blind&informed adaptation, ways for feedback mechanisms
-
+% ! zliobailte's concept drift survey (not conceptdriftsurvey but the 2nd): incremental learning is not related to adaptation, it is a different domain! do not confuseeeee
 -> there are a lot of ways, many ways to classify the ways also. Make more sense of what each means and how they should be presented. Find more sources than \cite{conceptdriftsurvey} to find more insight.
 
 definitions
