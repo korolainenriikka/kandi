@@ -174,12 +174,14 @@ The most mature big data systems as of date have each evolved on their own but d
 
 % Knowledge retention is a self-invented term and should be replaced with a better one.
 
+% online learning is kind of synonymous to stream processing and can (?) be taken as given. define it here or elsewhere, in systems possibly.
+
 In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
 
 The paper at hand is dealing with the problem of adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding transfer learning are defined next.
 
 \textbf{Lifelong learning} is a machine learning paradigm of ''learning many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
-
+% stability-plasticity is a transfer learning problem. omit.
 The general challenges arising in knowledge retention are the following. Especially within transfer learning \textbf{the stability-plasticity dilemma} is central. This refers to the need of finding an optimal balance on when to retain the old knowledge (stability) and when to replace it with new insight (plasticity) in order to perform well in predicting for both the old tasks seen and the new ones emerging later. Overdoing plasticity, i. e. replacing old parameters too easily may sometimes lead to \textbf{catastrophic forgetting}, which means that the ability to predict accurately for the old tasks is lost completely or for a big part.
 
 % add: that the only legitimate option to drift mitigation is retraining, which is cpu-heavy.
@@ -310,6 +312,12 @@ combinations of approaches that are not researched a lot -> immature
     \item transfer learning + online learning \cite{mlforstreamingsurvey}
     \item adaptive learning + delayed labels \cite{mlforstreamingsurvey}
 \end{itemize}
+
+ensemble/single model / drift detection comparison: general impressions
+
+ensemble seems popular and efficient
+
+ensemble literature general impression: every approach is stated to be empirically better than the ones compared to. Should find literature comparing them, not presenting something, maybe. Single-model approaches are used as baselines that are compared to, that are definitely worse than all the ensemble approaches.
 
 \section{system architecture}
 
