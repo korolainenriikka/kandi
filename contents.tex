@@ -41,7 +41,7 @@ methology
 
 when comparing systems, only systems handing spatiotemporal data are considered
 
-when comparing model updating approaches, classifiers are left out. This is because in general in this field classifiers are researched much more than other types of learning and taking classifiers into account would give a false sense of maturity of the approaches as the case studied has only non-classifier models
+when comparing model updating approaches, classifie
 
 
 
@@ -313,11 +313,23 @@ combinations of approaches that are not researched a lot -> immature
     \item adaptive learning + delayed labels \cite{mlforstreamingsurvey}
 \end{itemize}
 
-ensemble/single model / drift detection comparison: general impressions
+HERE: initial hunches I have from going through literature on coping with concept drift
 
 ensemble seems popular and efficient
 
 ensemble literature general impression: every approach is stated to be empirically better than the ones compared to. Should find literature comparing them, not presenting something, maybe. Single-model approaches are used as baselines that are compared to, that are definitely worse than all the ensemble approaches.
+
+things that came up a lot
+maloof
+littlestone
+michalski
+algorithms: STAGGER, AQ-PM, AQ11-PM, AQ11-PM+WAH. DVM
+ensemble diversity
+pruning
+bagging and boosting
+
+single model approaches
+many talk about incremental learning being like a synonym to single model adaptation? is this true? many words are vague in the topic so maybe just choose a definition and start using
 
 \section{system architecture}
 
