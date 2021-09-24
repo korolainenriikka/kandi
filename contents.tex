@@ -1,71 +1,59 @@
 \chapter{Introduction}
+% 1st sect: GENERAL BACKGROUND & MOTIVATION
+A problem occurring in nearly every application of machine learning is the challenge of handling evolving environments, a problem known as  concept drift. Meanwhile, in the domain of big data systems, completely different challenges arise, such as being able to process the volumes of data coming in while meeting decent application response times. The combination of these two problems, the need to adapt the machine learner and simultaneously handling volumes of data, is complex, but common.
 
-%1st paragraph/section: context summary: why
-\section{context summary, why, and motivation}
-%Topic in a sentence: knowledge retention including into a system. The system does machine learning on extreme-scale data
+Each domain in which this combination of problems are tried to be solved is unique. Each has its domain and requirements that vary in terms of multitudes of aspects such as required throughput, the nature of the changes in the environment, available architecture, and regulation.
+Because of this variety in use cases a more fruitful approach to searching for a way of handling adaptation to concept-drifting data should come from the point of view of a case, so the solution can be searched for given some set of assumptions and requirements. 
 
-One of the main paradigm shifts currently ongoing within machine learning is developing models that can handle evolving tasks and environments. While the literature on algorithms able to retain knowledge is increasing, systems approaches to this problem are lagging behind, and systems presented in literature systematically lack reasoning on why the design decisions presented were made.
+% which points from the domain will actually be important regarding the discussion will be found out later, these should be changed then.
+In this thesis the domain of maritime is used as a starting point, and facilitating updates to deep learning models solving problems such as traffic forecasting and navigation as the goal. The domain in question is characteristic in the especially large volume of data coming in in form of sensor messages, and the relative slowness of vessel traffic in comparison to computing. Other points from the domain of application considered are the low quality of incoming data, heterogeneousness of data sources, and complexity of the machine learning models needed; most of these are tailored to the specific case of, for instance, weather routing.
 
-To contribute to filling this gap, an inspection of systems approaches for enabling long model lifetimes within the context of maritime is conducted. The case in question is highly geographically distributed, voluminous in data, and does not require instant response times. The aim is to thoroughly compare and assess approaches for dealing with evolving model environments and discuss which approaches suit the case and its set of requirements. Then, it is discussed what kind of big data system design would optimally enable implementing the knowledge retention approach chosen.
+Traditionally, works addressing the problem of concept drift largely focus on how to build a model that is able to adapt to the environment changes. This thesis can, from this perspective, also be seen as a systems approach to concept drift. If a model is taken as given, it is discussed how the system organization would be able to make sure the model stays accurate. This systems perspective aims to find a solution that not only works, but also takes into account best practices known from the field of designing big data systems. From the lessons learned there it is especially aimed for a solution that is simple and mature enough to be applied to a real-world scenario.
 
-In addition to presenting a system proposal for the specific case, as a conclusion is also discussed, which requirements led to which design decisions to elaborate how the insights derived in this case can be transferred to another case.
+% 2nd section: RESEARCH Q'S, METHODOLOGY, RESULTS SUMMARY
 
-The way in which this work differs form many other system presentations is that the goal is not only to find a solution that works, but to find a solution that has the highest chance of succeeding in operation. This means that some less technical considerations are also included. These are simplicity and maturity of the solution, as these traits arguably increase the chance that a system working in theory actually works in practice.
+% outline
+% main question
+% exact definitions of main question
+% sub-questions
+% note on methodology (literature based but not systematic, non-empirical)
+% results summary
 
-% outline: topic, backgound summary, motivation
+% comment: the sentence on the model is a little vague, tailored means that it is made for the case not just taken from somewhere else. I'm unsure what words to mention on the model here.
 
-% things to mention:
-% the paradigm shift
-% lack of systems literature addressing whys
-% maritime requirements
-% the intention: find vesselai optimal solutions
-% further intention: find applicability to other cases
-% take into account: maturity, simplicity. Not only find a system that works but the one that has the highest probability of succeeding in operation
+The thesis at hand will revolve around one main research question, under which some further specifying sub-questions will be investigated. The main point of investigation is the following:
 
-% to-adds: that maturity is a factor that ended up being the very one reason many promising-seeming approaches cannot be adopted in this case
+\begin{center}
+    Given the domain context and the models used, how to organize a workflow for efficient updating of the models in order to meet the demands posed by the use case?
+\end{center}
 
+As further elaboration, by updating the model it is meant that the model parameters are changed. By efficient we mean efficiency relative to the data volume, not relative to computing resources. This means that an average high performance cluster having the processing power of ... data here ... is assumed and the target is to be able to utilise that to be able to handle as much data in as little time as possible. The model used is assumed to be a complex deep learning model tailored to its specific task, operating in batch mode. Domain context and use case are dissected in section 2.3.
 
-%2nd paragraph/section: question, results, methodology
-\section{research questions, results summary and methodology}
+The secondary research questions considered as implications of the primary one are the following:
 
-primary question: Which model adaptation approach would be optimal for maintaining model accuracy across a long lifetime in the specific context of vesselai?
+\begin{itemize}
+    \item How much human intervention is required for maintaining the updating schemes; what are the possibilities of automating these workflows?
+\end{itemize}
 
-ssecondary question, option #1: what kind of workflow automation needs to be in place in order to have the models updated as efficiently as possible
+% add more implication-type questions later...
+% add paragraph on results here later...
 
-secondary question, option #2: what type of infrastructure is needed to facilitate the chosen approach for model lifetime extension in the system?
+As a note on methodology, the investigation in its entirety is based on literature. Conducting a systematic literature review would be beyond the scope of this thesis, so only material directly relevant regarding the specific set of requirements is taken into account. Testing the various approaches in practice is also beyond scope; the empirical investigation of these findings is left to future works. This limits that both the set of options considered to those already used in the problem domain and the evaluation to analyzig the thoroughness of existing evidence in literature.
 
-%outdated
-a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
-
-methology
-
-when comparing systems, only systems handing spatiotemporal data are considered
-
-when comparing model updating approaches, classifie
-
-
-
-results summary
-
-\section{Chapter roles}
-
-% this should maybe be shortened? in many papers this section is much shorter and only outlines the highest level, ie here chapters maybe
+% 3rd section: CHAPTER ROLES
+% ways of automating might be out of scope, can be deleted if it does not fit in
+% if the result is so that multiple can be good then change chap 4 description to state that the systems applying the max two best seeming options are presented.
 
 The rest of this thesis is organized as follows:
 
-Chapter 2 presents the necessary background knowledge to the reader. First, a general introduction into distributed big data systems with machine learning is given. The high-level components, such as data preprocessing and model training, are presented. Then, some general best practices for big data systems design are discussed.
+Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approach would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. 
 
-A more thorough state-of-the-art inspection is given in the domain of machine learning on the methods for extending the lifetime of a model. The main challenges in this, the concept drift and the stability-plasticity-dilemma are defined, and then the existing solutions for addressing the challenges are presented.
+Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The paper is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
 
-Next, the general context for the VesselAI project is described. The specialities of the maritime domain and the nature of the data sources are dissected, after which the project pilots and general goals are presented. From these the general requirements are listed and the main challenge of the project is identified: how to organize a workflow for efficient adaptation of the models.
+\chapter{Overview on large-scale machine learning systems for maritime}
 
-Chapter 3 analyzes and compares the various model updating approaches presented previously while taking into great consideration the point of view of the case studied. The implications of this to the machine learning workflow and the required infrastructure are inspected for optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
 
-The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
-
-\chapter{Context and Background}
-
-\section{On Big Data Systems With Machine Learning}
+\section{On big data systems}
 
 % MLOps is a term that should be used / mentioned somewhere
 
@@ -160,11 +148,9 @@ The most mature big data systems as of date have each evolved on their own but d
     \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
 \end{itemize}
 
-\section{Model adaptation techniques for machine learning}
+\section{Model updating approaches: terminology}
 
 % to-do: add adaptive learning approaches to the first subsect and remove subsectioning
-
-\subsection{Definitions}
 
 % this section: I should have more sources and double-check that I got the definitions correct.
 
@@ -175,6 +161,10 @@ The most mature big data systems as of date have each evolved on their own but d
 % Knowledge retention is a self-invented term and should be replaced with a better one.
 
 % online learning is kind of synonymous to stream processing and can (?) be taken as given. define it here or elsewhere, in systems possibly.
+
+%define real and virtual drift?
+%model specific and model independent adaptation could be a good divide
+%conceptdriftsurvey was the first to use the term(lecture)
 
 In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
 
@@ -195,8 +185,6 @@ The concept drift can include in itself a need for balancing stability and plast
 
 % maybe add: there is gradual and abrupt drift \cite{streamminingchallenges} \cite{conceptdriftsurvey}
 
-\subsection{Implementing adaptive learning}
-
 In the following section the ways of mitigating the effects of concept drift whilst maintaining performance on old tasks, if necessary, are presented.
 
 The ways of doing adaptive: retraining, incremental learning, online learning. Then there was the ways of preserving old data and re-feeding it to models. Then there are the ensemble learning techniques, putting models to sleep state, blind&informed adaptation, ways for feedback mechanisms
@@ -213,63 +201,60 @@ definitions
 
 % iotsurvey has a decent seeming sect on the monitoring stuff
 
-\section{The case: context and requirements for machine learning in the maritime domain}
+\section{Context and requirements from the maritime domain}
+% maritime is global
+Maritime as a domain of application for a sensor-based machine learning system differs in a few ways from others. The most obvious difference is its global nature: while other spatial domains such as smart cities also have to take geographical distribution into account, maritime is special as it encompasses all of what the earths' surface mostly is covered by: the seas. 
+% maritime is extreme heterogeneous data
 
-Maritime as a domain of application for a sensor-based machine learning system is in a few ways significantly different from many others. The most obvious difference is its global nature; domains like smart cities also have to take into account the fact that there is some geographical distribution, but with the seas covering x\% of the earths' surface, the extent of geographical distribution in the maritime context is on a whole new level.
+As another characteristic, equally to the area that is operated in, the amount of traffic is large, which results to data volumes exceeding even what is conventionally noted as big data. Due to international regulation vessels have to send update signals of their status from every few minutes to every two seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily \cite{maritimeinformatics}, this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather reports are needed \cite{D1.1}. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
 
-With the vastness of the seas and its vital nature for world trade, the amount of vessel traffic is large even in comparison to other big data applications. Due to international regulation vessels have to send update signals on their status from every few minutes to every 2 seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily (a source from \cite{maritimeinformatics} states this), this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather updates, are needed. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
+% lack of speed in terms of vessels
+Added to scale, another specific of this context is speed, or more specifically, the lack of it. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change course. This means that for machine learning services in this domain the acceptable end-to-end latencies are measured in seconds, even minutes. This differs greatly from other sensor system applications, where latencies are usually measured in the order of hundreds of milliseconds (e.g. \cite{anomalysystem}, \cite{facebook}, \cite{edgelatency}). This means that striving for instant response times is redundant, even of detriment, as prioritizing latency inevitably would introduce the need to make compromises in other respects, such as prediction accuracy.
 
-Added to scale, another specific of this context is speed. Depending on the size and type of the vessel, it takes from minutes to up to an hour to change the course of the vessel (todo: fact-check this). This means that for the AI services targeted for navigational purposes the end-to-end latencies need not to be faster than the order of minutes, and execution times of up to 30-60 minutes can be acceptable. For other AI services end-to-end times in order of seconds may be aimed for, but achieving sub-second latencies as is often the goal in literature (citations...), is unnecessary, even of detriment to the success of the system operation: for low latency other more important traits would have to be deprioritised, which in this case would do more harm than good.
+% AIS intro
+The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally expensive. In addition to faults in the data itself, another layer of error is added by the traffic system: factors such as busy areas where part of messages go lost because of overloaded receivers and vessels shutting off transmitters in fear of smugglers bring additional entropy to the data \cite{maritimeinformatics}.
 
-The main data source, the status signal data sent by vessels, called \textit{automatic identification system} (AIS) data, also has its specialities. AIS is a form of sensor data and has two types: static messages containing information such as name, destination and ship characteristics, and dynamic messages with information on the vessels' location, speed, heading, and rate of turn. The challenge with AIS data is both its highly fluctuating reporting intervals and especially its unreliability.  Things such as manually written destinations, faulty timestamping, lack of universal identifiers, unreceived sensor messages, misreported locations, and even illegal traffic camouflaging their operations, make identifying and correcting erroneous data both difficult and computationally intensive.
+% pilots
+The goal of the project studied, called VesselAI, is to provide the following four pilot services to users: route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. In addition to this, the more abstract goals are to find a system that is suitable for both managing extreme-scale data and enabling the models to run in production over extended periods of time. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way, and develop new machine learning methods \cite{D1.1}.
 
-The goal on the application level of the VesselAI project is to provide the following four pilot services to users: vessel route forecasting for traffic monitoring and management, design of optimal ship energy systems, operating autonomous ships in short sea transport, and weather-optimized routing for long-distance voyages. More abstract goals are to find a system that is suitable for both managing extreme-scale data and facilitating long model lifetimes. The goal is also to be able to fully utilize the most modern high performance computing infrastructures in an optimal way.
+% requirements derived from above
+With this context and goal specification in mind, the following system goals and challenges can be stated. The general goal is to be able to provide accurate predictions not in an instant, but still in a time-constrained manner. Two main challenges arise from the combination of context and required services that most pressingly need to be addressed to reach this goal. Firstly, the nature of data used sets high demands on the training part of the workflow: storage, preprocessing, and training. Secondly, given the environment of operation, concept drift identification poses a challenge. As data quality is low, distinguishing drift from noise is hard, especially as it can be expected that the drifts will be more of the gradual type; abrupt drifts will likely be encountered only within subsets of the data. The time spans of vessel operating mean that the prediction correctness is known only after days, which means that the problem of delayed labels is very present in the domain.
 
-With this context specification in mind, the following guidelines on the system aimed for can be stated: the high volume and relatively low quality of the data sets high demands on the training part of the pipeline, whereas the inference side has less strict requirements. The fact that the pilot cases are clearly defined and at least as of date there are no plans for additional applications, the primary challenge is maintaining and updating the models for these specific problem, not being ready to cope with the possibility of new problems being added, as is sometimes the case in other systems (find citations here...).  Summarized, the primary challenge for this system is to find a way of organising the training workflow to maintain accuracy throughout the model lifespan. This is the primary topic of inspection in the following chapters.
-
-% TO ADD HERE: the data processed is not personal in any way and the case studied is in this sense very different from many others. dunno id d10 should be cited because it was marked confidential
-
-% TO ADD (MAYBE): this is sensor stuff so it is kind of IoT like but it is different in many respects to what is usually thought of when talking about IoT like smart ovens and all those
-
-% TO ADD: the data used is spatiotemporal. Kind of mentioned kind of not mentioned. Could be emphasized more if needed in an argument
-
-% could emphasize even more not overdoing latency, not doing speed for the sake of speed because it's cool
+How to deal with these challenges, in order to build a system able to meet its requirements, is the primary topic of inspection in the following chapters.
 
 %outline:
+% 1st paragraph: maritime specifics: geo distr, volume, vessel slowness
+% 2nd paragraph: data is heterogeneous and error-prone
+% missing data due to lots of traffic -> receivers dont take in everything. senders turned off bc smuggling
 
-%maritime
-%	global
-%	geo distributed
-%	volume is huge (ais message rates & amount of traffic: give numbers)
-%	time scales: it takes minutes to an hour to turn a cargo vessel
-
-%ais
-%	what is AIS
-%	a lot of features that are unreliable
-%	identifying the erroneus might be very difficult: smugglers' disguising ais example
-
-%the project
+% 3rd paragraph: pilots n abstract aims
+% the project
 %	the pilots I-V: what each one aims for
 %		these ml problems are difficult
 %	abstract aims
 %		deal with extreme scale data
 %		facilitate continuous learning
 %		utilize modern HPC
-%
-%the system
-%	we combine different data sets
+
+%data thoughts
 %		static and dynamic, fast and slow paced
 %			examples: map data, weather data, sensor data
 %	many models only need a small fraction of the data
-%
-
-%combine these: the requirements
-%we need to know what we need and what we do not need for sure to know which system design makes sense.
 
 
-\chapter{vesselai-like systems}
+% combine these: the requirements.
+% we want accurate solutions to hard problems not instantly, but it should not take forever either
+% security is no obstacle
+% obstacles to reach this
+% there's a big need for data preprocessing (emphasis on workflow efficiency)
+% concept drift is gradual large scale abrupt only in subset of data (napa example: vessels start anchoring somewhere)
+% concept drift: noise vs drift is hard to distinguish bc error data
+% correct labels to data come delayed, talking about days to couple weeks. hard to get labels also is possible. mention delayed labels
 
-\section{facilitating knowledge retention: training approaches}
+
+\chapter{Analysis of model updating approaches for batch learning}
+
+\section{Updating approaches}
 
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
@@ -331,7 +316,7 @@ bagging and boosting
 single model approaches
 many talk about incremental learning being like a synonym to single model adaptation? is this true? many words are vague in the topic so maybe just choose a definition and start using
 
-\section{system architecture}
+%\section{system architecture}
 
 to discuss here: given the model updating approach deemed best for the case, what should the system be like on an abstract level?
 
@@ -340,7 +325,7 @@ to discuss here: given the model updating approach deemed best for the case, wha
     \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
 \end{itemize}
 
-\section{infrastructure choices}
+\section{Automating model updates}
 
 discuss here: edge v couldlet v fog v cloud for inference, then also should training be central (hpc) or more distributed
 
@@ -354,7 +339,7 @@ discuss here: edge v couldlet v fog v cloud for inference, then also should trai
 
 so: fog has drawbacks in complexity that are not acceptable considering that the advantages gotten with it are largely irrelevant.
 
-\chapter{the vesselai system}
+\chapter{The systems application}
 
 i e the results i get
 

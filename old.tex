@@ -1,0 +1,29 @@
+% a file for text that in the current version is out of scope / unnecessary
+
+introduction parts
+secondary question, option #2: what type of infrastructure is needed to facilitate the chosen approach for model lifetime extension in the system?
+
+%outdated
+a point of motivation from D1.1 moving beyond the state of the art section: ''the time is ripe  to  rethink  whether  cloud  computing  is  the  only  architecture  able  to  support  IoT  applications, especially  in  the  case  of  smart applications,  where  static  and  mobile  IoT  devices  will  be  widely embedded  in  infrastructures.  It  is  worth  investigating  an  overall  orchestration  of  the  computational resources  available  today  that  can  take  advantage  of  the  edge-fog-cloud  continuum'' addition: to make lifelong learning possible
+
+methology
+
+when comparing systems, only systems handing spatiotemporal data are considered
+
+chap roles long version
+Chapter 2 presents the necessary background knowledge to the reader . First, a general introduction into distributed big data systems with machine learning is given. The high-level components, such as data preprocessing and model training, are presented. Then, some general best practices for big data systems design are discussed.
+
+A more thorough state-of-the-art inspection is given in the domain of machine learning on the methods for extending the lifetime of a model. The main challenges in this, the concept drift and the stability-plasticity-dilemma are defined, and then the existing solutions for addressing the challenges are presented.
+
+Next, the general context for the VesselAI project is described. The specialities of the maritime domain and the nature of the data sources are dissected, after which the project pilots and general goals are presented. From these the general requirements are listed and the main challenge of the project is identified: how to organize a workflow for efficient adaptation of the models.
+
+Chapter 3 analyzes and compares the various model updating approaches presented previously while taking into great consideration the point of view of the case studied. The implications of this to the machine learning workflow and the required infrastructure are inspected for optimal trade-offs. After this, the VesselAI system proposal is presented, alongside reasoning why these decision should be made. It is also considered whether there is enough evidence to make the presented conclusions, or if there are several good-seeming options to choose from.
+
+The paper is concluded with discussion on if the conclusions reached with the case study are applicable to other systems with similar requirements. Especially applicability to other cases with highly voluminous data combined with a long model lifetime is emphasized.
+
+intro start
+In addition to presenting a system proposal for the specific case, as a conclusion is also discussed, which requirements led to which design decisions to elaborate how the insights derived in this case can be transferred to another case.
+
+While the literature on algorithms able to adapt to these changes is vast, systems approaches to this problem are lagging behind, and systems presented in literature systematically lack reasoning on why the design decisions presented were made.
+
+ The case in question is highly geographically distributed, voluminous in data, and does not require instant response times. The aim is to thoroughly compare and assess approaches for dealing with evolving model environments and discuss which approaches suit the case and its set of requirements. Then, it is discussed what kind of big data system design would optimally enable implementing the knowledge retention approach chosen.
