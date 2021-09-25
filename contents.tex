@@ -2,6 +2,10 @@
 % 1st sect: GENERAL BACKGROUND & MOTIVATION
 A problem occurring in nearly every application of machine learning is the challenge of handling evolving environments, a problem known as  concept drift. Meanwhile, in the domain of big data systems, completely different challenges arise, such as being able to process the volumes of data coming in while meeting decent application response times. The combination of these two problems, the need to adapt the machine learner and simultaneously handling volumes of data, is complex, but common.
 
+% to-add here: converse with D1.1.
+% they said: complete lack of works addressing autoML + model adaptation + maritime. so I'm adddressing a literature gap
+% D1.1 also identified a list of main challenges under "3.4Advanced Machine Learning  and Deep Learning Optimisation Techniques for Validity, High Precision, Federated and Continual Learning". There were several AutoML challenges, heaviness of retraining and the mitigation of catastrophic forgetting
+
 Each domain in which this combination of problems are tried to be solved is unique. Each has its domain and requirements that vary in terms of multitudes of aspects such as required throughput, the nature of the changes in the environment, available architecture, and regulation.
 Because of this variety in use cases a more fruitful approach to searching for a way of handling adaptation to concept-drifting data should come from the point of view of a case, so the solution can be searched for given some set of assumptions and requirements. 
 
@@ -121,7 +125,7 @@ The most important design decision to make for this component in the sensor data
 OCF is The Open Connectivity Foundation. add below + the proper source
 
 The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
-
+% maybe switch this to be intro to automl + mlops?
 \subsection{Best-practice design principles}
 
 %\cite{designprinciples}: most important things are system stability with fluctuating data quality, scalability, minimal human intervention
@@ -148,60 +152,30 @@ The most mature big data systems as of date have each evolved on their own but d
     \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
 \end{itemize}
 
-\section{Model updating approaches: terminology}
-
-% to-do: add adaptive learning approaches to the first subsect and remove subsectioning
-
-% this section: I should have more sources and double-check that I got the definitions correct.
-
-% mention the types of adaptive learning earlier
-
-% find reference to "There are two broad ways of retaining knowledge"
-
-% Knowledge retention is a self-invented term and should be replaced with a better one.
-
-% online learning is kind of synonymous to stream processing and can (?) be taken as given. define it here or elsewhere, in systems possibly.
-
-%define real and virtual drift?
-%model specific and model independent adaptation could be a good divide
-%conceptdriftsurvey was the first to use the term(lecture)
-
-In machine learning based systems, the term \textbf{knowledge retention} means extending the span of time of a machine learning model from months to years while preserving its performance. Here ''knowledge'' means the model parameters that resulted from training a machine learning model of a specific machine learning task. There are two broad ways of retaining knowledge. Firstly, one can use a model for a specific task in an environment that is shifting over time. This is called \textbf{adaptive learning} \cite{conceptdriftsurvey}. Secondly, a model can be used in multiple tasks; the knowledge gained from training for one task can be transferred to similar problem domains. This is referred to with \textbf{transfer learning} \cite{lmlsystems}.
-
-The paper at hand is dealing with the problem of adaptive learning. However, as terms can be easily confused and misunderstood, some terms regarding transfer learning are defined next.
-
-\textbf{Lifelong learning} is a machine learning paradigm of ''learning many tasks over a lifetime from one or more domains'' \cite{lmlsystems}. This means that the knowledge gained from one task is processed in a way that it can be applied to a related task. As of date lifelong learning is implemented for simple classification tasks, and the new tasks are usually introduced by including unseen classes of data for the testing data set \cite{lmlinneuralnets}. A new environment could also perhaps be interpreted as a new task, but as the paradigm is currently still new and tackling very simple problems \cite{lmlinneuralnets}, it is too early for its adoption to a real-world scenario with complex models.
-% stability-plasticity is a transfer learning problem. omit.
-The general challenges arising in knowledge retention are the following. Especially within transfer learning \textbf{the stability-plasticity dilemma} is central. This refers to the need of finding an optimal balance on when to retain the old knowledge (stability) and when to replace it with new insight (plasticity) in order to perform well in predicting for both the old tasks seen and the new ones emerging later. Overdoing plasticity, i. e. replacing old parameters too easily may sometimes lead to \textbf{catastrophic forgetting}, which means that the ability to predict accurately for the old tasks is lost completely or for a big part.
-
-% add: that the only legitimate option to drift mitigation is retraining, which is cpu-heavy.
-Within adaptive learning the central problem to address is called \textbf{concept drift}. This means, in technical terms, that ''the relation between the input data and the target variable changes over time'' \cite{conceptdriftsurvey}. This is usually the result of changes in the environment in which learning is conducted. For example, in the maritime domain, it is possible that over the years vessels' speeds increase, and as a result the old trajectory forecaster predicts systematically false future locations for vessels.
-
-The concept drift can include in itself a need for balancing stability and plasticity, depending on the use case. In autonomous cars, for example, an adaptive learning algorithm could change its predictions based on shifts in lighting and terrain conditions, but it should still be able to operate in the conditions it has seen before the changes \cite{conceptdriftsurvey}. In contrast, in maritime, it is not necessary for the models to perform well in an environment of the past after marine traffic conditions have shifted over time.
-
-% maybe add here the definition of feature drift: "A feature drift occurs when a subset of features becomes, or ceases to be, relevant to the learning task [10]" (from mlflorstreamingsurvey) -> feature evolution will be a rare occurence in vesselai, can be omitted? also streamminingchallenges stated that feature drift is an important problem to address!
-
-% maybe add: also hyperparams need to evolve! \cite{mlflorstreamingsurvey}
-
-% maybe add: there is gradual and abrupt drift \cite{streamminingchallenges} \cite{conceptdriftsurvey}
-
-In the following section the ways of mitigating the effects of concept drift whilst maintaining performance on old tasks, if necessary, are presented.
-
-The ways of doing adaptive: retraining, incremental learning, online learning. Then there was the ways of preserving old data and re-feeding it to models. Then there are the ensemble learning techniques, putting models to sleep state, blind&informed adaptation, ways for feedback mechanisms
-% ! zliobailte's concept drift survey (not conceptdriftsurvey but the 2nd): incremental learning is not related to adaptation, it is a different domain! do not confuseeeee
--> there are a lot of ways, many ways to classify the ways also. Make more sense of what each means and how they should be presented. Find more sources than \cite{conceptdriftsurvey} to find more insight.
-
-definitions
- retraining: taking a new instance of the model and completely training it again from scratch
-	    incremental learning: a model is trained with each batch coming in from a data source and updated after each training. a way of doing adaptive learning.
-	    online learning: the model is updated with each data entry coming in from a data stream and is simultaneously constantly in operation. a way of doing adaptive learning.
-	    ensemble learning: adapting through predicting with a combination of models
-
 % add here: in order to implement adaptive learning, a few new components need to be introduced. Then display the more complex system description and explain with emphasis the trigger and monitoring
 
 % iotsurvey has a decent seeming sect on the monitoring stuff
 
+\section{Model updating approaches: terminology}
+
+%conceptdriftsurvey was the first to use the term(lecture)
+
+The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
+
+For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
+data and the target variable changes over time' \cite{conceptdriftsurvey}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaite_driftsurvey}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
+
+In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
+
+The systems settings where machine learning is conducted also bear their own names. These settings can be divided into \textbf{online learning}, where data comes in as a stream and is processed one unit at a time, and \textbf{batch learning}, where incoming data is processed as batches. Both can be seen as types of \textbf{incremental learning} \cite{giraud-carrier_note_2000}, which refers to learning settings where not all input data is available when model training starts, but comes only after a delay.
+
+In some works, the term \textbf{continuous learning} is used to refer to machine learning that aims at keeping the model functioning over longer periods of time, despite challenges such as concept drifts. This can be conducted in two broad ways. \textbf{Transfer learning} aims to continuously extend the functioning of a learner to new tasks, which can for instance be new classes to a classifier \cite{iotsurvey}. \textbf{Adaptive learning}, on the other hand, aims to preserve the models' functioning on a non-changing task \cite{conceptdriftsurvey}. In deep learning, the term \textbf{lifelong learning} is used interchangeably to mean an adaptively learning neural network (ref automlsurvey once read), or a transfer-learning capable one.
+
+With the overview on terminology presented above, our research challenge can be reformulated to be the following: the aim is to mitigate concept drifts while avoiding catastrophic forgetting using continuous lifelong learning, operating in batch mode. Here the term lifelong learning is used in the meaning of single-task adaptation over time, as is common in AutoML literature (ref automlsurvey later once read).
+
+
 \section{Context and requirements from the maritime domain}
+
 % maritime is global
 Maritime as a domain of application for a sensor-based machine learning system differs in a few ways from others. The most obvious difference is its global nature: while other spatial domains such as smart cities also have to take geographical distribution into account, maritime is special as it encompasses all of what the earths' surface mostly is covered by: the seas. 
 % maritime is extreme heterogeneous data
