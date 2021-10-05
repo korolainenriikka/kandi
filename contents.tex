@@ -42,6 +42,8 @@ The secondary research questions considered as implications of the primary one a
 % add more implication-type questions later...
 % add paragraph on results here later...
 
+% add to methodology: literature regarding automl and concept drift were searched for answers
+
 As a note on methodology, the investigation in its entirety is based on literature. Conducting a systematic literature review would be beyond the scope of this thesis, so only material directly relevant regarding the specific set of requirements is taken into account. Testing the various approaches in practice is also beyond scope; the empirical investigation of these findings is left to future works. This limits that both the set of options considered to those already used in the problem domain and the evaluation to analyzig the thoroughness of existing evidence in literature.
 
 % 3rd section: CHAPTER ROLES
@@ -65,7 +67,7 @@ Chapter 4 synthesizes the findings above and presents an abstract overview of th
 
 \subsection{The high-level components}
 
-% is this section necessary?
+% the automl survey can be ref'd here
 
 The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
 
@@ -167,8 +169,10 @@ data and the target variable changes over time' \cite{conceptdriftsurvey}. As su
 
 In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
 
+% change this maybe... Hoi, S. C., Sahoo, D., Lu, J., & Zhao, P. (2018). Online learning: A comprehensive survey. arXiv preprint arXiv:1802.02871. states more that online learning is any learning happening in an online setting? double-check... but incremental learning can be defined to be what online is now
 The systems settings where machine learning is conducted also bear their own names. These settings can be divided into \textbf{online learning}, where data comes in as a stream and is processed one unit at a time, and \textbf{batch learning}, where incoming data is processed as batches. Both can be seen as types of \textbf{incremental learning} \cite{giraud-carrier_note_2000}, which refers to learning settings where not all input data is available when model training starts, but comes only after a delay.
 
+% also continual used in literature
 In some works, the term \textbf{continuous learning} is used to refer to machine learning that aims at keeping the model functioning over longer periods of time, despite challenges such as concept drifts. This can be conducted in two broad ways. \textbf{Transfer learning} aims to continuously extend the functioning of a learner to new tasks, which can for instance be new classes to a classifier \cite{iotsurvey}. \textbf{Adaptive learning}, on the other hand, aims to preserve the models' functioning on a non-changing task \cite{conceptdriftsurvey}. In deep learning, the term \textbf{lifelong learning} is used interchangeably to mean an adaptively learning neural network (ref automlsurvey once read), or a transfer-learning capable one.
 
 With the overview on terminology presented above, our research challenge can be reformulated to be the following: the aim is to mitigate concept drifts while avoiding catastrophic forgetting using continuous lifelong learning, operating in batch mode. Here the term lifelong learning is used in the meaning of single-task adaptation over time, as is common in AutoML literature (ref automlsurvey later once read).
@@ -230,19 +234,17 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 \section{Updating approaches}
 
+State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
+& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
+
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
-include also here: data cleaning
+single model approaches: incremental learning. clearly model-spe
 
-central vs federated learning: learning location
-
-the approach of doing adaptive learning in a unsupervised / semi-supervised setting
-
-Here: give the +'s and -'s of each approach. This information on how knowledge retention is likely to be applied affects the discussions on the other things in consideration
 
 blind mechanisms
 
-+ no need for a feedbacck system
++ no need for a feedback system
 
 identifying concept drift approaches
 
@@ -278,21 +280,7 @@ ensemble seems popular and efficient
 
 ensemble literature general impression: every approach is stated to be empirically better than the ones compared to. Should find literature comparing them, not presenting something, maybe. Single-model approaches are used as baselines that are compared to, that are definitely worse than all the ensemble approaches.
 
-things that came up a lot
-maloof
-littlestone
-michalski
-algorithms: STAGGER, AQ-PM, AQ11-PM, AQ11-PM+WAH. DVM
-ensemble diversity
-pruning
-bagging and boosting
 
-single model approaches
-many talk about incremental learning being like a synonym to single model adaptation? is this true? many words are vague in the topic so maybe just choose a definition and start using
-
-%\section{system architecture}
-
-to discuss here: given the model updating approach deemed best for the case, what should the system be like on an abstract level?
 
 \begin{itemize}
     \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
@@ -301,19 +289,17 @@ to discuss here: given the model updating approach deemed best for the case, wha
 
 \section{Automating model updates}
 
-discuss here: edge v couldlet v fog v cloud for inference, then also should training be central (hpc) or more distributed
+i.e. what solutions automl provides with the problem of efficient updates
 
-+ and - for fog, from \cite{fogsurvey}
+other options outside of updates, ''win time elsewhere''
 
-+'s that matter: saves bandwidth, mitigates problems with hostile areas that have fragile net connections (fog is stated to be fundamental in solving this problem), has reached a good enough maturity
+automl has solutions regarding data cleaning optimization
 
-+'s that do not matter: saves time (in range 66-302 ms), is somewhat more private, context awareness: able to adjust to location is probably not something the models are able to benefit from because edge training is most likely not computationally feasible
-
--'s: adds compexity by distribution and heterogenity: " imposes non-trivial orchestration issues", cloud is more energy efficient (fot this check [120] from \cite{fogsurvey}),
-
-so: fog has drawbacks in complexity that are not acceptable considering that the advantages gotten with it are largely irrelevant.
+another ''outside the box'': central vs federated learning: learning location
 
 \chapter{The systems application}
+
+to discuss here: given the model updating approach deemed best for the case, what should the system be like on an abstract level?
 
 i e the results i get
 
