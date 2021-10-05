@@ -113,6 +113,7 @@ it is a both challenging and crucial part of the system as preprocessing commonl
 
 The training conducted can be done from scratch, meaning that the same instance of the model has not been trained before, or in cases of using adaptation-capable models, the models can be updated. Details on model updating or retraining are discussed below.
 
+% changes: federated is definitely considered! + add quick intro to SGD=stochastic gradient descent, the goto algo for distributing neural nets
 As for infrastructure, training can be conducted in a central or federated manner. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{iotsurvey}. As the amount of data is large, high-performance computing (HPC) clusters and modern general processing units (GPU) are used to reach required latencies \cite{iotsurvey}. Federated approach refers to an internet of things setting where the training is conducted in the edge devices of the IoT network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}. As in the maritime context the data is neither highly private or has differing environments in different sensors, the federated approach is not considered further in this work.
 
 \textbf{Model evaluation and validation}: In this stage the model is tested and adjusted in various ways. For testing, usually various model metrics such as accuracy for classifiers and error statistics for regression tasks are checked \cite{iotsurvey}. These numbers can also be compared against other models, possibly models already in operation \cite{googlemlops}. Also testing different data sets and checking compatibility with the rest of the system is conducted at this stage \cite{googlemlops}.
@@ -166,6 +167,8 @@ The most mature big data systems as of date have each evolved on their own but d
 %conceptdriftsurvey was the first to use the term(lecture)
 
 % distributed training appears in systems papers... maybe define federated learning here if the term is needed?
+
+% another term to add: reoccurring concepts (if necessary)
 
 The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
 
@@ -236,6 +239,8 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 \chapter{Analysis of model updating approaches for batch learning}
 
+% one possibility of a subsection divide here: efficient retraining, drift detestion: retraining timeliness, and mitigating the need to re-train: adaptive and lifelong learning
+
 intro to this section here: in this chapter the existing solutions to the problem of efficiently updating the models are analyzed. Specified: we are looking at batch-mode neural nets. Should mention LSTM or is it too specific? Should I understand better what LSTM is?
 
 \section{Updating approaches}
@@ -251,6 +256,13 @@ in adaptive learning / concept drift adaptation the solutions have the machine l
 ensembles better also in  \cite{mlforstreamingsurvey}:
 a mature approach for the problem
 
+
+drift detection:
+approaches from bifet book
+- CUSUM and Page-Hinkley: analyzing of summary statistics (standard deviation) and alarm trigger once the statistic changes over a certain threshold that is determined by the tolerable false alarm rate. analysis: my knowledge is insufficient to tell if this is usable but it can definitely work
+- Statistical tests that compare two windows from different parts of a data stream to determine if the distribution has changed. this is unlikely to work given the maritime drifts nature
+- Gama's drift detection method: determines if the error rate has increased. very unlikely to work here because feedback receiving is unsure
+- ADWIN (adaptive sliding window): This is a more 'heavy duty' approach but somewhat mitigates the general tradeoff. This approach uses dynamic windowing. i need to understand more on this to tell if this is good. window is suboptimal anyway as it requires memory. this is also not simple.
 
 blind mechanisms
 
