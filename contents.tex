@@ -67,6 +67,9 @@ Chapter 4 synthesizes the findings above and presents an abstract overview of th
 
 \subsection{The high-level components}
 
+% add here: eg DATE n kung fu papers (1st & 2nd from lucy) state that in ML systems distribution is of high importance. add to model training part
+%kungfu: stochastic gradient descent (SGD) algorithm is common, give that as an example maybe?
+
 % the automl survey can be ref'd here
 
 The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
@@ -162,6 +165,8 @@ The most mature big data systems as of date have each evolved on their own but d
 
 %conceptdriftsurvey was the first to use the term(lecture)
 
+% distributed training appears in systems papers... maybe define federated learning here if the term is needed?
+
 The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
 
 For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
@@ -169,7 +174,6 @@ data and the target variable changes over time' \cite{conceptdriftsurvey}. As su
 
 In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
 
-% change this maybe... Hoi, S. C., Sahoo, D., Lu, J., & Zhao, P. (2018). Online learning: A comprehensive survey. arXiv preprint arXiv:1802.02871. states more that online learning is any learning happening in an online setting? double-check... but incremental learning can be defined to be what online is now
 The systems settings where machine learning is conducted also bear their own names. These settings can be divided into \textbf{online learning}, where data comes in as a stream and is processed one unit at a time, and \textbf{batch learning}, where incoming data is processed as batches. Both can be seen as types of \textbf{incremental learning} \cite{giraud-carrier_note_2000}, which refers to learning settings where not all input data is available when model training starts, but comes only after a delay.
 
 % also continual used in literature
@@ -232,14 +236,20 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 \chapter{Analysis of model updating approaches for batch learning}
 
+intro to this section here: in this chapter the existing solutions to the problem of efficiently updating the models are analyzed. Specified: we are looking at batch-mode neural nets. Should mention LSTM or is it too specific? Should I understand better what LSTM is?
+
 \section{Updating approaches}
 
 State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
 & large data constantly coming in. new models made for the solution -> no ready adaptive version of those
 
+Another point at the beginning: there are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning / systems literature to speed up the retraining process, including data ingestion and preprocessing. (so: how to efficiently retrain? or how to mitigate the need for retraining?). focus here anyway is mostly in the first, the second is given as a more top-level overview
+
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
-single model approaches: incremental learning. clearly model-spe
+in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
+ensembles better also in  \cite{mlforstreamingsurvey}:
+a mature approach for the problem
 
 
 blind mechanisms
@@ -252,13 +262,9 @@ identifying concept drift approaches
 
 - a feedback mechanism needs to be in the system
 
-online learning
 
-- no way for abrupt adaptation, only gradual \cite{conceptdriftsurvey}
 
-ensemble
 
-+ a mature approach for the problem \cite{mlforstreamingsurvey}
 
 approaches: stable&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
 
