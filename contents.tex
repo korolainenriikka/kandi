@@ -1,18 +1,23 @@
 \chapter{Introduction}
-% 1st sect: GENERAL BACKGROUND & MOTIVATION
-A problem occurring in nearly every application of machine learning is the challenge of handling evolving environments, a problem known as  concept drift. Meanwhile, in the domain of big data systems, completely different challenges arise, such as being able to process the volumes of data coming in while meeting decent application response times. The combination of these two problems, the need to adapt the machine learner and simultaneously handling volumes of data, is complex, but common.
+% 1st sect: GENERAL BACKGROUND: data environments evolve. data stream processing requires being accurate efficiently.
+A problem occurring in nearly every application of machine learning is the challenge of handling evolving environments, a problem known as concept drift. Meanwhile, the domain of data stream processing proposes its own set of challenges, the main one being the ability of providing accurate predictions at any time despite large volumes of data and constrained time and memory resources. The combination of these two problems, the need to adapt to evolving data while meeting the systems requirements, is complex, but common.
 
+% there are lots of solutions to this so requirements are needed to select from them
+Multitudes of approaches have been proposed as a solution to the problem of handling concept drift efficiently in stream processing systems, each with their own set of strengths. Therefore, to be able to compare the applicability of these solutions, a set of requirements should be used as a starting point. A case study is presented for this purpose, and the solution is searched for given the set of identified assumptions and requirements. 
+
+% the context intro
+The thesis at hand uses as context an on-going research project, VesselAI, aiming for applying novel machine learning to the domain of maritime. The domain in question is characteristic in the especially large volume of incoming sensor data and the slowness of vessel traffic in comparison. Additional context specifics include low-quality and heterogeneousness of data, the complexity and novelty of the deep learning models used, and the delayedness of model feedback. 
+
+% goal
+The goal of this analysis is, given the project context, to find the most optimal approach for maintaining model accuracy. In other words, from the challenges identified in the VesselAI state-of-the-art analysis \cite{D1.1}, the problem tackled is `ML model retraining is computationally very heavy: in environments where data evolves, it is urgent to use architectures that manage ML models in order to adapt to new data/tasks and retrain when necessary'. In addition to the suggested approach of lifelong learning, additional insight is gathered from the research fields of concept drift adaptation, batch learning, and AutoML.  This way literature gap of works addressing the maritime domain and automated model adaptation identified in \cite{D1.1} is addressed.   
+
+% deliverable conversation
 % to-add here: converse with D1.1.
 % they said: complete lack of works addressing autoML + model adaptation + maritime. so I'm adddressing a literature gap
-% D1.1 also identified a list of main challenges under "3.4Advanced Machine Learning  and Deep Learning Optimisation Techniques for Validity, High Precision, Federated and Continual Learning". There were several AutoML challenges, heaviness of retraining and the mitigation of catastrophic forgetting
 
-Each domain in which this combination of problems are tried to be solved is unique. Each has its domain and requirements that vary in terms of multitudes of aspects such as required throughput, the nature of the changes in the environment, available architecture, and regulation.
-Because of this variety in use cases a more fruitful approach to searching for a way of handling adaptation to concept-drifting data should come from the point of view of a case, so the solution can be searched for given some set of assumptions and requirements. 
 
-% which points from the domain will actually be important regarding the discussion will be found out later, these should be changed then.
-In this thesis the domain of maritime is used as a starting point, and facilitating updates to deep learning models solving problems such as traffic forecasting and navigation as the goal. The domain in question is characteristic in the especially large volume of data coming in in form of sensor messages, and the relative slowness of vessel traffic in comparison to computing. Other points from the domain of application considered are the low quality of incoming data, heterogeneousness of data sources, and complexity of the machine learning models needed; most of these are tailored to the specific case of, for instance, weather routing.
-
-Traditionally, works addressing the problem of concept drift largely focus on how to build a model that is able to adapt to the environment changes. This thesis can, from this perspective, also be seen as a systems approach to concept drift. If a model is taken as given, it is discussed how the system organization would be able to make sure the model stays accurate. This systems perspective aims to find a solution that not only works, but also takes into account best practices known from the field of designing big data systems. From the lessons learned there it is especially aimed for a solution that is simple and mature enough to be applied to a real-world scenario.
+% systems perspective
+Traditionally, works addressing the problem of concept drift largely focus on how to build a model that is able to adapt to the changing environment. This thesis can, from this perspective, also be seen as a systems approach to concept drift. If a model is taken as given, it is discussed how the system organization would be able to make sure the model stays accurate. This perspective also aims to take into account the insight on best practices from the field of designing big data systems. From the lessons learned there it is especially aimed for a solution that is simple and mature enough to be applied to a real-world scenario.
 
 % 2nd section: RESEARCH Q'S, METHODOLOGY, RESULTS SUMMARY
 
@@ -25,39 +30,36 @@ Traditionally, works addressing the problem of concept drift largely focus on ho
 
 % comment: the sentence on the model is a little vague, tailored means that it is made for the case not just taken from somewhere else. I'm unsure what words to mention on the model here.
 
-The thesis at hand will revolve around one main research question, under which some further specifying sub-questions will be investigated. The main point of investigation is the following:
+% research question
+The main research question addressed in this work is the following:
 
 \begin{center}
     Given the domain context and the models used, how to organize a workflow for efficient updating of the models in order to meet the demands posed by the use case?
 \end{center}
 
-As further elaboration, by updating the model it is meant that the model parameters are changed. By efficient we mean efficiency relative to the data volume, not relative to computing resources. This means that an average high performance cluster having the processing power of ... data here ... is assumed and the target is to be able to utilise that to be able to handle as much data in as little time as possible. The model used is assumed to be a complex deep learning model tailored to its specific task, operating in batch mode. Domain context and use case are dissected in section 2.3.
+As further elaboration, by updating the model it is meant that the model parameters are changed. By efficient we mean efficiency relative to the data volume, not relative to computing resources. This means that an average high performance cluster is assumed and the target is to be able to utilise that to be able to handle as much data in as little time as possible. The domain context used is the maritime domain, and the model used is assumed to be a deep learning model operating in batch mode.
 
 The secondary research questions considered as implications of the primary one are the following:
 
 \begin{itemize}
+    \item Is it possible to organize retraining effectively enough to handle incoming data, or does the model itself need to be adaptable?
     \item How much human intervention is required for maintaining the updating schemes; what are the possibilities of automating these workflows?
 \end{itemize}
 
-% add more implication-type questions later...
 % add paragraph on results here later...
 
-% add to methodology: literature regarding automl and concept drift were searched for answers
-
-As a note on methodology, the investigation in its entirety is based on literature. Conducting a systematic literature review would be beyond the scope of this thesis, so only material directly relevant regarding the specific set of requirements is taken into account. Testing the various approaches in practice is also beyond scope; the empirical investigation of these findings is left to future works. This limits that both the set of options considered to those already used in the problem domain and the evaluation to analyzig the thoroughness of existing evidence in literature.
+As a note on methodology, the investigation in its entirety is based on literature. Conducting a systematic literature review would be beyond the scope of this thesis, so only material directly relevant regarding the specific set of requirements is taken into account. Testing the various approaches in practice is also beyond scope; the empirical investigation of these findings is left to future works. This limits both the set of options considered to those already used in the problem domain and the evaluation to analyzig the thoroughness of existing evidence in literature.
 
 % 3rd section: CHAPTER ROLES
-% ways of automating might be out of scope, can be deleted if it does not fit in
 % if the result is so that multiple can be good then change chap 4 description to state that the systems applying the max two best seeming options are presented.
 
 The rest of this thesis is organized as follows:
 
-Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approach would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. 
-
-Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The paper is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
+Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approaches would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The thesis is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
 
 \chapter{Overview on large-scale machine learning systems for maritime}
 
+% in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description
 
 \section{On big data systems}
 
@@ -65,12 +67,16 @@ Chapter 4 synthesizes the findings above and presents an abstract overview of th
 
 % current main concern for this sect: I state out a lot of facts without giving a reference -> the fine line between common knowledge and what needs backing...
 
+% add here: this system presented is a ml one, some notes added specifically on the usage of neural networks in these systems
+
 \subsection{The high-level components}
 
 % add here: eg DATE n kung fu papers (1st & 2nd from lucy) state that in ML systems distribution is of high importance. add to model training part
 %kungfu: stochastic gradient descent (SGD) algorithm is common, give that as an example maybe?
 
 % the automl survey can be ref'd here
+
+% maybe add: model development. in neural networks neural architecture search is a major computational problem that has a lot of automl research attention. however, this operation is only needed when the model is first developed, not during updates, so its optimization is not considered
 
 The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
 
@@ -170,10 +176,16 @@ The most mature big data systems as of date have each evolved on their own but d
 
 % another term to add: reoccurring concepts (if necessary)
 
+% also could add ensemble learning... as a general term for using a combination of models
+
+% a important distinction is if data is handled as batches or in one pass mode one instance at a time!
+
 The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
 
+% maybe add: distinction between noise and drift is that noise is that samples coming randomly from a probability distribution fluctuate, in drift the distribution itself changes
 For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
 data and the target variable changes over time' \cite{conceptdriftsurvey}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaite_driftsurvey}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
+% specification to delayed labels: label does not only mean class label in classification but any feedback.
 
 In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
 
@@ -184,6 +196,9 @@ In some works, the term \textbf{continuous learning} is used to refer to machine
 
 With the overview on terminology presented above, our research challenge can be reformulated to be the following: the aim is to mitigate concept drifts while avoiding catastrophic forgetting using continuous lifelong learning, operating in batch mode. Here the term lifelong learning is used in the meaning of single-task adaptation over time, as is common in AutoML literature (ref automlsurvey later once read).
 
+
+% add here description like this: The online learning setting under consideration is one
+%where data can be buffered in batches using a moving window. So we do batch mode online learning.
 
 \section{Context and requirements from the maritime domain}
 
@@ -243,26 +258,35 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 intro to this section here: in this chapter the existing solutions to the problem of efficiently updating the models are analyzed. Specified: we are looking at batch-mode neural nets. Should mention LSTM or is it too specific? Should I understand better what LSTM is?
 
+another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classificaiton and regression tasks are dominant.
+
 \section{Updating approaches}
 
 State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
-& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
+\& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
 
 Another point at the beginning: there are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning / systems literature to speed up the retraining process, including data ingestion and preprocessing. (so: how to efficiently retrain? or how to mitigate the need for retraining?). focus here anyway is mostly in the first, the second is given as a more top-level overview
 
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
-in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
+in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism \cite{celik_adaptation_2021}, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
 ensembles better also in  \cite{mlforstreamingsurvey}:
 a mature approach for the problem
 
 
 drift detection:
+intro to drift detection: while \cite{zliobaite_driftsurvey} stated that this is more suitable for cases where abrupt drift is prominent, the good part about drift detection is that it can be implemented on any model; model independence / orthogonality
+
 approaches from bifet book
 - CUSUM and Page-Hinkley: analyzing of summary statistics (standard deviation) and alarm trigger once the statistic changes over a certain threshold that is determined by the tolerable false alarm rate. analysis: my knowledge is insufficient to tell if this is usable but it can definitely work
 - Statistical tests that compare two windows from different parts of a data stream to determine if the distribution has changed. this is unlikely to work given the maritime drifts nature
 - Gama's drift detection method: determines if the error rate has increased. very unlikely to work here because feedback receiving is unsure
 - ADWIN (adaptive sliding window): This is a more 'heavy duty' approach but somewhat mitigates the general tradeoff. This approach uses dynamic windowing. i need to understand more on this to tell if this is good. window is suboptimal anyway as it requires memory. this is also not simple.
+
+
+distribution as a way of doing retraining efficiently. mergeability =  that the combined model gives accurate results for the combined data despite distribution in-between \cite{bifet_machine_2017}. from \cite{ben-nun_demystifying_2019}: model parallelism also possible but (my justification) less researched field, usually data is parallellized rather than this
+
+another approach from \cite{ben-nun_demystifying_2019} to making dnn training more efficient: altering the computations to a form that is as compatible as possible with the used hardware. The specifics of this go beyond scope but can be found in \cite{ben-nun_demystifying_2019}
 
 blind mechanisms
 
@@ -274,11 +298,7 @@ identifying concept drift approaches
 
 - a feedback mechanism needs to be in the system
 
-
-
-
-
-approaches: stable&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
+approaches: stable\&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
 
 data window comparisons
 
@@ -314,6 +334,10 @@ other options outside of updates, ''win time elsewhere''
 automl has solutions regarding data cleaning optimization
 
 another ''outside the box'': central vs federated learning: learning location
+
+generally, except for the few first studies, there is very little existing literature of automl tackling concept drift. \cite{celik_adaptation_2021}
+
+however, automl methods performance suffer when the common assumption of no drifts no longer holds \cite{celik_adaptation_2021}
 
 \chapter{The systems application}
 
