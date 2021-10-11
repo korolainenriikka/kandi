@@ -11,11 +11,6 @@ The thesis at hand uses as context an on-going research project, VesselAI, aimin
 % goal
 The goal of this analysis is, given the project context, to find the most optimal approach for maintaining model accuracy. In other words, from the challenges identified in the VesselAI state-of-the-art analysis \cite{D1.1}, the problem tackled is `ML model retraining is computationally very heavy: in environments where data evolves, it is urgent to use architectures that manage ML models in order to adapt to new data/tasks and retrain when necessary'. In addition to the suggested approach of lifelong learning, additional insight is gathered from the research fields of concept drift adaptation, batch learning, and AutoML.  This way literature gap of works addressing the maritime domain and automated model adaptation identified in \cite{D1.1} is addressed.   
 
-% deliverable conversation
-% to-add here: converse with D1.1.
-% they said: complete lack of works addressing autoML + model adaptation + maritime. so I'm adddressing a literature gap
-
-
 % systems perspective
 Traditionally, works addressing the problem of concept drift largely focus on how to build a model that is able to adapt to the changing environment. This thesis can, from this perspective, also be seen as a systems approach to concept drift. If a model is taken as given, it is discussed how the system organization would be able to make sure the model stays accurate. This perspective also aims to take into account the insight on best practices from the field of designing big data systems. From the lessons learned there it is especially aimed for a solution that is simple and mature enough to be applied to a real-world scenario.
 
@@ -57,11 +52,15 @@ The rest of this thesis is organized as follows:
 
 Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approaches would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The thesis is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
 
-\chapter{Overview on large-scale machine learning systems for maritime}
+\chapter{Overview on large-scale machine\\ learning systems for maritime}
 
 % in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description
 
-\section{On big data systems}
+% ingressi: mitä aiot rakentaa luvussa, mikä tulee esille, miksi se on tärkeää, mihin tällä kokonaisuudella pyritään
+
+The general task of big data systems is that they should be able to handle vast amounts of data and from that be able to provide predictions in a timely manner. To position our problem of model maintenance in this larger domain, this chapter provides an introduction to the necessary background. First, the entire big data pipeline is presented on an abstract level, alongside best practices of systems design. Then, to clarify the terminology, machine learning approaches for efficient model updates are defined. Lastly, the requirements of the case used to compare the maintenance approaches are derived from the application domain description.
+
+\section{Introduction to big data systems}
 
 % MLOps is a term that should be used / mentioned somewhere
 
@@ -74,7 +73,7 @@ Chapter 2 presents the necessary background knowledge to the reader: an overview
 % add here: eg DATE n kung fu papers (1st & 2nd from lucy) state that in ML systems distribution is of high importance. add to model training part
 %kungfu: stochastic gradient descent (SGD) algorithm is common, give that as an example maybe?
 
-% the automl survey can be ref'd here
+% the automl survey can be ref'd here. add here a note on what automl + possibly mlops is.
 
 % maybe add: model development. in neural networks neural architecture search is a major computational problem that has a lot of automl research attention. however, this operation is only needed when the model is first developed, not during updates, so its optimization is not considered
 
@@ -87,7 +86,7 @@ The steps that most large-scale machine learning systems compose of are displaye
 \ \newline
 \begin{center}
 \includegraphics[width=0.9\textwidth]{simplegoogle.png}
-\caption{Abstract components of a big data analytics system. From Google Developer MLOps guide \cite{googlemlops}.}
+\caption{Abstract components of a big data analytics system. From Google Developer MLOps guide~\cite{googlemlops}.}
 \label{simplepipeline}
 \end{center}
 \end{figure}
@@ -137,6 +136,9 @@ The most important design decision to make for this component in the sensor data
 OCF is The Open Connectivity Foundation. add below + the proper source
 
 The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
+
+The steps of data ingestion, preprocessing, model development, training, inference, and maintenance, represent the end-to-end workflow that is required for a system to be able to provide intelligence from a data stream. From this large field of research, model maintenance is our primary concern: how to, given the hardware used and requirements defined, set up the part of the system that is responsible to keep the model accurate in production. Understood from the whole systems point of view, our goal really is a means to meeting the ends of setting up a full, efficient data processing pipeline.
+
 % maybe switch this to be intro to automl + mlops?
 \subsection{Best-practice design principles}
 
@@ -154,19 +156,22 @@ The definition of fog computing is the following, as stated by the the OCF (in \
 
 %also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important
 
-In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. At its simplest, for instance, improving the systems throughput by adding ... (what?) in a way adds complexity, meanwhile sacrificing simplicity.
+In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. Therefore, the right things should be identifiend for them to be prioritized.
 
-The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices, that should be preferred no matter the field of implementation. In each system compared, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples}, and the Uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the following traits were deemed the most important across all systems:
+The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices that should be preferred no matter the field of implementation. In each system compared, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples} and the Uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the traits of ease of use, scalability and resiliency were deemed the most important across all systems.
 
-\begin{itemize}
-    \item \textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
-    \item \textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of the nature of big data, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributed computation, or making adding more hardware to the system as seamless as possible.
-    \item \textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastucture, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
-\end{itemize}
+\textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
+
+\textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of the nature of big data, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributed computation, or making adding more hardware to the system as seamless as possible.
+    
+\textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastructure, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
+
 
 % add here: in order to implement adaptive learning, a few new components need to be introduced. Then display the more complex system description and explain with emphasis the trigger and monitoring
 
 % iotsurvey has a decent seeming sect on the monitoring stuff
+
+These best practices will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. This means that aspects such as simplicity and maturity will be emphasized, as they can be seen to enable ease of use as well as scalability and resiliency. 
 
 \section{Model updating approaches: terminology}
 
@@ -180,7 +185,7 @@ The most mature big data systems as of date have each evolved on their own but d
 
 % a important distinction is if data is handled as batches or in one pass mode one instance at a time!
 
-The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
+The terms for challenges arising in accuracy maintenance when models run in production are many, and the naming for various machine learning paradigms that try to address these issues is equally diverse. As the terminology of the problem field at hand is not fully established, some definitions need to be provided to clarify the discussions below. Some liberty had to be taken in order to definitely describe each term; these definitions are nowhere from absolute. The definitions chosen from the existing ones were aimed to be those that as words intuitively seem like what they are defined to be, and are as widely used in related literature in the same meaning as possible. 
 
 % maybe add: distinction between noise and drift is that noise is that samples coming randomly from a probability distribution fluctuate, in drift the distribution itself changes
 For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
@@ -200,10 +205,13 @@ With the overview on terminology presented above, our research challenge can be 
 % add here description like this: The online learning setting under consideration is one
 %where data can be buffered in batches using a moving window. So we do batch mode online learning.
 
-\section{Context and requirements from the maritime domain}
+\section{Context and requirements from the maritime \\domain}
+
+% why this section: we need to know the context to know the requirements to choose the right approach 
+Lastly for the background, this section introduces the maritime domain and elaborates its specialities that are then used to find the most optimal model maintenance workflow.
 
 % maritime is global
-Maritime as a domain of application for a sensor-based machine learning system differs in a few ways from others. The most obvious difference is its global nature: while other spatial domains such as smart cities also have to take geographical distribution into account, maritime is special as it encompasses all of what the earths' surface mostly is covered by: the seas. 
+The domain of application, maritime, differs in a few ways from others from the point or view of a sensor-based machine learning system. The most obvious difference is its global nature: while other spatial domains such as smart cities also have to take geographical distribution into account, maritime is special as it encompasses all of what the earths' surface mostly is covered by: the seas. 
 % maritime is extreme heterogeneous data
 
 As another characteristic, equally to the area that is operated in, the amount of traffic is large, which results to data volumes exceeding even what is conventionally noted as big data. Due to international regulation vessels have to send update signals of their status from every few minutes to every two seconds, depending on their speed and course \cite{maritimeinformatics}. With approximately 100, 000 ships sailing the world oceans daily \cite{maritimeinformatics}, this leads to several billion messages sent each day. To this exceptional amount of data we refer to as \textit{extreme-scale data} in this work. In addition to this, in order to provide valid maritime intelligence, other types of data such as geographical information and weather reports are needed \cite{D1.1}. Therefore, the data is not only highly voluminous, but also heterogeneous, coming in both static and dynamic forms at different velocities.
@@ -256,16 +264,18 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 % one possibility of a subsection divide here: efficient retraining, drift detestion: retraining timeliness, and mitigating the need to re-train: adaptive and lifelong learning
 
-intro to this section here: in this chapter the existing solutions to the problem of efficiently updating the models are analyzed. Specified: we are looking at batch-mode neural nets. Should mention LSTM or is it too specific? Should I understand better what LSTM is?
+In this chapter, the existing solutions to the problem of efficiently updating the models are analyzed. Specifically, we assume that there is a batch-trained neural network in production, and the environment faces occasionally concept drifts, mainly of gobal and gradual, or abrupt and partial type.
+
+There are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning and systems literature to speed up the retraining process, including data ingestion and preprocessing. Both of these will be investigated, with some emphasis on efficient re-training.
+
+\section{Mitigating the need to re-train: lifelong learning and drift adaptation}
 
 another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classificaiton and regression tasks are dominant.
-
-\section{Updating approaches}
 
 State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
 \& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
 
-Another point at the beginning: there are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning / systems literature to speed up the retraining process, including data ingestion and preprocessing. (so: how to efficiently retrain? or how to mitigate the need for retraining?). focus here anyway is mostly in the first, the second is given as a more top-level overview
+Another point at the beginning: 
 
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
@@ -325,7 +335,7 @@ ensemble literature general impression: every approach is stated to be empirical
     \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
 \end{itemize}
 
-\section{Automating model updates}
+\section{Optimizing re-training: batch learning and AutoML}
 
 i.e. what solutions automl provides with the problem of efficient updates
 
@@ -339,16 +349,39 @@ generally, except for the few first studies, there is very little existing liter
 
 however, automl methods performance suffer when the common assumption of no drifts no longer holds \cite{celik_adaptation_2021}
 
+Here: as summary paragraph some little summary on the analysis. Last sentence like these are presented as a system below
+
 \chapter{The systems application}
 
-to discuss here: given the model updating approach deemed best for the case, what should the system be like on an abstract level?
+to discuss here: given the model updating approach(es) deemed best for the case, what should the system be like on an abstract level?
 
 i e the results i get
 
+% is this chap necessary?
+
 \chapter{Conclusion}
+% what was aimed for, the results, impact of the results
 
-add here applicability of these conclusions to other systems.
+% what was done
+In this thesis, the optimal model updating workflows were searched for from literature concerning concept drift adaptation, batch learning, lifelong learning and AutoML. Firstly, the whole big data processing pipeline and domain requirements were presented. Then, the approaches found in literature were compared. Finally, the best-seeming options were summarized and presented as an abstract worklow that would incorporate them.
 
-could add here: that the results gotten could not be validated empirically as the scope and level of this thesis will not allow for a thorough experimental inspection.
+% impact: applicability of the conclusions to other systems
+As big data analytics grows more and more mainstream, the analysis on applicability of the research to the real world grows in importance. Therefore studies summarizing the applicability and maturity of the existing approaches is countinuously needed in order to successfully move the ideas out of research labs.
 
-also add maybe here that the literature on the topic is so vast and quickly evolving that it is possible that the subset of existing literature that I have gone through somehow conveys things in a non-objective way. This is unlikely however.
+
+also add maybe here that the literature on the topic is so vast and quickly evolving that it is possible that the subset of existing literature that I have gone through somehow conveys things in a non-objective way. also the cases are many and only some are researched so it is possible that they make things seem different than the actually optimal would be.
+
+significant traits that should be considered in choosing an maintenance approach
+ - the learning task, many approaches are classification only
+ - is the learning conducted in single instance or batch mode
+ - what type of drift can be predicted to occur?
+ - main constraint of the system
+ 
+ here delayed feedback was important, and the fact that partial and gradual drift can be predicted to dominate. also system requirements are important, the challenge was data volume, not response times
+ 
+ As another point of contribution, summarizing the insight existing on how to efficiently maintain model accuracy sheds light on which approaches need further investigation. The approaches deemed somewhat immature for real world application were the following:
+ 
+ automl with drift adaptation once research is more mature
+ the classification focus of drift adaptation in general, less intertwinedness between task and approach
+ 
+ end jargon something like the techniques now address the volume and speed now but continual work needs to be done to meet the growing demands of the future.
