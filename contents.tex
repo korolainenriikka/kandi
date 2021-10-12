@@ -79,7 +79,6 @@ The general task of big data systems is that they should be able to handle vast 
 
 The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
 
-% how do I properly cite the google cloud developer guide?
 % the figure is too small... -> not very readable
 \begin{figure}[ht]
 %\begin{figure}[tbh] t= top, b = bottom, h=here
@@ -118,6 +117,7 @@ it is a both challenging and crucial part of the system as preprocessing commonl
 
 The training conducted can be done from scratch, meaning that the same instance of the model has not been trained before, or in cases of using adaptation-capable models, the models can be updated. Details on model updating or retraining are discussed below.
 
+%add here: hyperparam tuning into model dev kinda
 % changes: federated is definitely considered! + add quick intro to SGD=stochastic gradient descent, the goto algo for distributing neural nets
 As for infrastructure, training can be conducted in a central or federated manner. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{iotsurvey}. As the amount of data is large, high-performance computing (HPC) clusters and modern general processing units (GPU) are used to reach required latencies \cite{iotsurvey}. Federated approach refers to an internet of things setting where the training is conducted in the edge devices of the IoT network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}. As in the maritime context the data is neither highly private or has differing environments in different sensors, the federated approach is not considered further in this work.
 
@@ -137,24 +137,13 @@ OCF is The Open Connectivity Foundation. add below + the proper source
 
 The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
 
+% add here paragraph on best practices: simplicity & automation. distill 2.2, scalability and resiliency not really needed. define mlops and automl.
+
+%definition of automl: automated machine learning that minimizes human intervention in designing and building machine learning systems \cite{celik}
+
 The steps of data ingestion, preprocessing, model development, training, inference, and maintenance, represent the end-to-end workflow that is required for a system to be able to provide intelligence from a data stream. From this large field of research, model maintenance is our primary concern: how to, given the hardware used and requirements defined, set up the part of the system that is responsible to keep the model accurate in production. Understood from the whole systems point of view, our goal really is a means to meeting the ends of setting up a full, efficient data processing pipeline.
 
-% maybe switch this to be intro to automl + mlops?
 \subsection{Best-practice design principles}
-
-%\cite{designprinciples}: most important things are system stability with fluctuating data quality, scalability, minimal human intervention
-
-%\cite{facebook}: ease of use, performance, fault-tolerance, scalability, correctness
-
-%\cite{storm@twitter}: scalable, resilient, extensible, efficient, easy to administer
-
-%\cite{uber} always a tradeoff between requirements, quick iteration for improvements, quich scaling in hardware
-
-%\cite{millwheel}: fault tolerance, scalability
-
-%--> synthesized there is scalability, resiliency for faults & environment changes, easy to improve the system 
-
-%also some genaral principles on bd systems. Tradeoffs is big: usually to achieve better results in some respect simplicity is sacrificed. The goal is to do complex in right places where real benefits can be received, and keep it simple elsewhere. Also point on this is that the big mature big data systems stated that simplicity or ease of use or maintainability, basically variants of simplicity, is the most imporant trait or one of the most important
 
 In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. Therefore, the right things should be identifiend for them to be prioritized.
 
@@ -171,7 +160,9 @@ The most mature big data systems as of date have each evolved on their own but d
 
 % iotsurvey has a decent seeming sect on the monitoring stuff
 
-These best practices will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. This means that aspects such as simplicity and maturity will be emphasized, as they can be seen to enable ease of use as well as scalability and resiliency. 
+In addition to incorporating these best practices, another trend in big data systems can be identified to be the need to minimize human intervention in the system. This concern is the main goal of \textbf{AutoML}, automated machine learning. Another related field, MlOps, similarly to DevOps, aims to find practices enabling better automation.
+
+The principles of simplicity, scalability, resiliency and degree of automation will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. This means that especially simplicity and maturity will be emphasized, as they can be seen to enable ease of use as well as scalability and resiliency. 
 
 \section{Model updating approaches: terminology}
 
@@ -189,7 +180,7 @@ The terms for challenges arising in accuracy maintenance when models run in prod
 
 % maybe add: distinction between noise and drift is that noise is that samples coming randomly from a probability distribution fluctuate, in drift the distribution itself changes
 For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
-data and the target variable changes over time' \cite{conceptdriftsurvey}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaite_driftsurvey}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
+data and the target variable changes over time' \cite{conceptdriftsurvey} \cite{schlimmer_incremental_1986}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaite_driftsurvey}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
 % specification to delayed labels: label does not only mean class label in classification but any feedback.
 
 In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
@@ -268,9 +259,10 @@ In this chapter, the existing solutions to the problem of efficiently updating t
 
 There are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning and systems literature to speed up the retraining process, including data ingestion and preprocessing. Both of these will be investigated, with some emphasis on efficient re-training.
 
-\section{Mitigating the need to re-train: lifelong learning and drift adaptation}
+% rename sect, these approaches require retraining
+\section{Reducing the need to re-train: lifelong learning and drift adaptation}
 
-another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classificaiton and regression tasks are dominant.
+another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classification and regression tasks are dominant. define here: previously unseenly model dependent and model independent drift adaptation approaches. training set sampling
 
 State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
 \& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
@@ -279,75 +271,82 @@ Another point at the beginning:
 
 The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
+% INAPPLICABLE SOLUTIONS: INCREMENTAL LEARNING & ENSEMBLES (CLASSIFICATION ONLY)
 in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism \cite{celik_adaptation_2021}, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
 ensembles better also in  \cite{mlforstreamingsurvey}:
 a mature approach for the problem
 
+ensemble is popular and efficient
 
-drift detection:
+incremental ('feed more data') or retrain from scratch: which one is better depends very much on the data and the choice affects performance a lot \cite{celik_adaptation_2021}. this needs to be tested with ais
+
+% DRIFT DETECTION
 intro to drift detection: while \cite{zliobaite_driftsurvey} stated that this is more suitable for cases where abrupt drift is prominent, the good part about drift detection is that it can be implemented on any model; model independence / orthogonality
 
 approaches from bifet book
 - CUSUM and Page-Hinkley: analyzing of summary statistics (standard deviation) and alarm trigger once the statistic changes over a certain threshold that is determined by the tolerable false alarm rate. analysis: my knowledge is insufficient to tell if this is usable but it can definitely work
 - Statistical tests that compare two windows from different parts of a data stream to determine if the distribution has changed. this is unlikely to work given the maritime drifts nature
-- Gama's drift detection method: determines if the error rate has increased. very unlikely to work here because feedback receiving is unsure
+- Gama's drift detection method (DDM): determines if the error rate has increased. very unlikely to work here because feedback receiving is unsure
 - ADWIN (adaptive sliding window): This is a more 'heavy duty' approach but somewhat mitigates the general tradeoff. This approach uses dynamic windowing. i need to understand more on this to tell if this is good. window is suboptimal anyway as it requires memory. this is also not simple.
 
+\cite{celik_adaptation_2021} deemed EDDM the best drift detector, \cite{madrid_towards_2019} says best is FHDDM. both are improved DDM's
 
+blind mechanisms
++ no need for a feedback system
+identifying concept drift approaches
++ more accuracy compared to blind methods \cite{conceptdriftsurvey}
+- a feedback mechanism needs to be in the system
+
+% TRAINING SET MANIPULATION
+data window comparisons
+
+- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> not applicable?
+
+sliding windows are popular \cite{celik_adaptation_2021}. intuitively seem useful... \cite{maritimeinformatics} (maybe) stated that removing unnecessary trajectory points makes training more efficient without degrading accuracy?
+
+% LIFELONG LEARNING
+
+comment from \cite{celik_adaptation_2021}: they talk about the new concepts as new tasks but division into tasks is nontrivial
+
+lifelong learning regards tasks that can be seen as both different problems in transfer learning or one tasks with varying concepts \cite{madrid_towards_2019}
+
+\section{Optimizing re-training: batch learning and AutoML}
+
+
+% DISTRIBUTION & PARALLELIZATION
 distribution as a way of doing retraining efficiently. mergeability =  that the combined model gives accurate results for the combined data despite distribution in-between \cite{bifet_machine_2017}. from \cite{ben-nun_demystifying_2019}: model parallelism also possible but (my justification) less researched field, usually data is parallellized rather than this
 
 another approach from \cite{ben-nun_demystifying_2019} to making dnn training more efficient: altering the computations to a form that is as compatible as possible with the used hardware. The specifics of this go beyond scope but can be found in \cite{ben-nun_demystifying_2019}
 
-blind mechanisms
 
-+ no need for a feedback system
+% AUTOML
+% structure: 1. state of literature (little to no research)
+% 2. existing possibilities: automated pipeline optimization and automated adaptation strategy choice
+% both of these: first makes full recovery possible but is quite immature, second requires to have the mechanisms. further improvements but not the main ones
+% other areas that have works: preprocessing automation can enhance simplicity
 
-identifying concept drift approaches
+% eka lause siis meinaa et automl:llä pystytään tekeen semmosia juttuja jotka ei ois manuaalisesti mahdollisia; monia asioita voidaan muuttaa dynaamisesti useemmin ja paljon tarkemmin
+As for AutoML, while most of the research aims to minimize human intervention, there are also ideas that enable more robust drift adaptation as these approaches enable new ways of adaptation that would not be feasible manually. The literature concerning AutoML approaches for concept drift adaptation is very new and narrow, but two promising ideas regarding new ways to incorporate adaptability have appeared. The first one adapts the full model updating pipeline; including preprocessing and retraining configuration and parameters. Celik et al. proved that while retraining or incremental training somewhat maintain accuracy using drift detectors, for full accuracy recovery after drifts, adjustments to the full pipeline is required \cite{celik_adaptation_2021}. Additionally, \cite{celik_adaptation_2021} and \cite{madrid_towards_2019} prove that automl mechanisms performance significantly suffers from drifts, so the phenomenon needs to be taken into account while considering system automation. 
 
-+ more accuracy compared to blind methods \cite{conceptdriftsurvey}
+% add here analysis of this: need to incorporate this but performance is so case dependent that the approach needs to be tested with the case data. also incrementally adding batches or from scratch needs that
 
-- a feedback mechanism needs to be in the system
+The second promising approach, presented by Bakirov et al. \cite{bakirov_automated_2021} present a way of dynamically choosing and changing the adaptation strategies in cases where many are available. This introduces dynimism that enables better adaptation. However, as this strategy needs to have the many adaptation strategies, this is possible only as a way of enhancing the effect of existing adaptation strategies, not as the primary strategy.
 
-approaches: stable\&reactive models, weighted average, model sleeping \cite{conceptdriftsurvey}
+Outside of drift adaptation, AutoML literature can be used to ease human intervention in other parts of the system. This includes especially data preprocessing, where literature is vast.
 
-data window comparisons
+% notes: automl
+%\cite{madrid_towards_2019} first work addressing drift and automl. couple works after that but not many
 
-- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> probably not applicable
+%\cite{celik_adaptation_2021}:
+%automl assumes static data sets
+%the assumption that only model needs to be updated to adapt to drift is false. the full preprocess + tune params + train needs to be adapted -> adaptable pipeline creation. this is promising, tens of \% accuracy wins, but very novel so immature
+%when using automl for finding pipelines rerunning from scratch is infeasible as it is computationally expensive -> keep the pipeline (suboptimal) or have efficient pipeline adaptability (immature) -> opt for suboptimal
+% ! this paper assumes classification...
 
-combinations of approaches that are not researched a lot -> immature
+%\cite{bakirov_automated_2021} this paper seems to present that it is possible to choose the optimal adaptation strategy in case there are many in an automated way. did not understand so revisit needed...
 
-\begin{itemize}
-    \item concept drift detection + delayed labels \cite{mlforstreamingsurvey}
-    \item transfer learning + online learning \cite{mlforstreamingsurvey}
-    \item adaptive learning + delayed labels \cite{mlforstreamingsurvey}
-\end{itemize}
-
-HERE: initial hunches I have from going through literature on coping with concept drift
-
-ensemble seems popular and efficient
-
-ensemble literature general impression: every approach is stated to be empirically better than the ones compared to. Should find literature comparing them, not presenting something, maybe. Single-model approaches are used as baselines that are compared to, that are definitely worse than all the ensemble approaches.
-
-
-
-\begin{itemize}
-    \item where to do data cleaning - maybe too much given the amount of to-discuss here already? \cite{mlforstreamingsurvey} has a good sect on this if this will eb considered
-    \item algorithm performance feedback mechanism (was presented as a thing to take into account in \cite{streamminingchallenges})
-\end{itemize}
-
-\section{Optimizing re-training: batch learning and AutoML}
-
-i.e. what solutions automl provides with the problem of efficient updates
-
-other options outside of updates, ''win time elsewhere''
-
-automl has solutions regarding data cleaning optimization
-
-another ''outside the box'': central vs federated learning: learning location
-
-generally, except for the few first studies, there is very little existing literature of automl tackling concept drift. \cite{celik_adaptation_2021}
-
-however, automl methods performance suffer when the common assumption of no drifts no longer holds \cite{celik_adaptation_2021}
+%other options outside of updates, ''win time elsewhere'' from automl here
+%data cleaning optimization
 
 Here: as summary paragraph some little summary on the analysis. Last sentence like these are presented as a system below
 
@@ -372,7 +371,7 @@ As big data analytics grows more and more mainstream, the analysis on applicabil
 also add maybe here that the literature on the topic is so vast and quickly evolving that it is possible that the subset of existing literature that I have gone through somehow conveys things in a non-objective way. also the cases are many and only some are researched so it is possible that they make things seem different than the actually optimal would be.
 
 significant traits that should be considered in choosing an maintenance approach
- - the learning task, many approaches are classification only
+ - the learning task, many approaches are classification only, the continued assumption of the learning task being a classification one raises questions to the applicability of these techniques to other learning tasks
  - is the learning conducted in single instance or batch mode
  - what type of drift can be predicted to occur?
  - main constraint of the system
@@ -381,7 +380,7 @@ significant traits that should be considered in choosing an maintenance approach
  
  As another point of contribution, summarizing the insight existing on how to efficiently maintain model accuracy sheds light on which approaches need further investigation. The approaches deemed somewhat immature for real world application were the following:
  
- automl with drift adaptation once research is more mature
+ automl with drift adaptation once research is more mature, pipeline adaptability especially promising
  the classification focus of drift adaptation in general, less intertwinedness between task and approach
  
  end jargon something like the techniques now address the volume and speed now but continual work needs to be done to meet the growing demands of the future.
