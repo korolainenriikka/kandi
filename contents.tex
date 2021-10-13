@@ -257,60 +257,61 @@ How to deal with these challenges, in order to build a system able to meet its r
 
 In this chapter, the existing solutions to the problem of efficiently updating the models are analyzed. Specifically, we assume that there is a batch-trained neural network in production, and the environment faces occasionally concept drifts, mainly of gobal and gradual, or abrupt and partial type.
 
-There are two approaches to go about when trying to reach the goal of efficient updates. One is to mitigate the need to completely retrain, i.e. apply methods from adaptive and/or lifelong learning. Other is to try to make retraining as effective as possible: using detectors to optimize when to update, use batch learning and systems literature to speed up the retraining process, including data ingestion and preprocessing. Both of these will be investigated, with some emphasis on efficient re-training.
+There are two approaches to go about when trying to reach the goal of efficient updates outside of using adaptable models. One is to reduce the need for retraining by timing updates correctly using concept drift detection. The other is to try to make retraining as effective as possible using batch learning systems literature. As a further point on how to improve the updating scheme, the first automl solutions on the topic are presented.
+
+% training set sampling is one existing approach but is not considered, maybe add or not?
 
 % rename sect, these approaches require retraining
-\section{Reducing the need to re-train: lifelong learning and drift adaptation}
+\section{Timeliness of re-training: concept drift detection}
 
-another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classification and regression tasks are dominant. define here: previously unseenly model dependent and model independent drift adaptation approaches. training set sampling
+% random stuff......
+%another intro point: some listed, some analyzed in terms of how applicable they are with neural nets. many approaches are very intertwined with a specific ml problem, usually classification, and their applicability to other tasks is largely not considered. generally under the term concept drift, classification and regression tasks are dominant. define here: previously unseenly model dependent and model independent drift adaptation approaches. training set sampling
 
-State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
-\& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
+%State at the beginning: the comparison point used is retraining from scratch without any implicit drift detection. ... is compared for the best solution for Batch learning LSTM / deep learning
+%\& large data constantly coming in. new models made for the solution -> no ready adaptive version of those
 
-Another point at the beginning: 
+%Another point at the beginning: 
 
-The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
+%The feedback mechanisms issue: is it possible to train supervised with historical data and then operate without performance feedback?
 
 % INAPPLICABLE SOLUTIONS: INCREMENTAL LEARNING & ENSEMBLES (CLASSIFICATION ONLY)
-in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism \cite{celik_adaptation_2021}, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
-ensembles better also in  \cite{mlforstreamingsurvey}:
-a mature approach for the problem
+%in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism \cite{celik_adaptation_2021}, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
+%ensembles better also in  \cite{mlforstreamingsurvey}:
+%a mature approach for the problem
 
-ensemble is popular and efficient
+%ensemble is popular and efficient
 
-incremental ('feed more data') or retrain from scratch: which one is better depends very much on the data and the choice affects performance a lot \cite{celik_adaptation_2021}. this needs to be tested with ais
-
-% DRIFT DETECTION
-intro to drift detection: while \cite{zliobaite_driftsurvey} stated that this is more suitable for cases where abrupt drift is prominent, the good part about drift detection is that it can be implemented on any model; model independence / orthogonality
-
-approaches from bifet book
-- CUSUM and Page-Hinkley: analyzing of summary statistics (standard deviation) and alarm trigger once the statistic changes over a certain threshold that is determined by the tolerable false alarm rate. analysis: my knowledge is insufficient to tell if this is usable but it can definitely work
-- Statistical tests that compare two windows from different parts of a data stream to determine if the distribution has changed. this is unlikely to work given the maritime drifts nature
-- Gama's drift detection method (DDM): determines if the error rate has increased. very unlikely to work here because feedback receiving is unsure
-- ADWIN (adaptive sliding window): This is a more 'heavy duty' approach but somewhat mitigates the general tradeoff. This approach uses dynamic windowing. i need to understand more on this to tell if this is good. window is suboptimal anyway as it requires memory. this is also not simple.
-
-\cite{celik_adaptation_2021} deemed EDDM the best drift detector, \cite{madrid_towards_2019} says best is FHDDM. both are improved DDM's
-
-blind mechanisms
-+ no need for a feedback system
-identifying concept drift approaches
-+ more accuracy compared to blind methods \cite{conceptdriftsurvey}
-- a feedback mechanism needs to be in the system
+%incremental ('feed more data') or retrain from scratch: which one is better depends very much on the data and the choice affects performance a lot \cite{celik_adaptation_2021}. this needs to be tested with ais
 
 % TRAINING SET MANIPULATION
-data window comparisons
+%data window comparisons
 
-- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> not applicable?
+%- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> not applicable?
 
-sliding windows are popular \cite{celik_adaptation_2021}. intuitively seem useful... \cite{maritimeinformatics} (maybe) stated that removing unnecessary trajectory points makes training more efficient without degrading accuracy?
+%sliding windows are popular \cite{celik_adaptation_2021}. intuitively seem useful... \cite{maritimeinformatics} (maybe) stated that removing unnecessary trajectory points makes training more efficient without degrading accuracy?
 
-% LIFELONG LEARNING
+% & LIFELONG LEARNING
 
-comment from \cite{celik_adaptation_2021}: they talk about the new concepts as new tasks but division into tasks is nontrivial
+%comment from \cite{celik_adaptation_2021}: they talk about the new concepts as new tasks but division into tasks is nontrivial
 
-lifelong learning regards tasks that can be seen as both different problems in transfer learning or one tasks with varying concepts \cite{madrid_towards_2019}
+%lifelong learning regards tasks that can be seen as both different problems in transfer learning or one tasks with varying concepts \cite{madrid_towards_2019}
 
-\section{Optimizing re-training: batch learning and AutoML}
+% ACTUAL DRIFT DETECTION TEXT STARTIN HERE; CAN BE EXPANDED
+
+% outline / what i wanna say here....
+% intro points: global gradual or abrupt partial is important, gradual is bad for detection
+% methods: windowing comparison, statistics: do two samples come from the same distribution?, ddm eddm fhddm and other model performance based: slow but popular
+% my argument: abrupt needs to be detected in a federated manner
+% so statistics need to be used as they are mem efficient and fast
+% for gradual something feedback based can be useful but likely is not useful.
+
+Concerning the implicit detection of concept drifts, the expectation of either gradual or abrupt partial drifts being present in our case is important. Additionally, abrupt drifts can be expected to be locally concentrated: an abrupt change is more likely to occur in a location than, for instance, in a feature of all sensor data. Another general point is that concept drift detection is overall better suitable for adaptation to abrupt drift as gradual drifts are hard to be distinguished from noise \cite{zliobaite_driftsurvey}. 
+
+Roughly, drift detectors can be divided into three classes: statistical methods triggering drifts based on perceived data distribution change, windowing techniques that compare two windows and trigger change if they differ sufficiently, and model feedback based methods that mark deteriorating model performance as drift occurring \cite{faithfull_unsupervised_2018}. Considering the nature of the case studied, it is necessary to detect the abrupt drifts: in cases where traffic in an area suddenly changes, for instance when a common route is shut for some reason, the performance of navigational services would deteriorate crucially unless the models are quickly updated. Additionally, due to the locality of abrupt drifts and the fact that one area represents a very small fraction of the globe, these drifts would be hard to detect unless the detection is conducted geographically distributed. Due to these specifications statistical tests seem most useful: as drift adaptation needs to be fast, model feedback based solutions work too slowly. As the memory resources in an edge device are limited, windowing might be too heavy in terms of space requirements. Which statistical test should be applied is very case dependent \cite{faithfull_unsupervised_2018}, so benchmarking on the data used is needed to determine the right statistic and change triggering threshold values. Thorough surveys on the possible methods and their evaluation are presented in \cite{conceptdriftsurvey} and \cite{faithfull_unsupervised_2018}.
+
+As for detecting the global gradual drifts, they are expected to occur so slowly that statistical tests or windowing would be unlikely to notice them. Model performance metrics could be used, but the best-deemed of those \cite{celik_adaptation_2021} \cite{madrid_towards_2019}, the DDM \cite{gama_learning_2004} and its improvements EDDM \cite{baena-garcia_early_2006} and FHDDM \cite{frasconi_fast_2016}, are only applied for classification tasks. For these reasons excplicit drift detection on the global level would be unlikely to add value to the updating workflow. 
+
+\section{Optimizing re-training: batch learning}
 
 
 % DISTRIBUTION & PARALLELIZATION
@@ -326,6 +327,9 @@ another approach from \cite{ben-nun_demystifying_2019} to making dnn training mo
 % other areas that have works: preprocessing automation can enhance simplicity
 
 % eka lause siis meinaa et automl:llä pystytään tekeen semmosia juttuja jotka ei ois manuaalisesti mahdollisia; monia asioita voidaan muuttaa dynaamisesti useemmin ja paljon tarkemmin
+
+\section{Expanding system adaptability: AutoML}
+
 As for AutoML, while most of the research aims to minimize human intervention, there are also ideas that enable more robust drift adaptation as these approaches enable new ways of adaptation that would not be feasible manually. The literature concerning AutoML approaches for concept drift adaptation is very new and narrow, but two promising ideas regarding new ways to incorporate adaptability have appeared. The first one adapts the full model updating pipeline; including preprocessing and retraining configuration and parameters. Celik et al. proved that while retraining or incremental training somewhat maintain accuracy using drift detectors, for full accuracy recovery after drifts, adjustments to the full pipeline is required \cite{celik_adaptation_2021}. Additionally, \cite{celik_adaptation_2021} and \cite{madrid_towards_2019} prove that automl mechanisms performance significantly suffers from drifts, so the phenomenon needs to be taken into account while considering system automation. 
 
 % add here analysis of this: need to incorporate this but performance is so case dependent that the approach needs to be tested with the case data. also incrementally adding batches or from scratch needs that
