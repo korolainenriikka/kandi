@@ -52,119 +52,16 @@ The rest of this thesis is organized as follows:
 
 Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approaches would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The thesis is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
 
-\chapter{Overview on large-scale machine\\ learning systems for maritime}
-
-% in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description
+\chapter{Overview on large-scale machine learning systems for maritime}
 
 % ingressi: mitä aiot rakentaa luvussa, mikä tulee esille, miksi se on tärkeää, mihin tällä kokonaisuudella pyritään
 
 The general task of big data systems is that they should be able to handle vast amounts of data and from that be able to provide predictions in a timely manner. To position our problem of model maintenance in this larger domain, this chapter provides an introduction to the necessary background. First, the entire big data pipeline is presented on an abstract level, alongside best practices of systems design. Then, to clarify the terminology, machine learning approaches for efficient model updates are defined. Lastly, the requirements of the case used to compare the maintenance approaches are derived from the application domain description.
 
-\section{Introduction to big data systems}
 
-% MLOps is a term that should be used / mentioned somewhere
+\section{Background on neural networks and machine learning approaches for model maintenance}
 
-% current main concern for this sect: I state out a lot of facts without giving a reference -> the fine line between common knowledge and what needs backing...
-
-% add here: this system presented is a ml one, some notes added specifically on the usage of neural networks in these systems
-
-\subsection{The high-level components}
-
-% add here: eg DATE n kung fu papers (1st & 2nd from lucy) state that in ML systems distribution is of high importance. add to model training part
-%kungfu: stochastic gradient descent (SGD) algorithm is common, give that as an example maybe?
-
-% the automl survey can be ref'd here. add here a note on what automl + possibly mlops is.
-
-% maybe add: model development. in neural networks neural architecture search is a major computational problem that has a lot of automl research attention. however, this operation is only needed when the model is first developed, not during updates, so its optimization is not considered
-
-The steps that most large-scale machine learning systems compose of are displayed in the following figure: 
-
-% the figure is too small... -> not very readable
-\begin{figure}[ht]
-%\begin{figure}[tbh] t= top, b = bottom, h=here
-\ \newline
-\begin{center}
-\includegraphics[width=0.9\textwidth]{simplegoogle.png}
-\caption{Abstract components of a big data analytics system. From Google Developer MLOps guide~\cite{googlemlops}.}
-\label{simplepipeline}
-\end{center}
-\end{figure}
-
-
-While the steps above represent a coarse abstraction, hiding away feedback loops and the multitudes of ways each part can be implemented, most contemporary big data systems implement all of the following steps:
-
-\textbf{Data extraction}: this component is responsible for handling the incoming data. Usual forms of data are either web logs, coming in from a server, or IoT data, coming in from sensors that are often geographically distant from the data ingesting component.
-% that data is usually web logs or sensor requires a reference?
-
-In big data systems incoming data is represented either as batches, meaning chunks of data coming in at certain intervals, or as a stream, meaning that individual data records are coming in constantly. The main advantage of using a batch representation is known to be increased throughput%(find citations here)
-, while stream processing allows smaller end-to-end latencies. %(find citations here)
-% the usually interpreted as stream or batch needs a ref too?
-
-To mitigate the tradeoff between throughput and latency, a popular solution is called the lambda architecture. This reference architecture has a processing unit for both batch and stream data with the stream component, so-called speed layer, handling requests for the data not yet processed by the batch layer \cite{beatingcap}. While this approach is widely accepted to solve the problem of handling highly voluminous data fast and mitigating human errors by allowing restarting the speed layer any time without losing data \cite{lambdakappa}, the architecture has faced criticism for being redundantly complex and forcing the data ingestion code to be written twice \cite{questioninglambda} \cite{uber} \cite{facebook}. As an alternative, the kappa architecture has been proposed, only composing of either a batch or a stream processor, usually the latter \cite{questioninglambda}. This mitigates duplication, but retains the tradeoff with throughput and latency \cite{lambdakappa}.
-
-\textbf{Data preparation}: This step encompasses the processes of data cleaning, transformation, and feature engineering. Data cleaning refers to operations identifying and removing faulty data, such as values that are missing or are clearly impossible. Data transformation and feature engineering are used interchangeably, both meaning processes that transform data into a format that the models used can process. A popular example in this is the mapping of plain text into word count matrices \cite{dapbook}.
-
-While the data preparation step is often overlooked in literature,
-it is a both challenging and crucial part of the system as preprocessing commonly takes up a majority of the total end-to-end latency of a machine learning system \cite{adaptivelearningsystems}. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways.
-% the two approaches and their tradeoffs need a ref...
-% the how many % of time preprocessing takes needs a ref... i got one somewhere...
-
-\textbf{Data storage}: Interpreted in the figure as offline data, the data storage is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Due to the volume of the data, the storage is either cleared often completely or only a small part of the data is archived.
-% data archival needs a ref.
-% popular ways of implementing data storage too!
-
-\textbf{Model training}: This component is responsible for training the model, which means tuning the model parameters in a way that it fits to the distribution of the incoming data in order to make accurate predictions from data coming in during operation.
-
-The training conducted can be done from scratch, meaning that the same instance of the model has not been trained before, or in cases of using adaptation-capable models, the models can be updated. Details on model updating or retraining are discussed below.
-
-%add here: hyperparam tuning into model dev kinda
-% changes: federated is definitely considered! + add quick intro to SGD=stochastic gradient descent, the goto algo for distributing neural nets
-As for infrastructure, training can be conducted in a central or federated manner. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{iotsurvey}. As the amount of data is large, high-performance computing (HPC) clusters and modern general processing units (GPU) are used to reach required latencies \cite{iotsurvey}. Federated approach refers to an internet of things setting where the training is conducted in the edge devices of the IoT network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}. As in the maritime context the data is neither highly private or has differing environments in different sensors, the federated approach is not considered further in this work.
-
-\textbf{Model evaluation and validation}: In this stage the model is tested and adjusted in various ways. For testing, usually various model metrics such as accuracy for classifiers and error statistics for regression tasks are checked \cite{iotsurvey}. These numbers can also be compared against other models, possibly models already in operation \cite{googlemlops}. Also testing different data sets and checking compatibility with the rest of the system is conducted at this stage \cite{googlemlops}.
-
-In addition to testing, models are also optimized for the infrastructure that they are being deployed on. This can include, for example, various performance optimizations, or in case of constrained memory, model compression \cite{iotsurvey}.
-
-\textbf{Model registry}: is a centralized storage for the trained models. 
-
-% need a reference here as well...
-
-\textbf{Model inference}: edge fog cloud here marked in the figure as 'prediction service', this component contains the trained models that are used for answering application requests. These requests can require data statistics, computed with conventional data analytics, or predictions made by machine learning models.
-
-The most important design decision to make for this component in the sensor data scenario is where to deploy the models, in the cloud, a cloudlet or 'fog', or on the edge. Cloud means that the model is deployed in a data center and edge refers to models being deployed in the IoT devices. Fog refers to the in-between solutions: 
-
-OCF is The Open Connectivity Foundation. add below + the proper source
-
-The definition of fog computing is the following, as stated by the the OCF (in \cite{fogsurvey} reference [42]): “Fog computing is a horizontal, system-level architecture that distributes computing, storage, control and networking functions closer to the users along a cloud-to-thing continuum.” (but not only entirely to the edge). Or, put differently by \cite{fogsurvey} for a clearer mental image: "The Fog is a Cloud closer to the ground."
-
-% add here paragraph on best practices: simplicity & automation. distill 2.2, scalability and resiliency not really needed. define mlops and automl.
-
-%definition of automl: automated machine learning that minimizes human intervention in designing and building machine learning systems \cite{celik}
-
-The steps of data ingestion, preprocessing, model development, training, inference, and maintenance, represent the end-to-end workflow that is required for a system to be able to provide intelligence from a data stream. From this large field of research, model maintenance is our primary concern: how to, given the hardware used and requirements defined, set up the part of the system that is responsible to keep the model accurate in production. Understood from the whole systems point of view, our goal really is a means to meeting the ends of setting up a full, efficient data processing pipeline.
-
-\subsection{Best-practice design principles}
-
-In order to design a working big data system, taking into account lessons and best practices learned in the past greatly increases the chances of succeeding in operation. In general, as stated by the authors of \cite{uber}, in systems design everything is a tradeoff: every design decision taken to improve the system in some respect inevitably will degrade quality in another respect. Therefore, the right things should be identifiend for them to be prioritized.
-
-The most mature big data systems as of date have each evolved on their own but despite that have identified quite similar best practices that should be preferred no matter the field of implementation. In each system compared, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter}, the M6D ad targeting engine \cite{designprinciples} and the Uber system \cite{uber}, there is a slight variance in emphasis of importance and naming of each one, but in general the traits of ease of use, scalability and resiliency were deemed the most important across all systems.
-
-\textbf{Ease of using and improving}: while others named this as 'ease of use', others named 'easy to administer', 'easy to improve' or 'minimal human intervention', in general all terms refer to how usable the system is. Its operation should be effortless, but at the same time, improving it should be quick, as this enables fast adaptation to ever-changing application needs. In addition, modularity is in this respect important as it enables iterating individual modules, and simplicity in general makes a system both usable, and easier to update.
-
-\textbf{Scalability}: Scalability was named as one of the most important trait to favor across all systems descriptions listed. Scale is at the core of the nature of big data, and with expectations of the amount of data doubling every x years (need a reference for this), it is reasonable to constantly be prepared to handle ever-growing quantities of data. This can be achieved through various solutions of distributed computation, or making adding more hardware to the system as seamless as possible.
-    
-\textbf{Resiliency}: Under this umbrella term fit both the terms fault tolerance and resiliency to changes in the operational environment. With big systems consisting of multitudes of components and different types of infrastructure, individual parts of the system failing is a very common occurence. In addition, in terms of the machine learning conducted in the systems, the models should be able to perform in a stable manner, meaning that the prediction accuracy variance should stay small despite minor changes in the incoming data, or other changes in the environment.
-
-
-% add here: in order to implement adaptive learning, a few new components need to be introduced. Then display the more complex system description and explain with emphasis the trigger and monitoring
-
-% iotsurvey has a decent seeming sect on the monitoring stuff
-
-In addition to incorporating these best practices, another trend in big data systems can be identified to be the need to minimize human intervention in the system. This concern is the main goal of \textbf{AutoML}, automated machine learning. Another related field, MlOps, similarly to DevOps, aims to find practices enabling better automation.
-
-The principles of simplicity, scalability, resiliency and degree of automation will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. This means that especially simplicity and maturity will be emphasized, as they can be seen to enable ease of use as well as scalability and resiliency. 
-
-\section{Model updating approaches: terminology}
+% in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description. include here intro to neural nets & rnn. move before sect 2.1 2.1 assumes nets introduced. introduce stochastic gradient descent, kungfu is a possible ref...
 
 %conceptdriftsurvey was the first to use the term(lecture)
 
@@ -196,7 +93,85 @@ With the overview on terminology presented above, our research challenge can be 
 % add here description like this: The online learning setting under consideration is one
 %where data can be buffered in batches using a moving window. So we do batch mode online learning.
 
-\section{Context and requirements from the maritime \\domain}
+
+\section{Best practices in big data systems design: organization and principles}
+% this is a long sect... a lot of stuff like lambdakappa and edgefogcloud can be omitted if necessary, they are more so nice to knows
+
+% intro to subsection: why this is explained.
+In the following the abstract components of a data streaming system are presented to clarify which parts are to be studied in the later chapters. Best practices are presented to have general guidelines for which traits to priorize when comparing model maintaining approaches.
+
+% list the components
+% maybe add: this is an abstraction, feedback loops and multitudes of ways of implementation abstracted away
+These parts in the order they operate in are: data extraction, data preparation, data storage, model training, model evaluation and validation, model registry, and model inference. It is assumed here that a ready neural network exists, as development organization concerns, however non-trivial, are out of scope of this thesis. For each of these, the main task and general design decisions to make are presented next.
+
+\textbf{Data extraction} is responsible for handling the incoming data. Usual forms of data are either web logs, coming in from a server, or IoT data, coming in from sensors that are often geographically distant from the data ingesting component.
+
+In big data systems data is usually coming in as a stream, constantly one record at a time. An important design decision to make here is whether the data should be processed as such or in very small chunks, called stream processing, or by collecting data into  larger chunks and processing those, called batch processing. The main advantage of using a batch representation is known to be increased throughput%(find citations here)
+, while stream processing allows smaller end-to-end latencies. %(find citations here)
+% the usually interpreted as stream or batch needs a ref too?
+
+To mitigate this trade-off between throughput and latency, a popular solution is called the lambda architecture. This reference architecture has a processing unit for both batch and stream data with the stream component, so-called speed layer, handling requests for the data not yet processed by the batch layer \cite{beatingcap}. While this approach is widely accepted to solve the problem of handling highly voluminous data fast and mitigating human errors \cite{lambdakappa}, the architecture has faced criticism for being redundantly complex and forcing code duplication \cite{questioninglambda} \cite{uber} \cite{facebook}. As an alternative, the kappa architecture has been proposed, only composing of a stream processor \cite{questioninglambda}. This mitigates duplication, but retains the tradeoff with throughput and latency \cite{lambdakappa}.
+
+\textbf{Data preparation} encompasses the processes of data cleaning, transformation, and feature engineering. Data cleaning refers to operations identifying and removing faulty data, such as values that are missing or clearly impossible. Data transformation and feature engineering are used interchangeably, both meaning processes that transform data into a format that the models used can process. A popular example in this is the mapping of plain text into word count matrices \cite{dapbook}.
+
+While the data preparation step is often overlooked in literature,
+it is a both challenging and crucial part of the system as preprocessing commonly takes up a majority of the total end-to-end latency of a machine learning system \cite{adaptivelearningsystems}. As for systems design, the most relevant decision to make is whether to clean data before it is saved to the data storage, or only when it is  needed for training. The main benefit with the first approach is that data only needs to be cleaned once, while the latter allows processing data for different models in different ways and retaining the data in its original form.
+% the two approaches and their tradeoffs need a ref...
+
+\textbf{Data storage} is used to save the data that is needed for model training. The most often used storage methods are called data warehouses and columnar databases. Here it is important to note that due to the volume of big data, storage times are generally short, usually the maximum being a few days. The other extreme is one-pass processing, which means that the processed data is not stored at all.
+% data archival needs a ref.
+
+\textbf{Model training} means tuning the model parameters in a way that it fits to the distribution of the incoming data in order to make accurate predictions from data coming in during operation.
+
+% too short sentences, töksähtelee
+The main design decision for this component regards infrastructure: distribution and parallelization. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{ben-nun_demystifying_2019}. As the amount of data is large, high-performance clusters and modern general processing units are used to reach required latencies \cite{iotsurvey}. The highest degree of distribution is called federated learning and refers to a setting where the training is conducted in the edge devices of a sensor network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}.
+
+\textbf{Model evaluation and validation} refers to the stage where the model is tested in various ways. For testing, usually various model metrics such as accuracy for classifiers and error statistics for regression tasks are checked \cite{iotsurvey}. These numbers can also be compared against other models, possibly models already in operation \cite{googlemlops}. Also testing different data sets and checking compatibility with the rest of the system is conducted at this stage \cite{googlemlops}.
+
+In addition to testing, models are also optimized for the infrastructure that they are being deployed on. This can include, for example, various performance optimizations, or in case of constrained memory, model compression \cite{iotsurvey}.
+
+\textbf{Model registry} is a centralized storage for the trained models. As trained models do not require a lot of memory, this stage has little complex design matters.
+
+\textbf{Model inference} refers to the model being in production and answering application requests.
+The most important design decision to make for this component is where to deploy the models. The options are a centralized cloud data center, the sensor network edge devices, or the so-called fog, which refers to any devices between the edge and the cloud \cite{fogsurvey}. The main advantage with the distributed approaches are, similarly to distributed training, reduced network latencies and better privacy. %find ref...
+
+The components presented above are summarized in Figure~\ref{simplepipeline}.
+
+% the figure is too small... -> not very readable
+\begin{figure}[hb]
+%\begin{figure}[tbh] t= top, b = bottom, h=here
+\newline
+\begin{center}
+\includegraphics[width=1.0\columnwidth]{simplegoogle.png}
+\caption{Abstract components of a big data analytics system. From Google Developer MLOps guide~\cite{googlemlops}.}
+\label{simplepipeline}
+\end{center}
+\end{figure}
+
+% model updating within inference, thesis concerns (iotsurvey has monitoring stuff if needed)
+% maybe add: this is like CI and CD but CT=continuous training (from \cite{googlemlops})
+The concerns of this study are within the step of model inference. This step requires, due to the evolving nature of data, a scheme for maintaining the accuracy of the model. For this purpose, a retraining pipeline, model monitoring system, and a retraining trigger need to be in place. From these parts, especially the retraining, monitoring, and trigger components are investigated. This general abstraction of the updating scheme, highlighted with the focuses of this thesis, are presented in Figure~\ref{triggerpipeline}.
+
+% best practices + automation: mlops and automl
+Lastly, the principles known to be the most important in building a successfully operating big data system are the following. These are combined lessons learned from the most mature big data systems of our time, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter} and the Uber system \cite{uber}. As the most important was deemed ease of using and improving the system, which includes modularity and simplicity. The two other principles named important across these systems were scalability and resiliency, meaning tolerance to failures and exceptions. 
+
+As an important part of a system being easy to use was named the fact that human intervention should be minimized. This is a general trend in big data systems, as in other fields of technology. The field of MLOps aims to, similarly to DevOps, unify machine learning system development and operation, which means that automation and monitoring is advocated \cite{googlemlops}. Automation and minimizing human intervention is the topic of study in the field of \textbf{AutoML} \cite{celik_adaptation_2021}. These fields are studied for solutions promoting automation and ultimately ease of use.
+
+% the figure is too small... -> not very readable
+\begin{figure}[ht]
+%\begin{figure}[tbh] t= top, b = bottom, h=here
+\ \newline
+\begin{center}
+\includegraphics[width=1.0\columnwidth]{triggergooglemarked.png}
+\caption{Automated retraining workflow, highlights added by the author. From Google Developer MLOps guide~\cite{googlemlops}.}
+\label{triggerpipeline}
+\end{center}
+\end{figure}
+
+% section conclusion: what was said & how it relates to whats to come
+The principles of simplicity, scalability, resiliency and degree of automation will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. From the full systems perspective, this goal means handling one part of the process, model updating, as successfully as possible. Seen this way, our goal really is the means to the ends of setting up a full, efficient data processing pipeline.
+
+\section{Context and requirements from the maritime domain}
 
 % why this section: we need to know the context to know the requirements to choose the right approach 
 Lastly for the background, this section introduces the maritime domain and elaborates its specialities that are then used to find the most optimal model maintenance workflow.
@@ -313,6 +288,10 @@ As for detecting the global gradual drifts, they are expected to occur so slowly
 
 \section{Optimizing re-training: batch learning}
 
+the question here is a more general one: how to train efficiently
+
+ The model can be training conducted can be done from scratch, meaning that the same instance of the model has not been trained before, or in cases of using adaptation-capable models, the models can be updated by feeding them with new data. Rnns can be fed with new data as such.
+
 
 % DISTRIBUTION & PARALLELIZATION
 distribution as a way of doing retraining efficiently. mergeability =  that the combined model gives accurate results for the combined data despite distribution in-between \cite{bifet_machine_2017}. from \cite{ben-nun_demystifying_2019}: model parallelism also possible but (my justification) less researched field, usually data is parallellized rather than this
@@ -354,19 +333,19 @@ Outside of drift adaptation, AutoML literature can be used to ease human interve
 
 Here: as summary paragraph some little summary on the analysis. Last sentence like these are presented as a system below
 
-\chapter{The systems application}
-
 to discuss here: given the model updating approach(es) deemed best for the case, what should the system be like on an abstract level?
 
 i e the results i get
 
 % is this chap necessary?
 
-\chapter{Conclusion}
+\section{Discussion}
 % what was aimed for, the results, impact of the results
 
+\chapter{Conclusion}
+
 % what was done
-In this thesis, the optimal model updating workflows were searched for from literature concerning concept drift adaptation, batch learning, lifelong learning and AutoML. Firstly, the whole big data processing pipeline and domain requirements were presented. Then, the approaches found in literature were compared. Finally, the best-seeming options were summarized and presented as an abstract worklow that would incorporate them.
+In this thesis, the optimal model updating workflows were searched for from literature concerning concept drift adaptation, batch learning, lifelong learning and AutoML. Firstly, the whole big data processing pipeline and domain requirements were presented. Then, the approaches found in literature were compared. Finally, the best-seeming options were summarized and presented as an abstract workflow that would incorporate them.
 
 % impact: applicability of the conclusions to other systems
 As big data analytics grows more and more mainstream, the analysis on applicability of the research to the real world grows in importance. Therefore studies summarizing the applicability and maturity of the existing approaches is countinuously needed in order to successfully move the ideas out of research labs.
@@ -386,5 +365,8 @@ significant traits that should be considered in choosing an maintenance approach
  
  automl with drift adaptation once research is more mature, pipeline adaptability especially promising
  the classification focus of drift adaptation in general, less intertwinedness between task and approach
+ 
+ % this is based on forbes article why machine learning models crash and burn in production, unsure if citing that is appropriate
+ concluding thought: concept drift is very studied in academia but expertise in industry is lagging behind. The reason does not seem to be a lack of solutions, but a lack of communication. The papers usually have a strict set of assumptions regarding nature of the problem, data, and the requirements of the task to be solved. There is a lack of thought addressing: if person xxx with ml problem xxx wants to keep their models accurate, which approaches are applicable, and of those, which one would work best? This would be extremenly important as lack of maintenance is no1 reason of failure in industry.
  
  end jargon something like the techniques now address the volume and speed now but continual work needs to be done to meet the growing demands of the future.

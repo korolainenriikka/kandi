@@ -1,0 +1,47 @@
+SECT 2.2: systems intro
+
+Best practices in big data systems design: organization and principles
+ingressi: miksi tää on tässä, mitä tullaan kertoo
+luettele bd systemin yleiset osat: data ingestion, prep, storage, trianing, registry, inference
+
+esittele bd systemin yleiset osat osa kerrallaan
+
+	model development workflow is omitted, assumption: model is developed. (development lifecycle is nontrivial for organization but is out of scope) assumption: model had ready is a neural net, affecs training
+	DATA INGESTION
+	description of taking in sensor data
+	batch and stream: what are they (batch as collected chunk of stream)
+	the general schemes: lambda and kappa (shortly)
+
+	DATA PREPARATION
+	what it is: existing text is good
+	include: data needs to be validated (from mlops guide)
+
+	DATA STORAGE
+	common ways of storing
+	note on what is able to store: 
+		not like dump all there and use when you have time
+		memory is very scarce: only a few days data can be saved, one-pass data is common practice in streaming
+		
+	MODEL TRAINING
+	intro to federated learning
+	(eg DATE n kung fu papers (1st & 2nd from lucy) state that in ML systems distribution is of high importance)
+	
+	MODEL EVALUATION & VALIDATION
+	here models are made sure that they work. like model testing phase
+
+	MODEL REGISTRY
+	quick naming: the storage of trained models, memory-wise small
+
+	MODEL INFERENCE
+	mention the fact that many devices are possible, this is big iot research field
+
+näytä kuva: the components are summarized in Figure...
+
+kerro asiat joita käsitellään: trigger = under which conditions retraining happens
+training: the actual retraining
+
+näytä kuva: tää kuva visualisoi missä osassa järjestelmää ollaan (google mlops se toinen kuva)
+
+kerro bestpracticeist: simple mature automated (automl mlops)
+
+sect conclusion
