@@ -52,14 +52,14 @@ The rest of this thesis is organized as follows:
 
 Chapter 2 presents the necessary background knowledge to the reader: an overview of the general organization of a big data system, definitions in the field of machine learning model updating, and an introduction to the maritime domain. Chapter 3 analyzes the various model updating approaches presented previously and discusses which approaches would be most useful given the context of the case. Then, ways of automating the optimal-seeming approaches are shortly discussed. Chapter 4 synthesizes the findings above and presents an abstract overview of the system that would apply the optimal updating workflow. In addition it is discussed how certain these findings are given the quality and thoroughness of the literature used. The thesis is concluded with discussion on the applicability of the results achieved to similar problems from different domains.
 
-\chapter{Overview on large-scale machine learning systems for maritime}
+\chapter[Overview on large-scale machine learning systems for maritime]{Overview on large-scale machine\\ learning systems for maritime}
 
 % ingressi: mitä aiot rakentaa luvussa, mikä tulee esille, miksi se on tärkeää, mihin tällä kokonaisuudella pyritään
 
 The general task of big data systems is that they should be able to handle vast amounts of data and from that be able to provide predictions in a timely manner. To position our problem of model maintenance in this larger domain, this chapter provides an introduction to the necessary background. First, the entire big data pipeline is presented on an abstract level, alongside best practices of systems design. Then, to clarify the terminology, machine learning approaches for efficient model updates are defined. Lastly, the requirements of the case used to compare the maintenance approaches are derived from the application domain description.
 
 %online learing survey has lots of definitions that can be checked!
-\section{Background on neural networks and machine learning approaches for model maintenance}
+\section[Background on neural networks and machine learning approaches for model maintenance]{Background on neural networks and machine\\ learning approaches for model maintenance}
 
 % in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description. include here intro to neural nets & rnn. move before sect 2.1 2.1 assumes nets introduced. introduce stochastic gradient descent, kungfu is a possible ref... also\cite{szeEfficientProcessingDeep2017} has a good intro
 
@@ -77,7 +77,7 @@ The terms for challenges arising in accuracy maintenance when models run in prod
 
 % maybe add: distinction between noise and drift is that noise is that samples coming randomly from a probability distribution fluctuate, in drift the distribution itself changes
 For the problem space addressed, the following terms are central. By \textbf{concept drift} we mean the case where `the relation between the input
-data and the target variable changes over time' \cite{conceptdriftsurvey} \cite{schlimmer_incremental_1986}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaite_driftsurvey}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
+data and the target variable changes over time' \cite{conceptdriftsurvey} \cite{schlimmerIncrementalLearningNoisy1986}. As sub-types of this phenomenon, by \textbf{real} and \textbf{virtual concept drift} we mean the phenomena where the previous relation actually changes, and the case where only the data distribution changes, respectively. The terms \textbf{abrupt} and \textbf{gradual concept drift} are used in literature to distinguish cases where drift occurs over short or longer period of time \cite{zliobaiteAdaptiveTrainingSet2010}. As a further challenge in this domain, the problem of \textbf{delayed labels} means that the true values of the target variable are only available after a delay \cite{delayedlabelstreams}.
 % specification to delayed labels: label does not only mean class label in classification but any feedback.
 
 In approaches that emulate what is known in humans and animals as lifelong learning, the following problems arise. The central challenge, the \textbf{stability-plasticity dilemma} revolves around the question of how to to integrate new information to the model without deteriorating performance with previously encountered examples \cite{lmlinneuralnets}. \textbf{Catastrophic forgetting} means the case where the model adapts to new data so eagerly that it no longer can correctly predict examples it was able to previously \cite{lmlinneuralnets}. In other words, this means overemphasizing plasticity at the cost of stability.
@@ -94,7 +94,7 @@ With the overview on terminology presented above, our research challenge can be 
 %where data can be buffered in batches using a moving window. So we do batch mode online learning.
 
 
-\section{Best practices in big data systems design: organization and principles}
+\section[Best practices in big data systems design: organization and principles]{Best practices in big data systems design:\\ organization and principles}
 % this is a long sect... a lot of stuff like lambdakappa and edgefogcloud can be omitted if necessary, they are more so nice to knows
 
 % intro to subsection: why this is explained.
@@ -124,7 +124,7 @@ it is a both challenging and crucial part of the system as preprocessing commonl
 \textbf{Model training} means tuning the model parameters in a way that it fits to the distribution of the incoming data in order to make accurate predictions from data coming in during operation.
 
 % too short sentences, töksähtelee
-The main design decision for this component regards infrastructure: distribution and parallelization. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{ben-nun_demystifying_2019}. As the amount of data is large, high-performance clusters and modern general processing units are used to reach required latencies \cite{iotsurvey}. The highest degree of distribution is called federated learning and refers to a setting where the training is conducted in the edge devices of a sensor network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}.
+The main design decision for this component regards infrastructure: distribution and parallelization. Centralized training, often run in a cloud data center, can run either on one machine or distributed across multiple cores by splitting the model or the data to parallelize the training \cite{ben-nunDemystifyingParallelDistributed2019}. As the amount of data is large, high-performance clusters and modern general processing units are used to reach required latencies \cite{iotsurvey}. The highest degree of distribution is called federated learning and refers to a setting where the training is conducted in the edge devices of a sensor network. This aims to solve the issues of moving privacy-sensitive data across the network and being able to adapt to the unique environments of each data source \cite{iotsurvey}.
 
 \textbf{Model evaluation and validation} refers to the stage where the model is tested in various ways. For testing, usually various model metrics such as accuracy for classifiers and error statistics for regression tasks are checked \cite{iotsurvey}. These numbers can also be compared against other models, possibly models already in operation \cite{googlemlops}. Also testing different data sets and checking compatibility with the rest of the system is conducted at this stage \cite{googlemlops}.
 
@@ -155,7 +155,7 @@ The concerns of this study are within the step of model inference. This step req
 % best practices + automation: mlops and automl
 Lastly, the principles known to be the most important in building a successfully operating big data system are the following. These are combined lessons learned from the most mature big data systems of our time, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter} and the Uber system \cite{uber}. As the most important was deemed ease of using and improving the system, which includes modularity and simplicity. The two other principles named important across these systems were scalability and resiliency, meaning tolerance to failures and exceptions. 
 
-As an important part of a system being easy to use was named the fact that human intervention should be minimized. This is a general trend in big data systems, as in other fields of technology. The field of MLOps aims to, similarly to DevOps, unify machine learning system development and operation, which means that automation and monitoring is advocated \cite{googlemlops}. Automation and minimizing human intervention is the topic of study in the field of \textbf{AutoML} \cite{celik_adaptation_2021}. These fields are studied for solutions promoting automation and ultimately ease of use.
+As an important part of a system being easy to use was named the fact that human intervention should be minimized. This is a general trend in big data systems, as in other fields of technology. The field of MLOps aims to, similarly to DevOps, unify machine learning system development and operation, which means that automation and monitoring is advocated \cite{googlemlops}. Automation and minimizing human intervention is the topic of study in the field of \textbf{AutoML} \cite{celikAdaptationStrategiesAutomated2021}. These fields are studied for solutions promoting automation and ultimately ease of use.
 
 % the figure is too small... -> not very readable
 \begin{figure}[ht]
@@ -171,7 +171,7 @@ As an important part of a system being easy to use was named the fact that human
 % section conclusion: what was said & how it relates to whats to come
 The principles of simplicity, scalability, resiliency and degree of automation will be another point considered when choosing the most appropriate model updating workflow: from the promising-seeming options encountered, the goal is to find one that would meet these best practices as well as possible. From the full systems perspective, this goal means handling one part of the process, model updating, as successfully as possible. Seen this way, our goal really is the means to the ends of setting up a full, efficient data processing pipeline.
 
-\section{Context and requirements from the maritime domain}
+\section[Context and requirements from the maritime domain]{Context and requirements from the maritime\\ domain}
 
 % why this section: we need to know the context to know the requirements to choose the right approach 
 Lastly for the background, this section introduces the maritime domain and elaborates its specialities that are then used to find the most optimal model maintenance workflow.
@@ -265,26 +265,14 @@ There are two approaches to go about when trying to reach the goal of efficient 
 
 %sliding windows are popular \cite{celik_adaptation_2021}. intuitively seem useful... \cite{maritimeinformatics} (maybe) stated that removing unnecessary trajectory points makes training more efficient without degrading accuracy?
 
-% & LIFELONG LEARNING
-
-%comment from \cite{celik_adaptation_2021}: they talk about the new concepts as new tasks but division into tasks is nontrivial
-
-%lifelong learning regards tasks that can be seen as both different problems in transfer learning or one tasks with varying concepts \cite{madrid_towards_2019}
-
 % ACTUAL DRIFT DETECTION TEXT STARTIN HERE; CAN BE EXPANDED
+Concerning the implicit detection of concept drifts, the expectation of either gradual or abrupt partial drifts being present in our case is important. Additionally, abrupt drifts can be expected to be locally concentrated: an abrupt change is more likely to occur in a location than, for instance, in a feature of all sensor data. Another general point is that concept drift detection is overall better suitable for adaptation to abrupt drift as gradual drifts are hard to be distinguished from noise \cite{zliobaiteLearningConceptDrift2010}. 
 
-% outline / what i wanna say here....
-% intro points: global gradual or abrupt partial is important, gradual is bad for detection
-% methods: windowing comparison, statistics: do two samples come from the same distribution?, ddm eddm fhddm and other model performance based: slow but popular
-% my argument: abrupt needs to be detected in a federated manner
-% so statistics need to be used as they are mem efficient and fast
-% for gradual something feedback based can be useful but likely is not useful.
+Roughly, drift detectors can be divided into three classes: statistical methods triggering drifts based on perceived data distribution change, windowing techniques that compare two windows and trigger change if they differ sufficiently, and model feedback based methods that mark deteriorating model performance as drift occurring \cite{faithfullUnsupervisedChangeDetection2018}. Considering the nature of the case studied, it is necessary to detect the abrupt drifts: in cases where traffic in an area suddenly changes, for instance when a common route is shut for some reason, the performance of navigational services would deteriorate crucially unless the models are quickly updated. Additionally, due to the locality of abrupt drifts and the fact that one area represents a very small fraction of the globe, these drifts would be hard to detect unless the detection is conducted geographically distributed. Due to these specifications statistical tests seem most useful: as drift adaptation needs to be fast, model feedback based solutions work too slowly. As the memory resources in an edge device are limited, windowing might be too heavy in terms of space requirements. Which statistical test should be applied is very case dependent \cite{faithfullUnsupervisedChangeDetection2018}, so benchmarking on the data used is needed to determine the right statistic and change triggering threshold values. Thorough surveys on the possible methods and their evaluation are presented in \cite{conceptdriftsurvey} and \cite{faithfullUnsupervisedChangeDetection2018}.
 
-Concerning the implicit detection of concept drifts, the expectation of either gradual or abrupt partial drifts being present in our case is important. Additionally, abrupt drifts can be expected to be locally concentrated: an abrupt change is more likely to occur in a location than, for instance, in a feature of all sensor data. Another general point is that concept drift detection is overall better suitable for adaptation to abrupt drift as gradual drifts are hard to be distinguished from noise \cite{zliobaite_driftsurvey}. 
+As for detecting the global gradual drifts, they are expected to occur so slowly that statistical tests or windowing would be unlikely to notice them. Model performance metrics could be used, but the best-deemed of those \cite{celikAdaptationStrategiesAutomated2021} \cite{madridAutoMLPresenceDrift2019}, the DDM \cite{gamaLearningDriftDetection2004} and its improvements EDDM \cite{baena-garciaEarlyDriftDetection2006} and FHDDM \cite{pesaranghaderFastHoeffdingDrift2016}, are only applied for classification tasks. For these reasons explicit drift detection on the global level would be unlikely to add value to the updating workflow. 
 
-Roughly, drift detectors can be divided into three classes: statistical methods triggering drifts based on perceived data distribution change, windowing techniques that compare two windows and trigger change if they differ sufficiently, and model feedback based methods that mark deteriorating model performance as drift occurring \cite{faithfull_unsupervised_2018}. Considering the nature of the case studied, it is necessary to detect the abrupt drifts: in cases where traffic in an area suddenly changes, for instance when a common route is shut for some reason, the performance of navigational services would deteriorate crucially unless the models are quickly updated. Additionally, due to the locality of abrupt drifts and the fact that one area represents a very small fraction of the globe, these drifts would be hard to detect unless the detection is conducted geographically distributed. Due to these specifications statistical tests seem most useful: as drift adaptation needs to be fast, model feedback based solutions work too slowly. As the memory resources in an edge device are limited, windowing might be too heavy in terms of space requirements. Which statistical test should be applied is very case dependent \cite{faithfull_unsupervised_2018}, so benchmarking on the data used is needed to determine the right statistic and change triggering threshold values. Thorough surveys on the possible methods and their evaluation are presented in \cite{conceptdriftsurvey} and \cite{faithfull_unsupervised_2018}.
-
-As for detecting the global gradual drifts, they are expected to occur so slowly that statistical tests or windowing would be unlikely to notice them. Model performance metrics could be used, but the best-deemed of those \cite{celik_adaptation_2021} \cite{madrid_towards_2019}, the DDM \cite{gama_learning_2004} and its improvements EDDM \cite{baena-garcia_early_2006} and FHDDM \cite{frasconi_fast_2016}, are only applied for classification tasks. For these reasons excplicit drift detection on the global level would be unlikely to add value to the updating workflow. 
+% maybe add: statistical tests are an indirect indication, whereas feedback is a direct indication. therefore monitoring model feedback should also be in place because that would then notice faults in the drift detector: does model accuracy correlate with the detected drifts or not?
 
 \section{Optimizing re-training: batch learning}
 
@@ -304,26 +292,19 @@ matrix multiplications can be parallelized and accelerated (latter: using certai
 techniques stated + refs for more: sparse weights, fft, winograd algo 76 strassen 77 78 dynamic 79 80 for computation efficiency. for energy saving with optimal data flow: 84-95, move computing close to data, reduced precision 90, 121, 122. reduced operation amount / model compression (only after training so does not accelerate training?)
 
 % DISTRIBUTION & PARALLELIZATION
-distribution as a way of doing retraining efficiently. mergeability =  that the combined model gives accurate results for the combined data despite distribution in-between \cite{bifet_machine_2017}. from \cite{ben-nun_demystifying_2019}: model parallelism also possible but (my justification) less researched field, usually data is parallellized rather than this
+distribution as a way of doing retraining efficiently. mergeability =  that the combined model gives accurate results for the combined data despite distribution in-between \cite{bifetMachineLearningData2017}. from \cite{ben-nunDemystifyingParallelDistributed2019}: model parallelism also possible but (my justification) less researched field, usually data is parallellized rather than this
 
-another approach from \cite{ben-nun_demystifying_2019} to making dnn training more efficient: altering the computations to a form that is as compatible as possible with the used hardware. The specifics of this go beyond scope but can be found in \cite{ben-nun_demystifying_2019}
-
-
-% AUTOML
-% structure: 1. state of literature (little to no research)
-% 2. existing possibilities: automated pipeline optimization and automated adaptation strategy choice
-% both of these: first makes full recovery possible but is quite immature, second requires to have the mechanisms. further improvements but not the main ones
-% other areas that have works: preprocessing automation can enhance simplicity
+another approach from \cite{ben-nunDemystifyingParallelDistributed2019} to making dnn training more efficient: altering the computations to a form that is as compatible as possible with the used hardware. The specifics of this go beyond scope but can be found in \cite{ben-nunDemystifyingParallelDistributed2019}
 
 % eka lause siis meinaa et automl:llä pystytään tekeen semmosia juttuja jotka ei ois manuaalisesti mahdollisia; monia asioita voidaan muuttaa dynaamisesti useemmin ja paljon tarkemmin
 
 \section{Expanding system adaptability: AutoML}
 
-As for AutoML, while most of the research aims to minimize human intervention, there are also ideas that enable more robust drift adaptation as these approaches enable new ways of adaptation that would not be feasible manually. The literature concerning AutoML approaches for concept drift adaptation is very new and narrow, but two promising ideas regarding new ways to incorporate adaptability have appeared. The first one adapts the full model updating pipeline; including preprocessing and retraining configuration and parameters. Celik et al. proved that while retraining or incremental training somewhat maintain accuracy using drift detectors, for full accuracy recovery after drifts, adjustments to the full pipeline is required \cite{celik_adaptation_2021}. Additionally, \cite{celik_adaptation_2021} and \cite{madrid_towards_2019} prove that automl mechanisms performance significantly suffers from drifts, so the phenomenon needs to be taken into account while considering system automation. 
+As for AutoML, while most of the research aims to minimize human intervention, there are also ideas that enable more robust drift adaptation as these approaches enable new ways of adaptation that would not be feasible manually. The literature concerning AutoML approaches for concept drift adaptation is very new and narrow, but two promising ideas regarding new ways to incorporate adaptability have appeared. The first one adapts the full model updating pipeline; including preprocessing and retraining configuration and parameters. Celik et al. proved that while retraining or incremental training somewhat maintain accuracy using drift detectors, for full accuracy recovery after drifts, adjustments to the full pipeline is required \cite{celikAdaptationStrategiesAutomated2021}. Additionally, \cite{celikAdaptationStrategiesAutomated2021} and \cite{madridAutoMLPresenceDrift2019} prove that automl mechanisms performance significantly suffers from drifts, so the phenomenon needs to be taken into account while considering system automation. 
 
 % add here analysis of this: need to incorporate this but performance is so case dependent that the approach needs to be tested with the case data. also incrementally adding batches or from scratch needs that
 
-The second promising approach, presented by Bakirov et al. \cite{bakirov_automated_2021} present a way of dynamically choosing and changing the adaptation strategies in cases where many are available. This introduces dynimism that enables better adaptation. However, as this strategy needs to have the many adaptation strategies, this is possible only as a way of enhancing the effect of existing adaptation strategies, not as the primary strategy.
+The second promising approach, presented by Bakirov et al. \cite{bakirovAutomatedAdaptationStrategies2021} present a way of dynamically choosing and changing the adaptation strategies in cases where many are available. This introduces dynimism that enables better adaptation. However, as this strategy needs to have the many adaptation strategies, this is possible only as a way of enhancing the effect of existing adaptation strategies, not as the primary strategy.
 
 Outside of drift adaptation, AutoML literature can be used to ease human intervention in other parts of the system. This includes especially data preprocessing, where literature is vast.
 
@@ -343,16 +324,12 @@ Outside of drift adaptation, AutoML literature can be used to ease human interve
 
 Here: as summary paragraph some little summary on the analysis. Last sentence like these are presented as a system below
 
-to discuss here: given the model updating approach(es) deemed best for the case, what should the system be like on an abstract level?
-
-i e the results i get
-
-% is this chap necessary?
-
 \section{Discussion}
-% what was aimed for, the results, impact of the results
+
+These things could only be inspected on the level of these solutions seem promising to be applicable. However, there is no way to tell if they really are unless actual benchmarking is done. List things that should be empirically benchmarked.
 
 \chapter{Conclusion}
+% what was aimed for, the results, impact of the results
 
 % what was done
 In this thesis, the optimal model updating workflows were searched for from literature concerning concept drift adaptation, batch learning, lifelong learning and AutoML. Firstly, the whole big data processing pipeline and domain requirements were presented. Then, the approaches found in literature were compared. Finally, the best-seeming options were summarized and presented as an abstract workflow that would incorporate them.
