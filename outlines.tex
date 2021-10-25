@@ -1,3 +1,27 @@
+SECT 2.1 neural nets & approaches intro
+outline
+
+start: nonestablished terminology, terms are chosen.
+terms
+the method: neural networks. gradient descent. recurrent + deep net meaning. trained using batches (batch more clearly in systems, move here?)
+
+	problems chek
+		concept drift
+		subtypes: gradual/abrupt, real/virtual
+		delayed feedback
+
+	ml paradigms chek
+	    
+		approaches that are not this: transfer learning is changing learning problem, lifelong learning is dnn changing problem or environment, adaptive learning usually classification / regression adjustment to concept drift. continual learning = methods that enable longer-term operation. online and incremental learning mean that not all data is known at first, our case can be interpreted as both of them but continual will be used.
+
+		
+note
+% in case a neural networks introduction is needed: \cite{ben-nun_demystifying_2019} sect 4.1 has a good description. include here intro to neural nets & rnn. move before sect 2.1 2.1 assumes nets introduced. introduce stochastic gradient descent, kungfu is a possible ref... also\cite{szeEfficientProcessingDeep2017} has a good intr
+
+clarify
+	we deal with global/partial gradual + partial abrupt concept drift
+	we do continual learning with delayed labels to cope with concept drift
+
 SECT 2.2: systems intro
 
 Best practices in big data systems design: organization and principles
@@ -40,7 +64,7 @@ näytä kuva: the components are summarized in Figure...
 kerro asiat joita käsitellään: trigger = under which conditions retraining happens
 training: the actual retraining
 
-näytä kuva: tää kuva visualisoi missä osassa järjestelmää ollaan (google mlops se toinen kuva)
+näytä kuva: tää kuva visualisoi missä osassa järjestelmää ollaan (google mlops se toinen kuva). sano et tehään model maintaining to enable continual learning!
 
 kerro bestpracticeist: simple mature automated (automl mlops)
 
@@ -61,3 +85,5 @@ AUTOML
 % 2. existing possibilities: automated pipeline optimization and automated adaptation strategy choice
 % both of these: first makes full recovery possible but is quite immature, second requires to have the mechanisms. further improvements but not the main ones
 % other areas that have works: preprocessing automation can enhance simplicity
+
+
