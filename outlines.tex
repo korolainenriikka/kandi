@@ -70,6 +70,23 @@ kerro bestpracticeist: simple mature automated (automl mlops)
 
 sect conclusion
 
+BATCH LEARNING INGRESSI
+
+the question here is a more general one: how to train efficiently
+
+Recurrent neural networks can be either trained from scratch or fed with new data as such, model does not need to be 're-feeding' capable
+
+ 
+states that dnn training can take hours to days. This means that in order to meet decent update cycle times, optimization is necessary. Also: in training speedup is nice, but lots of research focuses on being energy efficient as usually in inference the resources are most constrained
+
+the time demands of the system are so large that the 100s of millisecs for moving stuff to the cloud is irrelevant -> training can be conducted in the cloud -> edge device resource constraints do not play a role
+
+most expensive parts for rnns: memory accesses and data moving (nykynen versio ei mainitse tätä)
+
+approaches to discuss: large batch training, distribution and parallelization, optimized computational primitives (matrix multiplication?), reduced precision networks (under 32b numbers up to binary nets)
+
+methodology note: the approaches chosen here are those that are the most mature. There is a lot of other research going on as well in the field but these were seen as the most mature for real world implementation. a crucial matter is that many methods are tested on different learning tasks. Also only approaches that suit recurrent neural networks are considered.
+
 DRIFT DETECTION
 
 % outline / what i wanna say here....

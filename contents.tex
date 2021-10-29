@@ -229,23 +229,8 @@ There are two approaches to go about when trying to reach the goal of efficient 
 
 \section{Timeliness of re-training: concept drift detection}
 
-% INAPPLICABLE SOLUTIONS: INCREMENTAL LEARNING & ENSEMBLES (CLASSIFICATION ONLY)
-%in adaptive learning / concept drift adaptation the solutions have the machine learning problem quite intertwined with the adaptation mechanism \cite{celik_adaptation_2021}, and the task is dominantly a classifying task. Therefore, it is unlikely to find applicable solutions there. If those methods should be further investigated, ensembles (set of models not one model) and training set manipulation are likely to be more successful: they are popular so they are mature, and they are better for gradual-type drifts. \cite{zliobaite_driftsurvey}. worse are incremental approaches, and drift detection methods.
-%ensembles better also in  \cite{mlforstreamingsurvey}:
-%a mature approach for the problem
+% maybe add also monitoring to this subheading & content, model should also be monitored and updated based on that
 
-%ensemble is popular and efficient
-
-%incremental ('feed more data') or retrain from scratch: which one is better depends very much on the data and the choice affects performance a lot \cite{celik_adaptation_2021}. this needs to be tested with ais
-
-% TRAINING SET MANIPULATION
-%data window comparisons
-
-%- old data needs to be stored and takes up lots of memory \cite{conceptdriftsurvey} -> not applicable?
-
-%sliding windows are popular \cite{celik_adaptation_2021}. intuitively seem useful... \cite{maritimeinformatics} (maybe) stated that removing unnecessary trajectory points makes training more efficient without degrading accuracy?
-
-% ACTUAL DRIFT DETECTION TEXT STARTIN HERE; CAN BE EXPANDED
 Concerning the implicit detection of concept drifts, the expectation of either gradual or abrupt partial drifts being present in our case is important. Additionally, abrupt drifts can be expected to be locally concentrated: an abrupt change is more likely to occur in a location than, for instance, in a feature of all sensor data. Another general point is that concept drift detection is overall better suitable for adaptation to abrupt drift as gradual drifts are hard to be distinguished from noise \cite{zliobaiteLearningConceptDrift2010}. 
 
 Roughly, drift detectors can be divided into three classes: statistical methods triggering drifts based on perceived data distribution change, windowing techniques that compare two windows and trigger change if they differ sufficiently, and model feedback based methods that mark deteriorating model performance as drift occurring \cite{faithfullUnsupervisedChangeDetection2018}. Considering the nature of the case studied, it is necessary to detect the abrupt drifts: in cases where traffic in an area suddenly changes, for instance when a common route is shut for some reason, the performance of navigational services would deteriorate crucially unless the models are quickly updated. Additionally, due to the locality of abrupt drifts and the fact that one area represents a very small fraction of the globe, these drifts would be hard to detect unless the detection is conducted geographically distributed. Due to these specifications statistical tests seem most useful: as drift adaptation needs to be fast, model feedback based solutions work too slowly. As the memory resources in an edge device are limited, windowing might be too heavy in terms of space requirements. Which statistical test should be applied is very case dependent \cite{faithfullUnsupervisedChangeDetection2018}, so benchmarking on the data used is needed to determine the right statistic and change triggering threshold values. Thorough surveys on the possible methods and their evaluation are presented in \cite{conceptdriftsurvey} and \cite{faithfullUnsupervisedChangeDetection2018}.
@@ -256,26 +241,14 @@ As for detecting the global gradual drifts, they are expected to occur so slowly
 
 \section{Optimizing re-training: batch learning}
 
-the question here is a more general one: how to train efficiently
+% not mentioned but maybe should: in neural net processing memory access, data moving, and multiply-accumulate ops are the most expensive
 
-Recurrent neural networks can be either trained from scratch or fed with new data as such, model does not need to be 're-feeding' capable
+% not mentioned: why the highlighted approaches were highlighted (seem most mature for training recurrent networks, a lot of approaches optimize inference and convolutions for cnns)
 
-\cite{szeEfficientProcessingDeep2017} \cite{jia_highly_2018} \cite{de_sa_high-accuracy_2018}: 
-states that dnn training can take hours to days. This means that in order to meet decent update cycle times, optimization is necessary. Also: in training speedup is nice, but lots of research focuses on being energy efficient as usually in inference the resources are most constrained
+The goal of optimized re-training from the perspective of concept drift adaptation is that it can be expected that the more often model updates can be executed, the better they can keep up with environment changes without significant fluctuations in model performance. The aim is therefore to be able to minimize the cost of an update cycle so that update frequency can be increased. As deep neural network training can take from hours to days, even weeks (\cite{szeEfficientProcessingDeep2017}, \cite{jia_highly_2018}, \cite{de_sa_high-accuracy_2018}), reducing training costs is crucial: update cycles of this time span are unacceptable especially in the cases of abrupt local concept drifts in marine traffic.
 
-the time demands of the system are so large that the 100s of millisecs for moving stuff to the cloud is irrelevant -> training can be conducted in the cloud -> edge device resource constraints do not play a role
-
-most expensive parts for rnns: memory accesses and data moving
-
-approaches to discuss: large batch training, distribution and parallelization, optimized computational primitives (matrix multiplication?), reduced precision networks (under 32b numbers up to binary nets)
-
-methodology note: the approaches chosen here are those that are the most mature. There is a lot of other research going on as well in the field but these were seen as the most mature for real world implementation. a crucial matter is that many methods are tested on different learning tasks. Also only approaches that suit recurrent neural networks are considered.
-
-sze tested on imagenet and those stating that they reach state of the art accuracy had 19-29\% accuracy losses. So it is necessary to test on the problem used if these wins exist in the problem domain 
-
-omgomg \cite{courbariaux_binarized_2016} on cuul jeeee
-
-\cite{sze_efficient_2017} has stats on how much resources each approximation saves
+% assumption of feeding more data, should this be questioned?
+The research question for this section is a generalization of the main question: how can the re-training time of deep recurrent neural networks be reduced? It is assumed that the model is re-trained based on the previous trained model  on a cloud data center , as moving data to the cloud requires time spans measured in hundreds of milliseconds, which is a small time given the acceptable response times (up to minutes) of the maritime intelligence case. Assuming these, the approaches of large batch training (??), data and model parallelization, reduced precision networks and optimized computational primitives will be highlighted.
 
 \textbf{Large batch training}
 
@@ -291,7 +264,7 @@ An efficient technique for optimizing neural network processing is lowering the 
 
 It has been proven that the operands in the network can be reduced from 32-bit to 16-bit floating point using either stochastic or deterministic rounding without losses in accuracy for image classification \cite{pmlr-v37-gupta15} \cite{micikevicius_mixed_2018}. This precision reduction would halve the need of memory usage, which is a major gain as memory operations are named as a bottleneck in neural network processing \cite{sze_efficient_2017}. Even more reduction to the computational cost have been proposed through the use of binarized neural networks. These networks use only the numbers 1 and -1 as either weights \cite{courbariaux_binaryconnect_2016} or weights and activations \cite{courbariaux_binarized_2016},  which transforms all multiply-and-accumulate operations, another costly part of DNN processing, to simple additions. This would result in computational efficiency increasing by up to a factor of 3 \cite{courbariaux_binaryconnect_2016}. As a further improvement, ternary networks add the number 0 to the possible weights, which would also have the benefit of simple additions but would enable more expressiveness with the network weights \cite{li_ternary_2016}.
 
-As a rule, the reduced precision techniques report the same or very close to the same accuracies as the standard 32-bit floating point on the tasks used for benchmarking. However, changing this task can reduce the usability of the technique even when using a different task in image classification, as is seen with binarized networks: these reported state-of-the-art accuracies using the MNIST, CIFAR or SVHN datasets \cite{courbariaux_binarized_2016}, \cite{courbariaux_binaryconnect_2016}, but using ImageNet, accuracy losses of 19-29\% were reported \cite{leibe_xnor-net_2016}. This means that the usability of these methods cannot be determined without benchmarking on the specific learning task used in the application domain, and the results can vary greatly depending on the learning task.
+As a rule, the reduced precision techniques report the same or very close to the same accuracies as the standard 32-bit floating point on the tasks used for benchmarking. However, changing this task can reduce the usability of the technique even when using a different task in image classification, as is seen with binarized networks: these reported state-of-the-art accuracies using the MNIST, CIFAR or SVHN datasets (\cite{courbariaux_binarized_2016}, \cite{courbariaux_binaryconnect_2016}), but using ImageNet, accuracy losses of 19-29\% were reported \cite{leibe_xnor-net_2016}. This means that the usability of these methods cannot be determined without benchmarking on the specific learning task used in the application domain, and the results can vary greatly depending on the learning task.
 
 \textbf{Optimized computation primitives}
 
