@@ -104,3 +104,33 @@ AUTOML
 % other areas that have works: preprocessing automation can enhance simplicity
 
 
+
+analysis chap topic division: 
+
+training
+* large batch - data management
+    -> storage mechanisms (intermediate storage?where also cleaning and pre-processing happens)
+    -> which data (time period etc..., data versioning?)
+* training in fast + reliable manner
+	-> parallelization model/data parallel (highlight some tools? mlflow, airlfow etc.)
+	-> approximation values in networks
+
+* Monitoring (updating triggers)
+* drift detection / monitoring: when to update
+
+
+parallel / distributed
+
+the division: data vs model parallelism
+
+what is data parallelism: minibatch sgd n training on the minibatches is divided across processes
+general tradeoff: the generalization gap
+
+what is model parallelism: dividing models across cores
+general trade-off: communication becomes a bottleneck
+
+reasoning:
+both tradeoffs have ways of mitigating, but more literature for data parallel and more popularity in general
+communication is an inherent bottleneck vs data seems not to be inherent
+model parallelism requires duplicating data which is badd
+finally, tech report states that for specifically lstms there was no training quality loss from increased batch size

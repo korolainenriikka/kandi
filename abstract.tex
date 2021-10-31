@@ -1,18 +1,13 @@
 %abstract should be max 100 words
-%1st paragraph: on knowledge retention
 
-this is very old... rewrite once thesis done
+% 1st paragraph: summarized: what is this thesis about, motivation also
+A common problem with creating successful large-scale machine learning systems is the fact that significant efforts are needed to keep the system working over longer periods of time. This is mainly caused by unpreparedness to changing environments causing changes in the data source, also known as concept drifts. In order to adapt to these drifts, advanced and case-tailored maintenance schemes are needed.
 
-Adapting machine learning models to evolving tasks and environments is a promising field with a multitude of approaches. Research topics such as lifelong learning, transfer learning, adaptive, and federated learning, are each advancing rapidly. Therefore, a valid question to ask is which ones are as of date mature enough for read world adoption, and under which conditions.
+% 2nd paragraph prepares readers to follow
+The thesis at hand searches for efficient model updating schemes for the specific case of bringing machine learning methods to the maritime domain, to applications such as traffic forecasting. Given the model type, recurrent deep neural networks, and case-specific requirements, such as large data and comparatively loose end-to-end latency requirements, the optimal drift-coping methods are searched for.
 
-%2nd paragraph: the thesis investigating the case of maritime
-This literature review compares these approaches from the point of view of the maritime domain and its specific characteristics of high geographical distribution, voluminous data, and less-than-instant speed requirements. After determining the optimal approach, its implications on the system architecture, stream processing, training system, and deployment scheme, are presented. A special emphasis is put in thorough arguing why the decisions presented should be made, and taking practical matters such as system maintainability into account.
-
-%3rd paragraph: results and wider motivation
-In the review it is found that in the case studied the ... knowledge retention approach is ideal, and therefore a xxx architecture for stream processing,  ... for model training, and ... for the deployment scheme should be preferred. %add here: more motivation.
-
-%also: what is mature to implement, what is not, currently, and which immature ones would be the most rewarding in a real world scenario.
-
+% 3rd paragraph: results and implication (conclusions summary essentially)
+Based on literature it is found that combining both model and data monitoring and neural network training optimization techniques such as ... would most likely enable consistent accuracy of the models despite environment changes. However, it is found that for many approaches the usability for the specific case cannot be determined without experimental benchmarking of several options.  %add here: more motivation.
 
 %some abstract drafting... (what to include)
 % essence of your paper
@@ -20,13 +15,11 @@ In the review it is found that in the case studied the ... knowledge retention a
 %  remember key points
   
 %  the context - maritime
-%  the general topic under study - iot+ml systems
-%  the specific topic of your research - for model adaptation
-%  the central questions or statement of the problem your research addresses - which system design is optimal for facilitating long model lifetimes
-%  what’s already known about this question, what previous research has done or shown - laterr
-%  motivation: unique combination of requirements (extreme scale data, low latency, high geo distribution, no privacy concerns)
-%  your research and/or analytical methods - literature review x 
-%  your main findings, results, or arguments - which design decisions we sould prefer, at least cloud over edge probably
-%  implication - reasoning behind which requirement led to which design decision x
-
-
+%  the general topic under study - big data processing systems
+%  the specific topic of your research - updating neural networks efficiently
+%  the central questions or statement of the problem your research addresses - which updating workflow is optimal for facilitating model maintenance
+%  what’s already known about this question, what previous research has done or shown - showed a lot of options for how models can stay up to date with concept drift in very specific situations
+%  motivation - in order to bridge the gap between research and industry, the applicability of approaches need to be studied
+%  your research and/or analytical methods - literature based
+%  your main findings, results, or arguments - that neural networks can be kept up to date with highly voluminous data using explicit concept drift detection, model approximation / parallelization and batch size increasing
+%  implication - what needs to be taken into account when choosing the optimal updating workflow
