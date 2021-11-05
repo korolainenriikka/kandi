@@ -74,7 +74,7 @@ For the problem space addressed, the central term is \textbf{concept drift}. By 
 data and the predicted variable change over time \cite{conceptdriftsurvey} \cite{schlimmerIncrementalLearningNoisy1986}. It is important to note that this does not mean fluctuation in data naturally occurring when sampling from a probability distribution, but when the probability distribution itself changes. As a simple example, fours repeating when throwing a dice would not be a concept drift, but changing the dice to one with multiple fours on it would characterize a drift. Concept drift can be further divided into types by the duration and scope of the drift. For duration, the terms \textbf{abrupt} and \textbf{gradual concept drift} distinguish cases where drift occurs over a short or a longer period of time \cite{zliobaiteAdaptiveTrainingSet2010}. For scope, \textbf{global} and \textbf{partial} concept drift are used to distinguish between drifts occurring in all or only in a subset of the incoming data. As a further challenge in this domain, it is common that the correct answers for the prediction tasks made by models are only available after some time \cite{delayedlabelstreams}, for which the term  \textbf{delayed feedback} will be used. 
 
 % paradigms: what this is & is not
-The terms describing machine learning approaches used for dealing with concept drifts or other changes are the following. Approaches regarding models that are capable to learn new tasks using previous training, such as a classifier being able to recognize unseen classes is called \textbf{transfer learning} \cite{iotsurvey}. \textbf{Lifelong learning} is a closely related field that explores the ability of models to adapt to new tasks, meaning new problems or environments, without losing the accuracy on previously learned tasks.  These approaches are out of the scope of this thesis. As for approaches that do not enable adjusting to new prediction tasks, \textbf{adaptive learning} refers to models able to adjust to concept drift \cite{conceptdriftsurvey}. Somewhat synonymously, \textbf{continual learning} is used to refer to models able to operate accurately over a longer period of time. Summarized, both adaptive and continual learning could be used to characterize the problem of this thesis, but only continual learning is used for the sake of clarity and as adaptive learning research primarily focuses on classifying tasks.
+The terms describing machine learning approaches for dealing with concept drifts or other changes are the following. Approaches regarding models that are capable to learn new tasks using previous training, such as a classifier being able to recognize unseen classes is called \textbf{transfer learning} \cite{iotsurvey}. \textbf{Lifelong learning} is a closely related field that explores the ability of models to adapt to new tasks, meaning new problems or environments, without losing the accuracy on previously learned tasks.  These approaches are out of the scope of this thesis. As for approaches that do not enable adjusting to new prediction tasks, \textbf{adaptive learning} refers to models able to adjust to concept drift \cite{conceptdriftsurvey}. Somewhat synonymously, \textbf{continual learning} is used to refer to models able to operate accurately over a longer period of time. Summarized, both adaptive and continual learning could be used to characterize the problem of this thesis, but only continual learning is used for the sake of clarity and as adaptive learning research primarily focuses on classifying tasks.
 
 As for systems settings where machine learning is conducted, the follwing approaches are central. \textbf{Incremental learning} means cases where not all input data is available during training \cite{giraud-carrier_note_2000}. As a subtype of this, \textbf{online learning} refers to cases where data comes in as a stream one unit at a time, and can be processed as such or in \textbf{batches}, meaning chunks of data \cite{conceptdriftsurvey}.
 
@@ -124,7 +124,7 @@ In addition to testing, models are also optimized for the infrastructure that th
 \textbf{Model registry} is a centralized storage for the trained models. As trained models do not require a lot of memory, this stage has little complex design matters.
 
 \textbf{Model inference} refers to the model being in production and answering application requests.
-The most important design decision to make for this component is where to deploy the models. The options are a centralized cloud data center, the sensor network edge devices, or the so-called fog, which refers to any devices between the edge and the cloud \cite{fogsurvey}. The main advantage with the distributed approaches are, similarly to distributed training, reduced network latencies and better privacy. \cite{szeEfficientProcessingDeep2017}
+The most important design decision to make for this component is where to deploy the models. The options are a centralized cloud data center, the sensor network edge devices, or the so-called fog, which refers to any devices between the edge and the cloud \cite{fogsurvey}. The main advantage with the distributed approaches are, similarly to distributed training, reduced network latencies and better privacy \cite{szeEfficientProcessingDeep2017}.
 
 The components presented above are summarized in Figure~\ref{simplepipeline}.
 
@@ -146,7 +146,7 @@ The concerns of this study are within the step of model inference. This step req
 % best practices + automation: mlops and automl
 Lastly, the principles known to be the most important in building a successfully operating big data system are the following. These are combined lessons learned from the most mature big data systems of our time, Google MillWheel \cite{millwheel}, Facebook \cite{facebook}, Twitter storm \cite{storm@twitter} and the Uber system \cite{uber}. As the most important was deemed ease of using and improving the system, which includes modularity and simplicity. The two other principles named important across these systems were scalability and resiliency, meaning tolerance to failures and exceptions. 
 
-As an important part of a system being easy to use was named the fact that human intervention should be minimized. This is a general trend in big data systems, as in other fields of technology. The field of MLOps aims to, similarly to DevOps, unify machine learning system development and operation, which means that automation and monitoring is advocated \cite{googlemlops}. Automation and minimizing human intervention is the topic of study in the field of \textbf{AutoML} \cite{celikAdaptationStrategiesAutomated2021}. These fields are studied for solutions promoting automation and ultimately ease of use.
+As an important part of a system being easy to use was named the fact that human intervention should be minimized. This is a general trend in big data systems, as in other fields of technology. The field of MLOps aims to, similarly to DevOps, unify machine learning system development and operation, which means that automation and monitoring is advocated \cite{googlemlops}. Automation and minimizing human intervention is the topic of study in the field of \textbf{AutoML} \cite{celikAdaptationStrategiesAutomated2021}.
 
 % the figure is too small... -> not very readable
 \begin{figure}[ht]
@@ -280,45 +280,63 @@ Roughly, drift detectors can be divided into three classes: statistical methods 
 
 As for detecting the global gradual drifts, they are expected to occur so slowly that statistical tests or windowing would be unlikely to notice them. Model performance metrics could be used, but the best-deemed of those \cite{celikAdaptationStrategiesAutomated2021} \cite{madridAutoMLPresenceDrift2019}, the DDM \cite{gamaLearningDriftDetection2004} and its improvements EDDM \cite{baena-garciaEarlyDriftDetection2006} and FHDDM \cite{pesaranghaderFastHoeffdingDrift2016}, are only applied for classification tasks. For these reasons explicit drift detection on the global level would be unlikely to add value to the updating workflow. 
 
-% maybe add: statistical tests are an indirect indication, whereas feedback is a direct indication. therefore monitoring model feedback should also be in place because that would then notice faults in the drift detector: does model accuracy correlate with the detected drifts or not?
+% add: statistical tests are an indirect indication, whereas feedback is a direct indication. therefore monitoring model feedback should also be in place because that would then notice faults in the drift detector: does model accuracy correlate with the detected drifts or not? rewrite this: monitoring is needed. Add concluding sentence: data monitoring and model metrics monitoring should notice all drift types.
 
-Here: as summary paragraph some little summary on the analysis. Last sentence like these are presented as a system below
+\section{Synthesis}
 
-\section{Discussion}
+This section combines the mechanisms needed for efficient updates: the mechanisms required are listed, alongside the benchmarking needed to know how they should exactly be implemented. Finally it is analyzed to which degree these approaches can be automated.
 
-These things could only be inspected on the level of these solutions seem promising to be applicable. However, there is no way to tell if they really are unless actual benchmarking is done. List things that should be empirically benchmarked.
+% outline
+% orthogonal but interdependent
+% what needs to be in place to enable efficient updates
+% what needs to be benchmarked
+% what can be automated
 
-These approaches are orthogonal in the sense that applying one does not impact the applicability of the other. All contribute to the same goal from different directions.
+% orthogonal but interdependent
+The approaches for enabling efficient update cycles outlined in the previous sections are orthogonal in nature: all approach the problem from different directions and can therefore be implemented somewhat independently. On the other hand, they also partly impact one another. For instance, the speed of retraining impacts how often retraining can be triggered, which has an impact on how sensitive the monitoring system should be. This means that the approaches have also to take into account the implementation of other mechanisms.
 
-The papers test their approaches dominantly on classification only. Therefore it is hard to tell if the task that the implementation should be done is similarly good. Therefore good seeming stuff should be tested and seen with the particular learning task if the method actually works or not.
+% % what needs to be in place to enable efficient updates
+Combined, the following systems parts are required to enable efficient model updates. For data management, there needs to be enough storage for both the incoming data before it is used for training and the data used to train the models currently in production. In addition, metadata on which data with which pre-processing was used on the current models are needed to enable reproducibility in cases of data errors. Only saving the preprocessed data for models in production is not sufficient as that will not enable backtracking the cases where an unexpected change in data caused erroneous training. Secondly, for training, efficient optimization schemes, such as distribution and approximation, need to be implemented. Finally, for monitoring, inspection of both incoming data and model performance need to be in place. Data monitoring should consist of a system looking for concept drifts and a system validating the incoming data. This is because only if data is thoroughly validated, model performance deterioration can be stated to be due to concept drifts, not due to data errors.
 
-what makes this challenging is that model performance can deteriorate because of a data error or because of concept drifts, how to tell which one occurred to know if model or data cleaning should be adjusted.
+% what needs to be benchmarked
+The comparisons of different approaches could only be conducted on a level of identifying promising solutions due to the lack of experimental testing. As the effectiveness of the approaches was seen to be highly task-dependent, to determine the actual usefulness and some implementation details, the following parts need to be benchmarked on maritime data and the models from the problem domain.
+
+In monitoring, the actual statistical test used on the data to determine if drifts occur needs to be identified. This statistic needs likely to monitor both locations and timestamps, as both the speeds and the routes taken can change. Also the trigger value, the threshold at which the monitoring statistic change is marked as a concept drift, needs to be chosen. This depends both on the environment and the speed at which an update cycle can be performed. Both of these aspects, the way in which monitoring is done and the trigger value, equally need to be benchmarked for model monitoring.
+
+The second aspect of benchmarking regards re-training optimization: The degree of distribution without deteriorated training quality needs to be identified for the case. Also the degree of approximation of the network, if this is possible in the case, needs to be tested with the data and model used in the application before the actual usability can be determined.
+
+% what can be automated (is this necessary or kinda outta scope...)
+While automating machine learning systems is a problem on its own, it can be stated on a high level for which aspects can be automated to start which, and where humans are definitely needed. The mechanisms presented in this work can be theoretically implemented fully automated, that is, during an individual update cycle, no human intervention is necessarily required. However, on a higher level the human factor is still necessary: it cannot be known in advance if the updating scheme works over the long term. This means that the functioning of the full retraining scheme will also be needed to evaluate and adjusted if necessary. These adjustments can include, for instance, changing the data preparation and validation schemes, or developing better models, as there is always the possibility of unknown factors emerging.
 
 \chapter{Conclusion}
 % what was aimed for, the results, impact of the results
 
 % what was done
-In this thesis, the ways of enabling efficient model updating workflows were searched for from the relevant literature. Firstly, the necessary machine learning background, the big data processing pipeline and requirements from the maritime domain were presented. Then, the possible updating approaches regarding concept drift detection, efficient re-training and AutoML approaches for concept drift adaptation were compared and analyzed.
+In this thesis, the ways of enabling efficient model updating workflows were searched for from the relevant literature. Firstly, the necessary machine learning background, the big data processing pipeline and requirements from the maritime domain were presented. Then, the mechanisms necessary for the updating cycle regarding data management, optimized re-training and concept drift detection were compared and analyzed.
+
+% motivation: why this was important
+As big data analytics grows more and more mainstream, the analysis on applicability of existing solutions in literature to the real world grows in importance. Therefore, works like the one conducted; summarizing the applicability and maturity of the existing approaches is countinuously needed in order to successfully implement machine learning systems of scale. This aspect of maintenance can be seen as the factor determining the usability of all the other factors: a perfectly estabilshed machine learning system delivers its true value only if it is possible to operate it over the long term.
 
 % impact: applicability of the conclusions to other systems
-As big data analytics grows more and more mainstream, the analysis on applicability of the research to the real world grows in importance. Therefore studies summarizing the applicability and maturity of the existing approaches is countinuously needed in order to successfully move the ideas out of research labs.
+The results concluded in this thesis, deeming data parallelism, model approximation, and the presented data and model monitoring system as the most promising, are applicable to other applications in case their requirements match the one considered here to a necessary extent. The important factors were the machine learning paradigm being deep learning, the expected drift types being mainly of abrupt partial and gradual global type, and learning being conducted in batch mode. Also the fact that being able to process the extreme-scale data was a challenge whereas the end-to-end latency requirement was easier to meet affected the approaches preferred. Finally, delays in model feedback set constraints on the usability of some monitoring mechanisms.
 
-also add maybe here that the literature on the topic is so vast and quickly evolving that it is possible that the subset of existing literature that I have gone through somehow conveys things in a non-objective way. also the cases are many and only some are researched so it is possible that they make things seem different than the actually optimal would be.
 
-significant traits that should be considered in choosing an maintenance approach
- - the learning task, many approaches are classification only, the continued assumption of the learning task being a classification one raises questions to the applicability of these techniques to other learning tasks
- - is the learning conducted in single instance or batch mode
- - what type of drift can be predicted to occur?
- - main constraint of the system
+
+%significant traits that should be considered in choosing an maintenance approach
+% - the learning task, many approaches are classification only, the continued assumption of the learning task being a classification one raises questions to the applicability of these techniques to other learning tasks
+ %- is the learning conducted in single instance or batch mode
+% - what type of drift can be predicted to occur?
+% - main constraint of the system
  
- here delayed feedback was important, and the fact that partial and gradual drift can be predicted to dominate. also system requirements are important, the challenge was data volume, not response times
+ %here delayed feedback was important, and the fact that partial and gradual drift can be predicted to dominate. also system requirements are important, the challenge was data volume, not response times
  
- As another point of contribution, summarizing the insight existing on how to efficiently maintain model accuracy sheds light on which approaches need further investigation. The approaches deemed somewhat immature for real world application were the following:
- 
- automl with drift adaptation once research is more mature, pipeline adaptability especially promising
- the classification focus of drift adaptation in general, less intertwinedness between task and approach
+ % further contribution: gaps in literature
+ As another point of contribution, summarizing the insight existing on how to efficiently maintain model accuracy shed light on the gaps existing in literature. Especially it was found that in a large amount of works a rather tight assumption was made regarding the learning task: the works largely focus on classification and rarely address the question of applicability to other learning tasks. Another field that was found to be lacking is AutoML: whereas there are lots of works regarding other aspects of big data systems, only a few recent works question the assumption of no concept drifts occurring.
  
  % this is based on forbes article why machine learning models crash and burn in production, unsure if citing that is appropriate
- concluding thought: concept drift is very studied in academia but expertise in industry is lagging behind. The reason does not seem to be a lack of solutions, but a lack of communication. The papers usually have a strict set of assumptions regarding nature of the problem, data, and the requirements of the task to be solved. There is a lack of thought addressing: if person xxx with ml problem xxx wants to keep their models accurate, which approaches are applicable, and of those, which one would work best? This would be extremenly important as lack of maintenance is no1 reason of failure in industry.
+ %concluding thought: concept drift is very studied in academia but expertise in industry is lagging behind. The reason does not seem to be a lack of solutions, but a lack of communication. The papers usually have a strict set of assumptions regarding nature of the problem, data, and the requirements of the task to be solved. There is a lack of thought addressing: if person xxx with ml problem xxx wants to keep their models accurate, which approaches are applicable, and of those, which one would work best? This would be extremenly important as lack of maintenance is no1 reason of failure in industry.
  
- end jargon something like the techniques now address the volume and speed now but continual work needs to be done to meet the growing demands of the future.
+ % end jargon: nonstopping work because data volumes and models grow this also needs to grow in effectiveness
+ %end jargon something like the techniques now address the volume and speed now but continual work needs to be done to meet the growing demands of the future.
+ 
+ In general, in order to establish working practices concerning large machine learning systems, both the fields of building successful systems and ensuring operation for longer spans of time need to advance equally. As both the amounts of data and the sizes of deep learning models are expected to keep growing, the aspects of updating will be needed constant re-visiting to ensure that the growing systems keep operating successfully.
