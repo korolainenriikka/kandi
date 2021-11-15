@@ -187,21 +187,18 @@
   isbn = {978-3-540-22064-0 978-3-540-24775-3}
 }
 
-@online{courbariauxBinarizedNeuralNetworks2016,
-  title = {Binarized {{Neural Networks}}: Training {{Deep Neural Networks}} with {{Weights}} and {{Activations Constrained}} to +1 or -1},
-  shorttitle = {Binarized {{Neural Networks}}},
-  author = {Courbariaux, Matthieu and Hubara, Itay and Soudry, Daniel and El-Yaniv, Ran and Bengio, Yoshua},
-  date = {2016-03-17},
-  eprint = {1602.02830},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/1602.02830},
-  urldate = {2021-10-27},
-  abstract = {We introduce a method to train Binarized Neural Networks (BNNs) - neural networks with binary weights and activations at run-time. At training-time the binary weights and activations are used for computing the parameters gradients. During the forward pass, BNNs drastically reduce memory size and accesses, and replace most arithmetic operations with bit-wise operations, which is expected to substantially improve power-efficiency. To validate the effectiveness of BNNs we conduct two sets of experiments on the Torch7 and Theano frameworks. On both, BNNs achieved nearly state-of-the-art results over the MNIST, CIFAR-10 and SVHN datasets. Last but not least, we wrote a binary matrix multiplication GPU kernel with which it is possible to run our MNIST BNN 7 times faster than with an unoptimized GPU kernel, without suffering any loss in classification accuracy. The code for training and running our BNNs is available on-line.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Machine Learning},
-  file = {/home/riikoro/Zotero/storage/YWHXQ6ZX/Courbariaux et al. - 2016 - Binarized Neural Networks Training Deep Neural Ne.pdf;/home/riikoro/Zotero/storage/E96BJ29X/1602.html}
+@inproceedings{courbariauxBinarizedNeuralNetworks2016,
+ author = {Hubara, Itay and Courbariaux, Matthieu and Soudry, Daniel and El-Yaniv, Ran and Bengio, Yoshua},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {D. Lee and M. Sugiyama and U. Luxburg and I. Guyon and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Binarized Neural Networks},
+ url = {https://proceedings.neurips.cc/paper/2016/file/d8330f857a17c53d217014ee776bfd50-Paper.pdf},
+ volume = {29},
+ year = {2016}
 }
+
 
 @inproceedings{courbariauxBinaryConnectTrainingDeep2016,
  author = {Courbariaux, Matthieu and Bengio, Yoshua and David, Jean-Pierre},
@@ -216,25 +213,27 @@
  year = {2015}
 }
 
+@inproceedings{koychevGradualForgettingAdaptation2000,
+  title = {Gradual {{Forgetting}} for {{Adaptation}} to {{Concept Drift}}},
+  booktitle = {Proceedings of {{ECAI}} 2000 {{Workshop}} on {{Current Issues}} in {{Spatio}}-{{Temporal Reasoning}}},
+  author = {Koychev, Ivan},
+  date = {2000},
+  url = {http://hdl.handle.net/10506/57},
+  urldate = {2021-09-16}
+}
 
-@online{courbariauxTrainingDeepNeural2015,
+@inproceedings{courbariauxTrainingDeepNeural2015,
   title = {Training Deep Neural Networks with Low Precision Multiplications},
+  booktitle = {International Conference on Learning Representations Workshop 2015},
   author = {Courbariaux, Matthieu and Bengio, Yoshua and David, Jean-Pierre},
-  date = {2015-09-22},
-  eprint = {1412.7024},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
+  date = {2015-09-23},
   url = {http://arxiv.org/abs/1412.7024},
   urldate = {2021-10-27},
-  abstract = {Multipliers are the most space and power-hungry arithmetic operators of the digital implementation of deep neural networks. We train a set of state-of-the-art neural networks (Maxout networks) on three benchmark datasets: MNIST, CIFAR-10 and SVHN. They are trained with three distinct formats: floating point, fixed point and dynamic fixed point. For each of those datasets and for each of those formats, we assess the impact of the precision of the multiplications on the final error after training. We find that very low precision is sufficient not just for running trained networks but also for training them. For example, it is possible to train Maxout networks with 10 bits multiplications.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing},
-  file = {/home/riikoro/Zotero/storage/66JQ5XST/Courbariaux et al. - 2015 - Training deep neural networks with low precision m.pdf;/home/riikoro/Zotero/storage/SAM7VAAS/1412.html}
 }
 
 @inproceedings{DBLP:conf/icml/LeNCLPN11,
   title = {On Optimization Methods for Deep Learning},
-  booktitle = {{{ICML}}},
+  booktitle = {International Conference on Machine Learning},
   author = {Le, Quoc V. and Ngiam, Jiquan and Coates, Adam and Lahiri, Ahbik and Prochnow, Bobby and Ng, Andrew Y.},
   date = {2011},
   pages = {265--272},
@@ -305,7 +304,7 @@
 
 @inproceedings{gamaLearningDriftDetection2004,
   title = {Learning with {{Drift Detection}}},
-  booktitle = {Advances in {{Artificial Intelligence}} – {{SBIA}} 2004},
+  booktitle = {Advances in {{Artificial Intelligence}} – Brazilian Symposium on Artificial Intelligence 2004},
   author = {Gama, João and Medas, Pedro and Castillo, Gladys and Rodrigues, Pedro},
   editor = {Bazzan, Ana L. C. and Labidi, Sofiane},
   date = {2004},
@@ -322,6 +321,7 @@
   date = {2000},
   volume = {13},
   number = {4},
+  journaltitle = {AI Communications},
   pages = {215--223},
   issn = {09217126}
 }
@@ -337,38 +337,6 @@
   doi = {10.1145/1982185.1982403},
   isbn = {978-1-4503-0113-8},
   langid = {english}
-}
-
-@online{goyalAccurateLargeMinibatch2018,
-  title = {Accurate, {{Large Minibatch SGD}}: Training {{ImageNet}} in 1 {{Hour}}},
-  shorttitle = {Accurate, {{Large Minibatch SGD}}},
-  author = {Goyal, Priya and Dollár, Piotr and Girshick, Ross and Noordhuis, Pieter and Wesolowski, Lukasz and Kyrola, Aapo and Tulloch, Andrew and Jia, Yangqing and He, Kaiming},
-  date = {2018-04-30},
-  eprint = {1706.02677},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/1706.02677},
-  urldate = {2021-10-27},
-  abstract = {Deep learning thrives with large neural networks and large datasets. However, larger networks and larger datasets result in longer training times that impede research and development progress. Distributed synchronous SGD offers a potential solution to this problem by dividing SGD minibatches over a pool of parallel workers. Yet to make this scheme efficient, the per-worker workload must be large, which implies nontrivial growth in the SGD minibatch size. In this paper, we empirically show that on the ImageNet dataset large minibatches cause optimization difficulties, but when these are addressed the trained networks exhibit good generalization. Specifically, we show no loss of accuracy when training with large minibatch sizes up to 8192 images. To achieve this result, we adopt a hyper-parameter-free linear scaling rule for adjusting learning rates as a function of minibatch size and develop a new warmup scheme that overcomes optimization challenges early in training. With these simple techniques, our Caffe2-based system trains ResNet-50 with a minibatch size of 8192 on 256 GPUs in one hour, while matching small minibatch accuracy. Using commodity hardware, our implementation achieves \textasciitilde 90\% scaling efficiency when moving from 8 to 256 GPUs. Our findings enable training visual recognition models on internet-scale data with high efficiency.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Distributed; Parallel; and Cluster Computing,Computer Science - Machine Learning},
-  file = {/home/riikoro/Zotero/storage/PS8GMEIC/Goyal et al. - 2018 - Accurate, Large Minibatch SGD Training ImageNet i.pdf;/home/riikoro/Zotero/storage/W9PUN5UA/1706.html}
-}
-
-@online{goyalAccurateLargeMinibatch2018a,
-  title = {Accurate, {{Large Minibatch SGD}}: Training {{ImageNet}} in 1 {{Hour}}},
-  shorttitle = {Accurate, {{Large Minibatch SGD}}},
-  author = {Goyal, Priya and Dollár, Piotr and Girshick, Ross and Noordhuis, Pieter and Wesolowski, Lukasz and Kyrola, Aapo and Tulloch, Andrew and Jia, Yangqing and He, Kaiming},
-  date = {2018-04-30},
-  eprint = {1706.02677},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/1706.02677},
-  urldate = {2021-10-31},
-  abstract = {Deep learning thrives with large neural networks and large datasets. However, larger networks and larger datasets result in longer training times that impede research and development progress. Distributed synchronous SGD offers a potential solution to this problem by dividing SGD minibatches over a pool of parallel workers. Yet to make this scheme efficient, the per-worker workload must be large, which implies nontrivial growth in the SGD minibatch size. In this paper, we empirically show that on the ImageNet dataset large minibatches cause optimization difficulties, but when these are addressed the trained networks exhibit good generalization. Specifically, we show no loss of accuracy when training with large minibatch sizes up to 8192 images. To achieve this result, we adopt a hyper-parameter-free linear scaling rule for adjusting learning rates as a function of minibatch size and develop a new warmup scheme that overcomes optimization challenges early in training. With these simple techniques, our Caffe2-based system trains ResNet-50 with a minibatch size of 8192 on 256 GPUs in one hour, while matching small minibatch accuracy. Using commodity hardware, our implementation achieves \textasciitilde 90\% scaling efficiency when moving from 8 to 256 GPUs. Our findings enable training visual recognition models on internet-scale data with high efficiency.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Distributed; Parallel; and Cluster Computing,Computer Science - Machine Learning},
-  file = {/home/riikoro/Zotero/storage/RXNI2K4U/Goyal et al. - 2018 - Accurate, Large Minibatch SGD Training ImageNet i.pdf;/home/riikoro/Zotero/storage/B5SQFAXW/1706.html}
 }
 
 @inproceedings{hazelwoodAppliedMachineLearning2018,
@@ -564,19 +532,12 @@ series = {NIPS'17}
   file = {/home/riikoro/Zotero/storage/T4YD4YQG/Krizhevsky - 2014 - One weird trick for parallelizing convolutional ne.pdf;/home/riikoro/Zotero/storage/CEF7RRWK/1404.html}
 }
 
-@online{liTernaryWeightNetworks2016,
+@inproceedings{liTernaryWeightNetworks2016,
   title = {Ternary {{Weight Networks}}},
+  booktitle = {30th Conference on Neural Information Processing Systems (NIPS 2016)},
   author = {Li, Fengfu and Zhang, Bo and Liu, Bin},
-  date = {2016-11-18},
-  eprint = {1605.04711},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/1605.04711},
-  urldate = {2021-10-28},
-  abstract = {We introduce ternary weight networks (TWNs) - neural networks with weights constrained to +1, 0 and -1. The Euclidian distance between full (float or double) precision weights and the ternary weights along with a scaling factor is minimized. Besides, a threshold-based ternary function is optimized to get an approximated solution which can be fast and easily computed. TWNs have stronger expressive abilities than the recently proposed binary precision counterparts and are thus more effective than the latter. Meanwhile, TWNs achieve up to 16\$\textbackslash times\$ or 32\$\textbackslash times\$ model compression rate and need fewer multiplications compared with the full precision counterparts. Benchmarks on MNIST, CIFAR-10, and large scale ImageNet datasets show that the performance of TWNs is only slightly worse than the full precision counterparts but outperforms the analogous binary precision counterparts a lot.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition},
-  file = {/home/riikoro/Zotero/storage/U3JG86VZ/Li et al. - 2016 - Ternary Weight Networks.pdf;/home/riikoro/Zotero/storage/SVARJM9Z/1605.html}
+  address = {Barcelona, Spain},
+  date = {2016}
 }
 
 @article{maddoxDecibelRelationalDataset2016,
@@ -584,7 +545,7 @@ series = {NIPS'17}
   shorttitle = {Decibel},
   author = {Maddox, Michael and Goehring, David and Elmore, Aaron J. and Madden, Samuel and Parameswaran, Aditya and Deshpande, Amol},
   date = {2016-05},
-  journaltitle = {Proceedings of the VLDB Endowment},
+  journaltitle = {Proceedings of the Very Large Data Bases Endowment},
   shortjournal = {Proc. VLDB Endow.},
   volume = {9},
   number = {9},
@@ -600,7 +561,7 @@ series = {NIPS'17}
   TITLE = {{Towards AutoML in the presence of Drift: first results}},
   AUTHOR = {Madrid, Jorge G and Jair Escalante, Hugo  and Morales, Eduardo F and Tu, Wei-Wei and Yu, Yang and Sun-Hosoya, Lisheng and Guyon, Isabelle and Sebag, Mich{\`e}le},
   URL = {https://hal.inria.fr/hal-01966962},
-  BOOKTITLE = {{Workshop AutoML 2018 @ ICML/IJCAI-ECAI}},
+  BOOKTITLE = {{Workshop AutoML 2018 @ International Conference on Machine Learning/International Joint Conference on Artificial Intelligence-European Conference on Artificial Intelligence}},
   ADDRESS = {Stockholm, Sweden},
   ORGANIZATION = {{Pavel Brazdil and Christophe Giraud-Carrier and Isabelle Guyon}},
   YEAR = {2018},
@@ -667,7 +628,7 @@ author={Paulius Micikevicius and Sharan Narang and Jonah Alben and Gregory Diamo
 booktitle={International Conference on Learning Representations},
 year={2018},
  urldate = {2021-10-27},
-url={https://openreview.net/forum?id=r1gs9JgRZ},
+url={https://arxiv.org/abs/1710.03740},
 }
 
 @online{mikamiMassivelyDistributedSGD2019,
@@ -805,7 +766,7 @@ url={https://openreview.net/forum?id=r1gs9JgRZ},
   shorttitle = {Data {{Lifecycle Challenges}} in {{Production Machine Learning}}},
   author = {Polyzotis, Neoklis and Roy, Sudip and Whang, Steven Euijong and Zinkevich, Martin},
   date = {2018-12-11},
-  journaltitle = {ACM SIGMOD Record},
+  journaltitle = {ACM Special Interest Group on Management of Data Record},
   shortjournal = {SIGMOD Rec.},
   volume = {47},
   number = {2},
@@ -819,7 +780,7 @@ url={https://openreview.net/forum?id=r1gs9JgRZ},
 @incollection{rastegariXNORNetImageNetClassification2016,
   title = {{{XNOR}}-{{Net}}: {{ImageNet Classification Using Binary Convolutional Neural Networks}}},
   shorttitle = {{{XNOR}}-{{Net}}},
-  booktitle = {Computer {{Vision}} – {{ECCV}} 2016},
+  booktitle = {European Conference on Computer Vision 2016},
   author = {Rastegari, Mohammad and Ordonez, Vicente and Redmon, Joseph and Farhadi, Ali},
   editor = {Leibe, Bastian and Matas, Jiri and Sebe, Nicu and Welling, Max},
   date = {2016},
@@ -833,20 +794,18 @@ url={https://openreview.net/forum?id=r1gs9JgRZ},
   file = {/home/riikoro/Zotero/storage/KAJ9IWMH/Rastegari et al. - 2016 - XNOR-Net ImageNet Classification Using Binary Con.pdf}
 }
 
-@online{renggliDataQualityDrivenView2021,
+@article{renggliDataQualityDrivenView2021,
   title = {A {{Data Quality}}-{{Driven View}} of {{MLOps}}},
   author = {Renggli, Cedric and Rimanic, Luka and Gürel, Nezihe Merve and Karlaš, Bojan and Wu, Wentao and Zhang, Ce},
-  date = {2021-02-15},
-  eprint = {2102.07750},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/2102.07750},
-  urldate = {2021-11-02},
-  abstract = {Developing machine learning models can be seen as a process similar to the one established for traditional software development. A key difference between the two lies in the strong dependency between the quality of a machine learning model and the quality of the data used to train or perform evaluations. In this work, we demonstrate how different aspects of data quality propagate through various stages of machine learning development. By performing a joint analysis of the impact of well-known data quality dimensions and the downstream machine learning process, we show that different components of a typical MLOps pipeline can be efficiently designed, providing both a technical and theoretical perspective.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Databases,Computer Science - Machine Learning},
-  file = {/home/riikoro/Zotero/storage/PJWL85VB/Renggli et al. - 2021 - A Data Quality-Driven View of MLOps.pdf;/home/riikoro/Zotero/storage/AX5KMNXV/2102.html}
+  date = {2021-03},
+  journaltitle = {Data Engineering Bulletin},
+  volume = {44},
+  number = {1},
+  pages = {11--23},
+  url = {http://sites.computer.org/debull/A21mar/p11.pdf},
+  urldate = {2021-11-15}
 }
+
 
 @article{schlimmerIncrementalLearningNoisy1986,
   title = {Incremental Learning from Noisy Data},
@@ -878,23 +837,8 @@ title={Don't Decay the Learning Rate, Increase the Batch Size},
 author={Samuel L. Smith and Pieter-Jan Kindermans and Quoc V. Le},
 booktitle={International Conference on Learning Representations},
 year={2018},
-url={https://openreview.net/forum?id=B1Yy1BxCZ},
+url={http://arxiv.org/abs/1711.00489},
 urldate = {2021-10-28}
-}
-
-@online{smithDonDecayLearning2018a,
-  title = {Don't {{Decay}} the {{Learning Rate}}, {{Increase}} the {{Batch Size}}},
-  author = {Smith, Samuel L. and Kindermans, Pieter-Jan and Ying, Chris and Le, Quoc V.},
-  date = {2018-02-23},
-  eprint = {1711.00489},
-  eprinttype = {arxiv},
-  primaryclass = {cs, stat},
-  url = {http://arxiv.org/abs/1711.00489},
-  urldate = {2021-10-31},
-  abstract = {It is common practice to decay the learning rate. Here we show one can usually obtain the same learning curve on both training and test sets by instead increasing the batch size during training. This procedure is successful for stochastic gradient descent (SGD), SGD with momentum, Nesterov momentum, and Adam. It reaches equivalent test accuracies after the same number of training epochs, but with fewer parameter updates, leading to greater parallelism and shorter training times. We can further reduce the number of parameter updates by increasing the learning rate \$\textbackslash epsilon\$ and scaling the batch size \$B \textbackslash propto \textbackslash epsilon\$. Finally, one can increase the momentum coefficient \$m\$ and scale \$B \textbackslash propto 1/(1-m)\$, although this tends to slightly reduce the test accuracy. Crucially, our techniques allow us to repurpose existing training schedules for large batch training with no hyper-parameter tuning. We train ResNet-50 on ImageNet to \$76.1\textbackslash\%\$ validation accuracy in under 30 minutes.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Distributed; Parallel; and Cluster Computing,Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/riikoro/Zotero/storage/DW6MGZ62/Smith et al. - 2018 - Don't Decay the Learning Rate, Increase the Batch .pdf;/home/riikoro/Zotero/storage/X98TSSWV/1711.html}
 }
 
 @article{szeEfficientProcessingDeep2017,
@@ -982,21 +926,6 @@ urldate = {2021-10-28}
   isbn = {978-3-540-56602-1 978-3-540-47597-2}
 }
 
-@online{youLargeBatchTraining2017,
-  title = {Large {{Batch Training}} of {{Convolutional Networks}}},
-  author = {You, Yang and Gitman, Igor and Ginsburg, Boris},
-  date = {2017-09-13},
-  eprint = {1708.03888},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
-  url = {http://arxiv.org/abs/1708.03888},
-  urldate = {2021-10-05},
-  abstract = {A common way to speed up training of large convolutional networks is to add computational units. Training is then performed using data-parallel synchronous Stochastic Gradient Descent (SGD) with mini-batch divided between computational units. With an increase in the number of nodes, the batch size grows. But training with large batch size often results in the lower model accuracy. We argue that the current recipe for large batch training (linear learning rate scaling with warm-up) is not general enough and training may diverge. To overcome this optimization difficulties we propose a new training algorithm based on Layer-wise Adaptive Rate Scaling (LARS). Using LARS, we scaled Alexnet up to a batch size of 8K, and Resnet-50 to a batch size of 32K without loss in accuracy.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition},
-  file = {/home/riikoro/Zotero/storage/6XRZSNFS/You et al. - 2017 - Large Batch Training of Convolutional Networks.pdf;/home/riikoro/Zotero/storage/32JRGHMM/1708.html}
-}
-
 @inproceedings{youLargebatchTrainingLSTM2019,
   title = {Large-Batch Training for {{LSTM}} and Beyond},
   booktitle = {Proceedings of the {{International Conference}} for {{High Performance Computing}}, {{Networking}}, {{Storage}} and {{Analysis}}},
@@ -1038,19 +967,14 @@ urldate = {2021-10-28}
   urldate = {2021-10-12}
 }
 
-@online{zliobaiteLearningConceptDrift2010,
+@techreport{zliobaiteLearningConceptDrift2010,
   title = {Learning under {{Concept Drift}}: An {{Overview}}},
   shorttitle = {Learning under {{Concept Drift}}},
   author = {Žliobaitė, Indrė},
-  date = {2010-10},
-  eprint = {1010.4784},
-  eprinttype = {arxiv},
-  primaryclass = {cs},
+  year = {2010},
+  institution = {Vilnus University},
   url = {http://arxiv.org/abs/1010.4784},
   urldate = {2021-09-13},
-  abstract = {Concept drift refers to a non stationary learning problem over time. The training and the application data often mismatch in real life problems. In this report we present a context of concept drift problem 1. We focus on the issues relevant to adaptive training set formation. We present the framework and terminology, and formulate a global picture of concept drift learners design. We start with formalizing the framework for the concept drifting data in Section 1. In Section 2 we discuss the adaptivity mechanisms of the concept drift learners. In Section 3 we overview the principle mechanisms of concept drift learners. In this chapter we give a general picture of the available algorithms and categorize them based on their properties. Section 5 discusses the related research fields and Section 5 groups and presents major concept drift applications. This report is intended to give a bird's view of concept drift research field, provide a context of the research and position it within broad spectrum of research fields and applications.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Artificial Intelligence}
 }
 
 
